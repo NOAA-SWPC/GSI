@@ -79,6 +79,9 @@ real(r_quad)        , intent(in   ) :: pdx
 integer(i_kind)     , intent(in   ) :: itertest 
 type(control_vector), optional, intent(in   ) :: xhat_in
 
+! Declare externals
+external :: stop2,evaljgrad
+
 ! Local variables
 real(r_quad), parameter :: half_quad=0.5_r_quad
 real(r_quad), parameter ::  two_quad=2.0_r_quad

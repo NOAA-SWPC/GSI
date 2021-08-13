@@ -104,6 +104,9 @@ contains
 
 !-------------------------------------------------------------------------
 
+!   Declare externals
+    external :: control2state,ensctl2state,model_tl,stop2,mpi_barrier
+
     real(r_kind),pointer,dimension(:,:,:) :: sub_u,sub_v
     real(r_kind),pointer,dimension(:,:,:) :: sub_qanl,sub_oz
     real(r_kind),pointer,dimension(:,:,:) :: sub_ql, sub_qi
@@ -553,6 +556,8 @@ contains
     use netcdf, only: nf90_noerr,nf90_strerror
     implicit none
     integer, intent (in   ) :: status
+!   Declare externals
+    external :: stop2
     if (status /= nf90_noerr) then
       print *, "fv3_increment netCDF error ", trim(nf90_strerror(status))
       call stop2(999)

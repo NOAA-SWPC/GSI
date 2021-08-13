@@ -115,6 +115,7 @@ subroutine setupgust(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,conv_diag
 
 ! Declare external calls for code analysis
   external:: tintrp2a1,tintrp2a11
+  external:: grdcrd1
   external:: stop2
 
 ! Declare local parameters

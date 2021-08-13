@@ -1042,6 +1042,9 @@ subroutine strong_bk(st,vp,p,t,uvflag)
   real(r_kind),dimension(latlon1n),intent(inout) :: t
   logical, intent(in):: uvflag
 
+! Declare externals
+  external :: calctends_no_tl,strong_bal_correction
+
   logical:: fullfield
   integer(i_kind) istrong
   real(r_kind),dimension(latlon1n)::u_t,v_t,t_t
@@ -1111,6 +1114,9 @@ subroutine strong_bk_ad(st,vp,p,t,uvflag)
   real(r_kind),dimension(latlon11),intent(inout) :: p
   real(r_kind),dimension(latlon1n),intent(inout) :: t
   logical,intent(in):: uvflag
+
+! Declare externals
+  external :: strong_bal_correction_ad,calctends_no_ad
 
 ! Declare local variables  	
   integer(i_kind) i

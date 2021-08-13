@@ -73,6 +73,9 @@ subroutine read_lag(nread,ndata,nodata,infile,lunout, &
   integer(i_kind),parameter:: nreal=npara
   integer(i_kind),parameter:: nchanl=0
 
+! Declare externals
+  external :: grdcrd1,w3fs21
+
 ! Declare local variables
   real(r_kind),allocatable,dimension(:,:):: lagdata
   integer(i_kind):: ctype

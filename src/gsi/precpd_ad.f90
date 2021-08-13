@@ -90,6 +90,8 @@ subroutine precpd_ad( km, dt, del, sl, ps, rhc, q_in, &
   real(r_kind)   ,intent(in   ):: sl(km)
   real(r_kind)   ,intent(in   ):: t_in(km)
   real(r_kind)   ,intent(  out):: t_out(km)
+! define externals
+  external :: fpvsx_ad
 !==============================================
 ! define local variables
 !==============================================

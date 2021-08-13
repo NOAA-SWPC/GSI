@@ -264,6 +264,9 @@ subroutine anprewgt(mype)
 
   integer(i_kind),intent(in   ) :: mype
 
+! Declare externals
+  external :: antest_maps0_glb
+
   integer(i_kind):: i,j,k,k1,kvar,ivar,idiagflg,igauss,istat
   real(r_kind):: factk,factor,anhswgtsum
   logical flowvar
@@ -810,6 +813,9 @@ subroutine read_bckgstats_glb(mype)
 
   integer(i_kind),intent(in   ) :: mype
 
+! Declare externals
+  external :: stop2,mpi_allreduce
+
   integer(i_kind):: mcount0,mcount,ierror
   real(r_kind) :: pbar4a,pbar4(nsig)
 
@@ -1029,6 +1035,9 @@ subroutine get_background_glb(mype)
 
 ! Declare passed variables
   integer(i_kind),intent(in   ) :: mype
+
+! Declare externals
+  external :: stop2,genqsat
 
 ! Declare local variables
   character(len=*),parameter::myname_=myname//'*get_background_glb'
@@ -1734,6 +1743,9 @@ subroutine get_theta_corrl_lenghts_glb(mype)
 ! Declare passed variables
   integer(i_kind),intent(in   ) :: mype
 
+! Declare externals
+  external :: mpi_allreduce,w3fa03
+
 ! Declare local variables
   integer(i_kind) i,j,k,kp,km,k1,it
   integer(i_kind) mcount0,mcount
@@ -2213,6 +2225,9 @@ subroutine anbkgvar_rewgt(mype)
 
   integer(i_kind),intent(in   ) :: mype
 
+! Declare externals
+  external :: bkgvar_rewgt,stop2
+
   integer(i_kind):: i,j,k,ix,ier,mm1
 
   real(r_kind),dimension(lat2,lon2,nsig):: sfvar,vpvar,tvar
@@ -2313,6 +2328,9 @@ subroutine get_aspect_ens(mype)
 
 ! Declare passed variables
   integer(i_kind),intent(in   ) :: mype
+
+! Declare externals
+  external :: stop2
 
 ! Declare local variables
   real(r_single),allocatable,dimension(:,:,:,:):: aniasp_p0, aniasp_p2, aniasp_p3
@@ -3228,6 +3246,9 @@ subroutine get_ensmber_glb(kens,ifld,igrid,ifldlevs, &
   real(r_single),dimension(pf2aP2%nlatf ,pf2aP2%nlonf ,nsig1o),intent(  out) :: ens0f_p2,ens0zf_p2
   real(r_single),dimension(pf2aP3%nlatf ,pf2aP3%nlonf ,nsig1o),intent(  out) :: ens0f_p3,ens0zf_p3
 
+! Declare externals
+  external :: stop2,mpi_alltoallv,vert_smther,mpi_gatherv,unfill_mass_grid2t
+
 ! Declare local variables
   integer(i_kind):: i,j,k,l,ivar,ier
   integer(i_kind):: n,kup
@@ -3700,6 +3721,9 @@ subroutine ens_intpglb_coeff(iref,jref,enscoeff,mype)
   integer(i_kind),intent(  out) :: jref(nlat,nlon)
   real   (r_kind),intent(  out) :: enscoeff(4,nlat,nlon)
 
+! Declare externals
+  external :: stop2
+
   integer(i_kind):: i,j,iy,jx,jxp,kg
   real(r_kind):: rlat,rlon,xg,yg
   real(r_kind):: dxg,dxg1,dyg,dyg1
@@ -3795,6 +3819,9 @@ subroutine ens_intpglb(workin,nx,ny,workout,iref,jref,enscoeff)
   real(r_single) ,intent(in   ) :: workin(nx,ny)
   real(r_single) ,intent(  out) :: workout(nlat,nlon)
 
+! Declare externals
+  external :: stop2
+
 ! Declare local variables
   integer(i_kind) i,j,ii,jj,iip,jjp
 
@@ -3858,6 +3885,9 @@ subroutine ens_uv2psichi(work1,work2)
 
 ! Declare passed variables
   real(r_single),dimension(nlat,nlon),intent(inout) :: work1,work2
+
+! Declare externals
+  external :: general_g2s0,general_s2g0
 
 ! Declare local variables
   real(r_kind),dimension(nlat,nlon):: work3,work4

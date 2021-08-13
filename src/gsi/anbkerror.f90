@@ -59,6 +59,9 @@ subroutine anbkerror(grady)
 ! Declare passed variables
   type(control_vector),intent(inout) :: grady
 
+! Declare externals
+  external :: anbkgcov,stop2
+
 ! Declare local variables
   integer(i_kind) i,j,k,ii,istatus
   real(r_kind),dimension(:,:,:),pointer::p_t  =>NULL()
@@ -293,8 +296,11 @@ subroutine anbkgcov(bundle)
 ! Passed Variables
   type(gsi_bundle),                 intent(inout) :: bundle
 
-! Local Variables
+! Declare externals
+  external :: vert_smther,anbkgvar,anbkgvar_lw,ansmoothrf_reg_sub2slab_option,&
+    ansmoothrf_reg_subdomain_option,ansmoothrf,tvert_smther
 
+! Local Variables
   integer(i_kind) n,istatus
   integer(i_kind) i_sst,i_stl,i_sti,i_ps,i_t,i_q,i_gust,i_wspd10m, &
                   i_td2m,i_mxtm,i_mitm,i_uwnd10m,i_vwnd10m, & 

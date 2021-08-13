@@ -1089,6 +1089,9 @@ subroutine get_sunangle(idate,dtime,dlon,dlat,sunangle)
   real(r_kind),intent(in)::dtime,dlon,dlat
   real(r_single),intent(out)::sunangle
 
+! Declare externals
+  external :: w3fs26,calcsun
+
   real(r_single),parameter:: s24 = 24._r_single
   real(r_single),parameter:: s180 = 180._r_single
   real(r_single),parameter:: s360 = 360._r_single
@@ -1139,6 +1142,9 @@ subroutine get_wbinid(udbl,vdbl,nbins,ibin)
   integer(i_kind),intent(in   ):: nbins
   real(r_double) ,intent(in   ):: udbl,vdbl
   integer(i_kind),intent(out  ):: ibin
+
+! Declare externals
+  external :: getwdir
 
 ! Declare local variables
   integer(i_kind) n

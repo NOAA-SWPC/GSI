@@ -104,6 +104,10 @@ subroutine gesinfo
   type(read_wrf_nmm_files_class):: wrf_nmm_files
   type(read_wrf_mass_files_class):: wrf_mass_files
 
+! Declare externals
+  external :: stop2,gengrid_vars,w3movdat,w3fs21,&
+    read_2d_files,read_cmaq_files,read_files
+
 ! Declare local variables
 
   logical fexist

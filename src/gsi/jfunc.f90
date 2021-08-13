@@ -396,6 +396,9 @@ contains
     type(control_vector),intent(inout) :: diry
     logical             ,intent(inout) :: success
 
+!   Declare externals
+    external :: mpi_scatterv,stop2
+
     integer(i_kind) i,k,mm1,myper,kk,i1,i2
     integer(i_kind) nlatg,nlong,nsigg
     integer(i_kind) nxval,nxrclen,nxsclen,nxpclen
@@ -534,6 +537,9 @@ contains
     implicit none
 
     integer(i_kind),intent(in   ) :: mype
+
+!   Declare externals
+    external :: mpi_gatherv
 
     integer(i_kind) i,j,k,mm1,mypew,kk,i1,i2,ie,is
     real(r_single),dimension(lat1,lon1):: field

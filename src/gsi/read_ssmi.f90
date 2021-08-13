@@ -121,6 +121,10 @@ subroutine read_ssmi(mype,val_ssmi,ithin,rmesh,jsatid,gstime,&
   integer(i_kind),intent(inout):: ndata,nodata
   logical        ,intent(in   ):: dval_use
 
+! Declare externals
+  external :: openbf,datelen,ufbint,w3fs21,ufbrep,grdcrd1,closbf,&
+    combine_radobs,count_obs
+
 ! Declare local parameters
   integer(i_kind),parameter :: n1bhdr=14
   integer(i_kind),parameter :: maxchanl=30

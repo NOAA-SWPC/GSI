@@ -106,6 +106,9 @@ subroutine intq_(qhead,rval,sval)
   type(gsi_bundle)       ,intent(in   ) :: sval
   type(gsi_bundle)       ,intent(inout) :: rval
 
+! Declare externals
+  external :: vqc_int
+
 ! Declare local variables  
   integer(i_kind) j1,j2,j3,j4,j5,j6,j7,j8,ier,istatus
   real(r_kind) w1,w2,w3,w4,w5,w6,w7,w8,ibb,ikk

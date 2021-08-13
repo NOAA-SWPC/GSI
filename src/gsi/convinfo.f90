@@ -169,6 +169,9 @@ contains
     use mpimod, only: mype
     use gsi_io, only: verbose
     implicit none
+
+!   Declare externals
+    external :: stop2
     
     character(len=1)cflg
     character(len=7) iotype
@@ -315,6 +318,9 @@ contains
 !
 !$$$
     implicit none
+
+!   Declare externals
+    external :: stop2
 
     integer(i_kind) ier
 

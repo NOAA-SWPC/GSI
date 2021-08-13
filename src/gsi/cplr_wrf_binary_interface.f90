@@ -128,6 +128,9 @@ contains
     implicit none
     class(get_wrf_binary_interface_class), intent(inout) :: this
   
+  ! Declare externals
+    external :: stop2
+
   ! Declare local parameters
     integer(i_kind),parameter:: in_unit = 15
     real(r_single),parameter:: one_single = 1.0_r_single
@@ -840,8 +843,10 @@ contains
     logical     ,intent(inout) :: update_pint
     real(r_kind),intent(  out) :: ctph0,stph0,tlm0
   
+!   Declare externals
+    external :: stop2
+
     integer(i_kind),parameter:: in_unit = 15
-  
   
     character(9) wrfges,fileout
     integer(i_kind),allocatable:: start_block(:),end_block(:)
@@ -1525,6 +1530,9 @@ contains
     logical     ,intent(inout) :: update_pint
     real(r_kind),intent(  out) :: ctph0,stph0,tlm0
   
+!   Declare externals
+    external :: stop2
+
   ! integer(i_kind),parameter:: in_unit = 15
     real(r_kind),parameter:: rd_over_cp = 0.285725661955006982_r_kind
   
@@ -2095,6 +2103,9 @@ contains
     character(9)   ,intent(in   ) :: wrfges
     integer(i_kind),intent(  out) :: nrecs
   
+!   Declare externals
+    external :: openfileread,closefile,to_native_endianness_i4
+
     character(10) cwrfges
     integer(i_llong) nextbyte,locbyte,thisblock
     integer(i_byte) lenrec4(4)
@@ -2269,6 +2280,9 @@ contains
     integer(i_kind) ,intent(in   ) :: in_unit
     character(9)    ,intent(in   ) :: wrfges
   
+!   Declare externals
+    external :: openfileread,closefile
+
     character(10) cwrfges
     integer(i_llong) nextbyte,locbyte,thisblock
     integer(i_byte) lenrec4(4)
@@ -2377,6 +2391,9 @@ contains
     integer(i_kind) ,intent(  out) :: start_byte(nrecs),end_byte(nrecs)
     integer(i_llong),intent(  out) :: file_offset(nrecs)
   
+!   Declare externals
+    external :: wrf_sizeof_integer,openfileread,closefile,to_native_endianness_i4
+
     character(10) cwrfges
     integer(i_kind) irecs
     integer(i_llong) nextbyte,locbyte,thisblock
@@ -2666,6 +2683,9 @@ contains
     integer(i_llong),intent(inout) :: locbyte
     logical         ,intent(inout) :: lastbuf
   
+!   Declare externals
+    external :: getbytes
+
     integer(i_kind) ierr
   
     if(lastbuf) return
@@ -2791,6 +2811,9 @@ contains
     integer(i_kind),intent(in   ) :: start_block,end_block,start_byte,end_byte
     integer(i_kind),intent(  out) :: outi1
   
+!   Declare externals
+    external :: to_native_endianness_i4
+
     integer(i_llong),parameter:: lrecl=2**20_i_llong
     integer(i_llong),parameter:: lword=2**18_i_llong
     integer(i_llong) num_swap
@@ -2876,6 +2899,9 @@ contains
     integer(i_kind),intent(in   ) :: start_block,end_block,start_byte,end_byte
     real(r_single),intent(  out) :: outr1
   
+!   Declare externals
+    external :: to_native_endianness_i4
+
     integer(i_llong),parameter:: lrecl=2**20_i_llong
     integer(i_llong),parameter:: lword=2**18_i_llong
     integer(i_llong) num_swap
@@ -2960,6 +2986,9 @@ contains
     integer(i_kind),intent(in   ) :: start_block,end_block,start_byte,end_byte
     real(r_single),intent(  out) :: outrn1(n1)
   
+!   Declare externals
+    external :: to_native_endianness_i4
+
     integer(i_llong),parameter:: lrecl=2**20_i_llong
     integer(i_llong),parameter:: lword=2**18_i_llong
     integer(i_llong) num_swap
@@ -3052,6 +3081,9 @@ contains
     integer(i_kind),intent(in   ) :: start_block,end_block,start_byte,end_byte
     real(r_single),intent(  out) :: outrn1n2(n1,n2)
   
+!   Declare externals
+    external :: to_native_endianness_i4
+
     integer(i_llong),parameter:: lrecl=2**20_i_llong
     integer(i_llong),parameter:: lword=2**18_i_llong
     integer(i_llong) num_swap
@@ -3145,6 +3177,8 @@ contains
     INTEGER(i_kind), INTENT(IN   ) ::  itypesize
     CHARACTER*(*)  , INTENT(INOUT) ::  Element, Data, VarName
     INTEGER(i_kind), INTENT(  OUT) ::  DataHandle, code
+  ! Declare externals
+    external :: int_get_ti_header_c
   !Local
     INTEGER(i_kind) i, n, DummyCount, typesize
     CHARACTER * 132  dummyData
@@ -3228,6 +3262,8 @@ contains
     CHARACTER*(*)   ,dimension(*), INTENT(INOUT) :: DimNames
     INTEGER(i_kind) ,dimension(*), INTENT(  OUT) :: DomainStart, DomainEnd
     INTEGER(i_kind) ,dimension(*), INTENT(  OUT) :: PatchStart,  PatchEnd
+  ! Declare externals
+    external :: wrf_error_fatal3
   !Local
     integer(i_kind),parameter:: int_field       =       530
     CHARACTER*132 mess
@@ -3424,7 +3460,7 @@ end module get_wrf_binary_interface_mod
   !   machine:  ibm RS/6000 SP
   !
   !$$$ end documentation block
-      USE module_wrf_error
+      USE module_wrf_error, only: wrf_debug_level
       use kinds, only: i_kind
       IMPLICIT NONE
   
@@ -3454,7 +3490,7 @@ end module get_wrf_binary_interface_mod
   !   machine:  ibm RS/6000 SP
   !
   !$$$ end documentation block
-      USE module_wrf_error
+      USE module_wrf_error, only: wrf_debug_level
       use kinds, only: i_kind
       IMPLICIT NONE
   
@@ -3485,12 +3521,13 @@ end module get_wrf_binary_interface_mod
   !   machine:  ibm RS/6000 SP
   !
   !$$$ end documentation block
-    USE module_wrf_error
     use kinds, only: i_kind
     IMPLICIT NONE
   
-    CHARACTER*(*) str
+    CHARACTER*(*),intent(in) :: str
     INTEGER(i_kind) , INTENT (IN   ) :: level
+!   Declare externals
+    external :: get_wrf_debug_level,wrf_message
     INTEGER(i_kind)                  :: debug_level
   
     CALL get_wrf_debug_level( debug_level )
@@ -3521,7 +3558,6 @@ end module get_wrf_binary_interface_mod
   !   machine:  ibm RS/6000 SP
   !
   !$$$ end documentation block
-    USE module_wrf_error
     IMPLICIT NONE
   
     CHARACTER*(*), intent(in   ) :: str
@@ -3558,7 +3594,6 @@ end module get_wrf_binary_interface_mod
   !   machine:  ibm RS/6000 SP
   !
   !$$$ end documentation block
-    USE module_wrf_error
     IMPLICIT NONE
   
     CHARACTER*(*), intent(in   ) :: str
@@ -3595,13 +3630,14 @@ end module get_wrf_binary_interface_mod
   !   machine:  ibm RS/6000 SP
   !
   !$$$ end documentation block
-    USE module_wrf_error
     use kinds, only: i_kind
     IMPLICIT NONE
   
     CHARACTER*(*)   , intent (in   ) :: file_str
     INTEGER(i_kind) , INTENT (IN   ) :: line  ! only print file and line if line > 0
     CHARACTER*(*)   , intent (in   ) :: str
+!   Declare externals
+    external :: wrf_message,stop2
     CHARACTER*256 :: line_str
   
     write(line_str,'(i6)') line
@@ -3636,10 +3672,12 @@ end module get_wrf_binary_interface_mod
   !   machine:  ibm RS/6000 SP
   !
   !$$$ end documentation block
-    USE module_wrf_error
     IMPLICIT NONE
   
     CHARACTER*(*),intent(in   ) :: str
+
+!   Declare externals
+    external :: wrf_error_fatal3
   
     CALL wrf_error_fatal3 ( ' ', 0, str )
   END SUBROUTINE wrf_error_fatal
@@ -3669,7 +3707,6 @@ end module get_wrf_binary_interface_mod
   !   machine:  ibm RS/6000 SP
   !
   !$$$ end documentation block
-    USE module_wrf_error
     use kinds, only: i_kind
     IMPLICIT NONE
   
@@ -3678,6 +3715,8 @@ end module get_wrf_binary_interface_mod
     CHARACTER*(*)   , intent (in   ) :: str
     CHARACTER*(*)   , intent (in   ) :: file_str
     INTEGER(i_kind) , INTENT (IN   ) :: line
+!   Declare externals
+    external :: wrf_error_fatal3
     CHARACTER (LEN=512)   :: rc_str
     CHARACTER (LEN=512)   :: str_with_rc
   

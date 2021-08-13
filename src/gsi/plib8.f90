@@ -7709,6 +7709,9 @@ SUBROUTINE hbncij(a,hamp,nol,lnfi,bnfi,lnfj,bnfj,                           &
                    INTENT(IN   ) :: hamp,bnfi,bnfj
   REAL(r_kind), DIMENSION(nol, ims:ime, jms:jme),                  &
                    INTENT(IN   ) :: lnfi,lnfj
+
+! Declare externals
+  external :: hbnrf2i,hbnrf2j
 !----------------------------------------------------------------------------
   INTEGER(i_kind)                :: i,j
 !============================================================================
@@ -7774,6 +7777,8 @@ SUBROUTINE hbncji(a,hamp,nol,lnfi,bnfi,lnfj,bnfj,                           &
                    INTENT(IN   ) :: hamp,bnfi,bnfj
   REAL(r_kind), DIMENSION(nol, ims:ime, jms:jme),                  &
                    INTENT(IN   ) :: lnfi,lnfj
+! Declare externals
+  external :: hbnrf2j,hbnrf2i
 !----------------------------------------------------------------------------
   INTEGER(i_kind)                :: i,j
 !============================================================================
@@ -7839,6 +7844,8 @@ SUBROUTINE hbncijk(a,hamp,nol,lnfi,bnfi,lnfj,bnfj,lnfk,bnfk,                &
                    INTENT(IN   ) :: hamp,bnfi,bnfj,bnfk
   REAL(r_kind), DIMENSION(nol, ims:ime, kms:kme, jms:jme),                  &
                    INTENT(IN   ) :: lnfi,lnfj,lnfk
+! Declare externals
+  external :: hbnrf3i,hbnrf3j,vbnrf3k
 !----------------------------------------------------------------------------
   INTEGER(i_kind)                :: i,j,k
 !============================================================================
@@ -7909,6 +7916,8 @@ SUBROUTINE hbnckji(a,hamp,nol,lnfi,bnfi,lnfj,bnfj,lnfk,bnfk,                &
                    INTENT(IN   ) :: hamp,bnfi,bnfj,bnfk
   REAL(r_kind), DIMENSION(nol, ims:ime, kms:kme, jms:jme),                  &
                    INTENT(IN   ) :: lnfi,lnfj,lnfk
+! Declare externals
+  external :: vbnrf3k,hbnrf3j,hbnrf3i
 !----------------------------------------------------------------------------
   INTEGER(i_kind)                :: i,j,k
 !============================================================================
@@ -7979,6 +7988,8 @@ integer(i_kind),                  intent(  OUT) :: ns,nw
 real(r_kind)   , dimension(ng),   intent(  OUT) :: ssig,snu
 integer(i_kind), dimension(ng),   intent(INOUT) :: ins1
 real(r_kind)   , dimension(no,ng),intent(INOUT) :: wts
+! Declare externals
+external :: jfit,stogt
 !----------------------------------------------------------------------------
 integer(i_kind)                                :: i,i1,im,k,l,is
 real(r_kind)                                   :: t

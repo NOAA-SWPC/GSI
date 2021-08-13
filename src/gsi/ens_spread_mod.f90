@@ -44,6 +44,9 @@ subroutine ens_spread_dualres_regional(en_bar)
 
   type(gsi_bundle),OPTIONAL,intent(in):: en_bar
 
+! Declare externals
+  external :: stop2,write_spread_dualres
+
   type(gsi_bundle):: sube,suba
   type(gsi_grid):: grid_ens,grid_anl
   real(r_kind) sp_norm,sig_norm_sq_inv

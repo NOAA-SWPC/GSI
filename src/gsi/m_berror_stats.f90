@@ -146,6 +146,9 @@ subroutine lset(opt,value)
 !       04Feb14 - todling - set logical parameters internal to this package
 !EOP ___________________________________________________________________
 
+!  Declare externals
+   external :: stop2
+
    character(len=*),parameter :: myname_=myname//'::lset'
    logical :: found
 
@@ -196,6 +199,9 @@ subroutine read_bal(agvin,bvin,wgvin,pputin,fut2ps,mype,lunit)
 !               - read in agvin,wgvin,bvin only
 !      09Oct12 - Gu  add fut2ps to project unbalanced temp to surface pressure in static B modeling
 !EOP ___________________________________________________________________
+
+!  Declare externals
+   external :: stop2
 
    character(len=*),parameter :: myname_=myname//'::read_bal'
 
@@ -301,6 +307,9 @@ subroutine read_wgt(corz,corp,hwll,hwllp,vz,corsst,hsst,varq,qoption,varcw,cwopt
 !       09Sept15 - Zhu - use centralized cloud_names_fwd and n_clouds_fwd to add 
 !                        flexibility for all-sky radiance assimilation
 !EOP ___________________________________________________________________
+
+!  Declare externals
+   external :: stop2
 
    character(len=*),parameter :: myname_=myname//'::read_wgt'
 
@@ -547,6 +556,9 @@ subroutine setcoroz_(coroz,mype)
 !       2013-10-19 oz guess field in metguess now 
 !EOP ___________________________________________________________________
 
+!  Declare externals
+   external :: stop2,mpi_allreduce
+
    character(len=*),parameter :: myname_=myname//'::setcoroz_'
 
    real(r_kind),parameter :: r25 = one/25.0_r_kind
@@ -756,6 +768,9 @@ subroutine setcorchem_(cname,corchem,rc)
 !    15Jul20010 - Todling - created from Guo's OZ routine
 !
 !EOP ___________________________________________________________________
+
+!  Declare externals
+   external :: stop2,mpi_allreduce
 
    character(len=*),parameter :: myname_=myname//'::setcorchem_'
 

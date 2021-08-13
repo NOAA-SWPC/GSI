@@ -57,6 +57,9 @@ subroutine penal(xhat)
 
   type(gsi_bundle),intent(in   ) :: xhat
 
+! Declare externals
+  external :: mpi_reduce,mpi_finalize
+
 ! Declare passed variables
   integer(i_kind), parameter    :: ld=300
   integer(i_kind), parameter    :: np=33

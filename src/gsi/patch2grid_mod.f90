@@ -78,6 +78,9 @@ subroutine setup_patch2grid
 !$$$ end documentation block
   implicit none
 
+! Declare externals
+  external :: stop2
+
   integer(i_kind):: ier
 
   ndx=(nx-nlon)/2

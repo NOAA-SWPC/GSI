@@ -70,6 +70,9 @@ subroutine get_gefs_ensperts_dualres
   use general_sub2grid_mod, only: sub2grid_info,general_sub2grid_create_info,general_sub2grid_destroy_info
   implicit none
 
+! Declare externals
+  external :: stop2,general_getprs_glb,genqsat,ens_spread_dualres
+
   real(r_kind),pointer,dimension(:,:)   :: ps
   real(r_kind),pointer,dimension(:,:,:) :: tv
   real(r_kind),pointer,dimension(:,:,:) :: q
@@ -420,6 +423,9 @@ subroutine ens_spread_dualres(en_bar,ibin)
   type(gsi_bundle),intent(in):: en_bar
   integer(i_kind),intent(in):: ibin
 
+! Declare externals
+  external :: stop2,write_spread_dualres
+
   type(gsi_bundle):: sube,suba
   type(gsi_grid):: grid_ens,grid_anl
   real(r_kind) sp_norm
@@ -534,6 +540,9 @@ subroutine write_spread_dualres(ibin,bundle)
 
   integer(i_kind), intent(in) :: ibin
   type(gsi_bundle):: bundle
+
+! declare externals
+  external :: baopenwt,gather_stuff2,wryte,baclose
 
 ! local variables
   character(255):: grdfile,grdctl

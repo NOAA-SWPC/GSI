@@ -76,8 +76,13 @@ contains
   
     implicit none
   
-  ! Declare local parameters
     class(convert_netcdf_class), intent(inout) :: this
+
+  ! Declare externals
+    external :: ext_ncd_ioinit,set_wrf_debug_level,ext_ncd_open_for_read,stop2,&
+      ext_ncd_get_next_time,ext_ncd_get_var_info,ext_ncd_read_field,ext_ncd_ioclose
+
+  ! Declare local parameters
     real(r_single),parameter:: one_single = 1.0_r_single
     real(r_single),parameter:: r45 = 45.0_r_single
   
@@ -1424,6 +1429,11 @@ contains
     logical     ,intent(in   ) :: guess
     logical     ,intent(inout) :: update_pint
     real(r_kind),intent(  out) :: ctph0,stph0,tlm0
+
+  ! Declare externals
+    external :: ext_ncd_ioinit,set_wrf_debug_level,ext_ncd_open_for_read,stop2,&
+      ext_ncd_get_next_time,ext_ncd_get_var_info,ext_ncd_read_field,ll2rpolar,&
+      rpolar2ll,ext_ncd_ioclose
   
     character(len=120) :: flnm1
     character(len=19)  :: DateStr1
@@ -2442,6 +2452,10 @@ contains
     implicit none
     class(convert_netcdf_class), intent(inout) :: this
   
+  ! Declare externals
+    external :: ext_ncd_ioinit,ext_ncd_open_for_update,stop2,ext_ncd_get_next_time,&
+      ext_ncd_get_var_info,ext_ncd_read_field,ext_ncd_write_field,ext_ncd_ioclose
+
     include 'netcdf.inc'
   
   ! Declare local parameters
@@ -3428,6 +3442,10 @@ contains
     include 'netcdf.inc'
     class(convert_netcdf_class), intent(inout) :: this
 ! include 'wrf_status_codes.h'
+
+  ! Declare externals
+    external :: ext_ncd_open_for_update,stop2,ext_ncd_get_next_time,&
+      ext_ncd_get_var_info,ext_ncd_write_field,ext_ncd_ioclose
   
     character(len=120) :: flnm1,flnm2
     character(len=19)  :: DateStr1

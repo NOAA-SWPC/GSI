@@ -74,6 +74,10 @@ subroutine calctends_no_tl(st,vp,t,p,mype,u_t,v_t,t_t,p_t,uvflag)
   real(r_kind),dimension(lat2,lon2)     ,intent(  out) :: p_t
   logical                               ,intent(   in) :: uvflag
 
+! Declare externals
+  external :: stop2,getprs_tl,get_derivatives2uv,get_derivatives2,&
+    getvvel_tl,turbl_tl
+
 ! Declare local variables
   character(len=*),parameter::myname='calctends_no_tl'
   real(r_kind),dimension(lat2,lon2,nsig+1):: pri

@@ -565,6 +565,8 @@ contains
 !EOP
 !-------------------------------------------------------------------------
     character(len=*),parameter::myname_=myname//'*init_grid_vars'
+!   Declare externals
+    external :: looplimits
     integer(i_kind) i,k,inner_vars,num_fields
     integer(i_kind) n3d,n2d,nvars,tid,nth
     integer(i_kind) ipsf,ipvp,jpsf,jpvp,isfb,isfe,ivpb,ivpe
@@ -1059,6 +1061,8 @@ contains
 !EOP
 !-------------------------------------------------------------------------
 
+!   Declare externals
+    external :: stop2,ll2rpolar,rpolar2ll
     logical fexist
     integer(i_kind) i,k
     real(r_single)pt,pdtop

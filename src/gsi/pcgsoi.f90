@@ -163,6 +163,12 @@ subroutine pcgsoi()
 
 ! Declare passed variables
 
+! Declare externals
+  external :: prt_guess,evaljo,writeout_gradients,penal,strong_baldiag_inc,&
+    update_guess,gsdcloudanalysis4nmmb,gsdcloudanalysis,gsdcloudanalysis4gfs,&
+    write_all,view_st,inc2guess,anbkerror,bkerror,control2state,ensctl2state,&
+    model_tl,model_ad,ensctl2state_ad,control2state_ad
+
 ! Declare local parameters
 
 ! Declare local variables  

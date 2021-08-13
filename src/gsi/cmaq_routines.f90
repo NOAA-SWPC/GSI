@@ -44,6 +44,9 @@ subroutine read_cmaq_files(mype)
   
 ! declare local parameters
   real(r_kind),parameter:: r0_001=0.001_r_kind
+
+! declare externals
+  external :: w3fs21,mpi_bcast
   
 ! declare local variables
   logical(4) fexist
@@ -247,7 +250,10 @@ subroutine read_cmaq_guess(mype)
 ! declare local variables
   
   real(r_kind),parameter:: r0_001=0.001_r_kind
-  
+ 
+! declare externals
+  external :: fill_mass_grid2t,mpi_alltoallv,stop2
+
 ! other internal variables
   real(r_single) tempa(itotsub)
   real(r_single),allocatable::temp1(:,:)
@@ -503,6 +509,9 @@ subroutine make_sigf
   use kinds, only: i_kind
   
   implicit none
+
+! Declare externals
+  external :: system
   
   character(len=maxstr) :: cmaq_infile_name
 
@@ -574,6 +583,10 @@ subroutine write_cmaq(mype)
 ! declare local parameters
 
 !wish this could be combined to a module rather then repeat
+
+! declare externals
+  external :: stop2,mpi_gatherv,fill_mass_grid2t,unfill_mass_grid2t,&
+    mpi_barrier
 
 ! declare local variables
   integer(i_kind) im,jm,lm

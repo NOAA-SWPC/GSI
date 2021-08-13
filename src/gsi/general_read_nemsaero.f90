@@ -69,6 +69,9 @@ subroutine general_read_nemsaero(grd,sp_a,filename,mype,gfschem_bundle, &
     integer(i_kind)                       ,intent(  out) :: iret_read
     type(gsi_bundle)                      ,intent(inout) :: gfschem_bundle
     
+!   Declare externals
+    external :: stop2,general_fill_ns,aerosol_reload
+
 !   Declare local variables
     character(len=120) :: my_name = 'general_read_nemsaero'
     character(len=1)   :: null = ' '
@@ -430,6 +433,9 @@ subroutine aerosol_reload(grd,ae_d1,ae_d2,ae_d3,ae_d4,ae_d5, &
 !
 !EOP
 !-------------------------------------------------------------------------
+
+! Declare externals
+  external :: mpi_alltoallv
 
   integer(i_kind) i,j,k,ij,klev
   real(r_kind),dimension(grd%lat2*grd%lon2,npe):: sub

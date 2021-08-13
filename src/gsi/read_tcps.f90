@@ -53,6 +53,9 @@ subroutine read_tcps(nread,ndata,nodata,infile,obstype,lunout,sis,nobs)
   integer(i_kind),parameter:: maxobs=2e6
   integer(i_kind),parameter:: maxdat=10
 
+! Declare externals
+  external :: datelen,grdcrd1,count_obs
+
 ! Declare local variables
   real(r_double) rstation_id
   character(8) station_id

@@ -127,6 +127,9 @@ subroutine pcp_k(km,dtp,del_in,sl_in,rbs,&
 ! Declare local parameters
   real(r_kind),parameter:: r0_99=0.99_r_kind
 
+! Declare externals
+  external :: precpd_ad
+
 ! Declare local arrays
   logical:: skipsas,skiplrg
   logical adjoint

@@ -81,6 +81,9 @@ subroutine adtest_obs
 
   implicit none
 
+! Declare externals
+  external :: control2state,mpi_allreduce
+
 ! Declare local variables  
   type(control_vector) :: xtest1
   type(gsi_bundle) :: mval(nsubwin)

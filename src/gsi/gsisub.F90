@@ -106,6 +106,10 @@ subroutine gsisub(init_pass,last_pass)
 ! Declare passed variables
   logical        ,intent(in) :: init_pass
   logical        ,intent(in) :: last_pass
+
+! Declare externals
+  external :: gesinfo,mpi_barrier,glbsoi
+
   logical print_verbose
   
   print_verbose=.false.

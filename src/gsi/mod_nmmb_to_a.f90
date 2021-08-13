@@ -422,6 +422,9 @@ subroutine b_to_a_interpolate(b,a,mb,nb,ma,na,xb,yb,xa,ya)
   real(r_kind)   ,intent(in   ) :: b(nb,mb),xb(mb),yb(nb),xa(ma),ya(na)
   real(r_kind)   ,intent(  out) :: a(na,ma)
 
+! Declare externals
+  external :: grdcrd1
+
   integer(i_kind) i,j
   real(r_kind) gxa,gya
   real(r_kind) dx(ma),dx1(ma),dy(na),dy1(na)

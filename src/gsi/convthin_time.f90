@@ -222,6 +222,9 @@ contains
   
     real(r_kind),dimension(nlevp),intent(in   ) :: pcoord
     
+!   Declare externals
+    external :: grdcrd1
+
     integer(i_kind):: ip,itx
     integer(i_kind) ix,iy
 
@@ -443,6 +446,9 @@ contains
     real(r_kind),dimension(nlevp),intent(in   ) :: pcoord
     real(r_kind),dimension(maxobs),intent(inout   ) :: rusage 
     
+!   Declare externals
+    external :: grdcrd1
+
     integer(i_kind):: ip,itx
     integer(i_kind) ix,iy
 

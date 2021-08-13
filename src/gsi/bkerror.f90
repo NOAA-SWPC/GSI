@@ -69,6 +69,9 @@ subroutine bkerror(grady)
 ! Declare passed variables
   type(control_vector),intent(inout) :: grady
 
+! Declare externals
+  external :: stop2,bkgcov
+
 ! Declare local variables
   integer(i_kind) i,ii
   integer(i_kind) i_t,i_p,i_st,i_vp

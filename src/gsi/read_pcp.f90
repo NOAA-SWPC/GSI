@@ -84,6 +84,10 @@
   real(r_kind)    ,intent(in   ) :: gstime
   real(r_kind)    ,intent(in   ) :: twind
 
+! Declare externals
+  external :: openbf,datelen,readmg,closbf,readsb,ufbint,w3fs21,ufbrep,grdcrd1,&
+    count_obs
+
 ! Declare local parameters
   real(r_kind),parameter:: r360=360.0_r_kind
 

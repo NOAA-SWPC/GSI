@@ -123,6 +123,10 @@ contains
     character(len=*),parameter::myname='read_wrf_mass_binary_guess::'
     real(r_kind),parameter:: rough_default=0.05_r_kind
   
+  ! Declare externals
+    external :: stop2,mpi_file_open,mpi_file_read_at,to_native_endianness_i4,&
+      mpi_file_close,fill_mass_grid2t,fill_mass_grid2u,fill_mass_grid2v,mpi_reduce
+
   ! Declare local variables
     integer(i_kind) kt,kq,ku,kv
     real(r_single) rad2deg_single
@@ -1379,6 +1383,10 @@ contains
     character(len=*),parameter::myname='read_wrf_mass_netcdf_guess::'
     real(r_kind),parameter:: rough_default=0.05_r_kind
   
+  ! Declare externals
+    external :: stop2,fill_mass_grid2t,fill_mass_grid2u,fill_mass_grid2v,&
+      mpi_alltoallv,mpi_reduce
+
   ! Declare local variables
     integer(i_kind) kt,kq,ku,kv,kw,kw0,kdbz
   
@@ -2355,6 +2363,9 @@ contains
     real(r_single) ,intent(inout) :: tempa(itotsub,kbegin_loc:kend_loc)
     real(r_single) ,intent(  out) :: all_loc(lat2*lon2*num_fields)
     
+!   Declare externals
+    external :: mpi_alltoallv
+
     integer(i_kind) k
     integer(i_kind) sendcounts(0:npe-1),sdispls(0:npe),recvcounts(0:npe-1),rdispls(0:npe)
   
@@ -2582,6 +2593,9 @@ contains
     integer(i_kind),intent(in   ) :: jbegin(0:npe),jend(0:npe-1)
     integer(i_kind),intent(in   ) :: kbegin(0:npe),kend(0:npe-1)
     
+!   Declare externals
+    external :: mpi_gatherv
+
     integer(i_long) sendbuf(im_jbuf*lm_jbuf*(jend_loc-jbegin_loc+2))
     integer(i_long) recvbuf(im_jbuf*jm_jbuf*(kend_loc-kbegin_loc+1))
     integer(i_long) recvcounts(0:npe-1),displs(0:npe)

@@ -60,6 +60,8 @@ subroutine writeout_gradients(dx,dy,nv,alpha,gamma,mype)
   type(control_vector),intent(in   ) :: dx,dy
   real(r_kind)        ,intent(in   ) :: alpha,gamma
 
+! Declare externals
+  external :: mpi_gatherv
 
 ! Declare local variables
   integer(i_kind),save :: nrf3_sf,nrf3_vp,nrf3_t,nrf3_q,nrf3_oz,nrf3_cw

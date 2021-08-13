@@ -530,6 +530,9 @@ contains
 
     integer(i_kind),intent(in   ) :: mype
 
+!   Declare externals
+    external :: mpi_allreduce
+
     integer(i_kind) idvar_last,k,kk
     integer(i_kind) nlevs0(0:npe-1),nlevs1(0:npe-1),nvar_id0(nsig1o*npe),nvar_id1(nsig1o*npe)
     logical print_verbose
@@ -824,6 +827,10 @@ subroutine halo_update_reg0(mype)
 
   integer(i_kind),intent(in   ) :: mype
 
+! Declare externals
+  external :: mpi_allreduce,mpi_alltoall,mpi_type_contiguous,mpi_type_commit,&
+    mpi_alltoallv,mpi_type_free
+
   integer(i_kind) i,ii,j,mm1,mpe,iglob,jglob,mpi_string1
   integer(i_kind) ijglob_pe(nlat,nlon),ijglob_pe0(nlat,nlon)
   integer(i_kind) iorigin(3*(lat2+lon2)),indx(3*(lat2+lon2)),iwork(3*(lat2+lon2))
@@ -959,6 +966,9 @@ subroutine halo_update_reg(f,nvert)
 
   integer(i_kind),intent(in   ) :: nvert
   real(r_kind)   ,intent(inout) :: f(lat2,lon2,nvert)
+
+! Declare externals
+  external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,mpi_type_free
 
   integer(i_kind) i,k,mpi_string2
   real(r_kind) bufsend(nvert,nsend_halo_loc),bufrecv(nvert,nrecv_halo_loc)

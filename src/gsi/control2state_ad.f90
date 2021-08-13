@@ -78,6 +78,10 @@ type(gsi_bundle)    , intent(inout) :: rval(nsubwin)
 type(predictors)    , intent(in   ) :: bval
 type(control_vector), intent(inout) :: grad
 
+! Declare externals
+external :: stop2,landlake_uvmerge,getuv,tv_to_tsen_ad,&
+  normal_rh_to_q_ad,getprs_ad,loglcbas_to_lcbas_ad
+
 ! Declare local variables
 character(len=*),parameter::myname='control2state_ad'
 character(len=max_varname_length),allocatable,dimension(:) :: gases

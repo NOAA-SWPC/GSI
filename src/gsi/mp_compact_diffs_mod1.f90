@@ -331,6 +331,10 @@ subroutine cdiff_sd2ew1(nlev,mype)
 
   integer(i_kind),intent(in   ) :: nlev,mype
 
+! Declare externals
+  external :: mpi_finalize,mpi_alltoall,mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,&
+    mpi_type_free
+
   integer(i_kind) list2(nlat,nlev)
   integer(i_kind) i,ii,ii0,ilat,ilat_1,ilat_2,ivert,j,mm1,nn,nlonloc,ipe,ilatm,ilon,mpi_string1
   integer(i_kind) isig,nlat_tot,i12
@@ -449,6 +453,10 @@ subroutine cdiff_ew2sd1(mype)
 
 
   integer(i_kind),intent(in   ) :: mype
+
+! Declare externals
+  external :: mpi_alltoall,mpi_type_contiguous,mpi_type_commit,&
+    mpi_alltoallv,mpi_type_free
 
   integer(i_kind) i,i1,i2,ilat_1,ilat_2,ivert,j,k,mm1,ipe,ilon,mpi_string1,nn
 
@@ -571,6 +579,9 @@ subroutine cdiff_sd2ew(u_sd,u_ew,nlev,mype)
   real(r_kind),dimension(lat2,lon2,nlev)      ,intent(in   ) :: u_sd
   real(r_kind),dimension(2,nlon,nlat_0:nlat_1),intent(  out) :: u_ew
 
+! Declare externals
+  external :: mpi_alltoallv
+
   integer(i_kind) i12,ilat,ilatm,ilon,ivert,j,mm1
   real(r_kind),allocatable::sendbuf(:),recvbuf(:)
 
@@ -635,6 +646,9 @@ subroutine cdiff_sd2ew2(u1_sd,u2_sd,u1_ew,u2_ew,nlev,mype)
   real(r_kind),dimension(lat2,lon2,nlev)      ,intent(in   ) :: u2_sd
   real(r_kind),dimension(2,nlon,nlat_0:nlat_1),intent(  out) :: u1_ew
   real(r_kind),dimension(2,nlon,nlat_0:nlat_1),intent(  out) :: u2_ew
+
+! Declare externals
+  external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,mpi_type_free
 
   integer(i_kind) i12,ilat,ilatm,ilon,ivert,j,mm1,mpi_string1
   real(r_kind),allocatable::sendbuf(:,:),recvbuf(:,:)
@@ -704,6 +718,9 @@ subroutine cdiff_ew2sd(u_sd,u_ew,nlev,mype)
   real(r_kind),dimension(lat2,lon2,nlev)      ,intent(  out) :: u_sd
   real(r_kind),dimension(2,nlon,nlat_0:nlat_1),intent(in   ) :: u_ew
 
+! Declare externals
+  external :: mpi_alltoallv
+
   real(r_kind),allocatable::sendbuf(:),recvbuf(:)
   integer(i_kind) i12,ilat,ivert,j,mm1,ilatm,ilon,ilonloc
 
@@ -772,6 +789,9 @@ subroutine cdiff_ew2sd2(u1_sd,u2_sd,u1_ew,u2_ew,nlev,mype)
   integer(i_kind)                             ,intent(in   ) :: nlev,mype
   real(r_kind),dimension(lat2,lon2,nlev)      ,intent(  out) :: u1_sd,u2_sd
   real(r_kind),dimension(2,nlon,nlat_0:nlat_1),intent(in   ) :: u1_ew,u2_ew
+
+! Declare externals
+  external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,mpi_type_free
 
   real(r_kind),allocatable::sendbuf(:,:),recvbuf(:,:)
   integer(i_kind) i12,ilat,ivert,j,mm1,ilatm,ilon,ilonloc,mpi_string1
@@ -860,6 +880,9 @@ subroutine cdiff_sd2ns0(nlev,mype)
   implicit none
 
   integer(i_kind),intent(in   ) :: nlev,mype
+
+! Declare externals
+  external :: stop2
 
   integer(i_kind) nlon_this,nlon_tot,kchk,i,k,kk,n,nn,nlonh
 
@@ -950,6 +973,10 @@ subroutine cdiff_sd2ns1(nlev,mype)
   implicit none
 
   integer(i_kind),intent(in   ) :: nlev,mype
+
+! Declare externals
+  external :: mpi_finalize,mpi_alltoall,mpi_type_contiguous,mpi_type_commit,&
+    mpi_alltoallv,mpi_type_free
 
   integer(i_kind) list2(nlon,nlev)
   integer(i_kind) i,ii,ii0,ilat,ilon_1,ilon_2,ivert,j,mm1,nn,ipe,ilon,mpi_string1
@@ -1068,8 +1095,11 @@ subroutine cdiff_ns2sd1(mype)
   use mpimod, only: npe,mpi_comm_world,ierror,mpi_integer4
   implicit none
 
-
   integer(i_kind),intent(in   ) :: mype
+
+! Declare externals
+  external :: mpi_alltoall,mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,&
+    mpi_type_free
 
   integer(i_kind) i,i1,i2,ilat,ilon_1,ilon_2,ivert,j,k,mm1,ipe,mpi_string1,nn
   integer(i_kind) iloop
@@ -1201,6 +1231,9 @@ subroutine cdiff_sd2ns(u_sd,u_ns,nlev,mype)
   real(r_kind),dimension(lat2,lon2,nlev)      ,intent(in   ) :: u_sd
   real(r_kind),dimension(2,nlat,nlon_0:nlon_1),intent(  out) :: u_ns
 
+! Declare externals
+  external :: mpi_alltoallv
+
   integer(i_kind) i12,ilat,ilonm,ilon,ivert,j,mm1
   real(r_kind),allocatable::sendbuf(:),recvbuf(:)
 
@@ -1263,6 +1296,9 @@ subroutine cdiff_sd2ns2(u1_sd,u2_sd,u1_ns,u2_ns,nlev,mype)
 
   real(r_kind),dimension(lat2,lon2,nlev)      ,intent(in   ) :: u1_sd,u2_sd
   real(r_kind),dimension(2,nlat,nlon_0:nlon_1),intent(  out) :: u1_ns,u2_ns
+
+! Declare externals
+  external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,mpi_type_free
 
   integer(i_kind) i12,ilat,ilonm,ilon,ivert,j,mm1,mpi_string1
   real(r_kind),allocatable::sendbuf(:,:),recvbuf(:,:)
@@ -1327,10 +1363,12 @@ subroutine cdiff_ns2sd(u_sd,u_ns,nlev,mype)
   use mpimod, only: mpi_comm_world,ierror,mpi_rtype
   implicit none
 
-
   integer(i_kind)                             ,intent(in   ) :: nlev,mype
   real(r_kind),dimension(lat2,lon2,nlev)      ,intent(  out) :: u_sd
   real(r_kind),dimension(2,nlat,nlon_0:nlon_1),intent(in   ) :: u_ns
+
+! Declare externals
+  external :: mpi_alltoallv
 
   real(r_kind),allocatable::sendbuf(:),recvbuf(:)
   integer(i_kind) i12,ilat,ivert,j,k,mm1,ilonm,ilonloc
@@ -1404,10 +1442,12 @@ subroutine cdiff_ns2sd2(u1_sd,u2_sd,u1_ns,u2_ns,nlev,mype)
   use mpimod, only: mpi_comm_world,ierror,mpi_rtype
   implicit none
 
-
   integer(i_kind)                             ,intent(in   ) :: nlev,mype
   real(r_kind),dimension(lat2,lon2,nlev)      ,intent(  out) :: u1_sd,u2_sd
   real(r_kind),dimension(2,nlat,nlon_0:nlon_1),intent(in   ) :: u1_ns,u2_ns
+
+! Declare externals
+  external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,mpi_type_free
 
   real(r_kind),allocatable::sendbuf(:,:),recvbuf(:,:)
   integer(i_kind) i12,ilat,ivert,j,k,mm1,ilonm,ilonloc,mpi_string1
@@ -1491,6 +1531,9 @@ subroutine mp_compact_dlon(b,dbdx,vector)
   logical                                     ,intent(in   ) :: vector
   real(r_kind),dimension(2,nlon,nlat_0:nlat_1),intent(in   ) :: b
   real(r_kind),dimension(2,nlon,nlat_0:nlat_1),intent(  out) :: dbdx
+
+! Declare externals
+  external :: mp_xdcirdp
 
   integer(i_kind) ny,nxh,nbp,nya,nxa
   integer(i_kind) lacox1,lbcox1,lacox2,lbcox2,lacoy1,lbcoy1,lacoy2,lbcoy2,lcy
@@ -1619,6 +1662,9 @@ subroutine mp_compact_dlon_ad(b,dbdx,vector)
   real(r_kind),dimension(2,nlon,nlat_0:nlat_1),intent(inout) :: b
   real(r_kind),dimension(2,nlon,nlat_0:nlat_1),intent(in   ) :: dbdx
 
+! Declare externals
+  external :: mp_xdcirdp
+
   integer(i_kind) ny,nxh,nbp,nya,nxa
   integer(i_kind) lacox1,lbcox1,lacox2,lbcox2,lacoy1,lbcoy1,lacoy2,lbcoy2,lcy
   integer(i_kind) ix,iy,k,i12,ilat
@@ -1740,11 +1786,13 @@ subroutine mp_compact_dlat(b,dbdy,vector)
   real(r_kind),dimension(2,nlat,nlon_0:nlon_1),intent(in   ) ::  b
   real(r_kind),dimension(2,nlat,nlon_0:nlon_1),intent(  out) :: dbdy
 
+! Declare externals
+  external :: mp_ydsphdp
+
   integer(i_kind) ny,nxh,nbp,nya,nxa,lacox1,lbcox1,lacox2,lbcox2,lacoy1,lbcoy1
   integer(i_kind) lbcoy2,lacoy2,iy,i,lcy,k
   real(r_kind),dimension(2,nlat-2):: work2,grid4
   real(r_kind) grid4n,grid4s
-
 
 ! Set parameters for calls to subsequent routines
   ny=nlat-2
@@ -1854,11 +1902,13 @@ subroutine mp_compact_dlat_ad(b,dbdy,vector)
   real(r_kind),dimension(2,nlat,nlon_0:nlon_1),intent(inout) :: b
   real(r_kind),dimension(2,nlat,nlon_0:nlon_1),intent(in   ) :: dbdy
 
+! Declare externals
+  external :: mp_tydsphdp
+
   integer(i_kind) ny,nxh,nbp,nya,nxa,lacox1,lbcox1,lacox2,lbcox2,lacoy1,lbcoy1
   integer(i_kind) lbcoy2,lacoy2,iy,i,lcy,k
   real(r_kind),dimension(2,nlat-2):: work2,grid4
   real(r_kind) grid4n,grid4s
-
 
 ! Set parameters for calls to subsequent routines
   ny=nlat-2

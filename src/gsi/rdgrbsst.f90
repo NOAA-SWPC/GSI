@@ -65,6 +65,9 @@ subroutine rdgrbsst(file_sst,mlat_sst,mlon_sst,&
 ! Declare local parameters
   integer(i_kind),parameter:: lu_sst = 21   ! FORTRAN unit number of GRIB SST file
 
+! Declare externals
+  external :: baopenr,stop2,getgbh,getgb
+
 ! Declare local variables and arrays
   logical(1), allocatable, dimension(:) ::  lb
 

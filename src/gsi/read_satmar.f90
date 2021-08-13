@@ -84,6 +84,10 @@ subroutine read_satmar (nread, ndata, nodata,                                 &
 !! %%%% Declare Passed Variables INOUT
    integer(i_kind)                     , intent(inout) :: nread,ndata,nodata
    integer(i_kind),dimension(npe)      , intent(inout) :: nobs
+
+!  Declare externals
+   external :: openbf,closbf,datelen,ufbint,w3fs21,grdcrd1,datesec,stop2,count_obs
+
 !! %%% Declare local varables
 !  integer
    integer(i_kind) :: ithin

@@ -70,9 +70,6 @@ subroutine read_aerosol(nread,ndata,nodata,jsatid,infile,gstime,lunout, &
   use mpimod, only: npe
   implicit none
 !
-! Declare local parameters
-  real(r_kind), parameter :: r360 = 360.0_r_kind
-!
 ! Declare passed variables
 !
   character(len=*),intent(in)    :: obstype, infile, jsatid
@@ -86,6 +83,13 @@ subroutine read_aerosol(nread,ndata,nodata,jsatid,infile,gstime,lunout, &
   integer(i_kind) ,intent(in)    :: npe_sub
   integer(i_kind) ,intent(in)    :: mpi_comm_sub
   real(r_kind),    intent(in)    :: gstime, twind, rmesh
+!
+! Declare externals
+  external :: openbf,datelen,readmg,readsb,ufbint,grdcrd1,&
+    upftbv,w3fs21,ufbrep,combine_radobs,count_obs,closbf
+!
+! Declare local parameters
+  real(r_kind), parameter :: r360 = 360.0_r_kind
 !
 ! Declare local variables
 !

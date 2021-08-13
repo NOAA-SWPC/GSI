@@ -611,6 +611,9 @@ subroutine gather_rmstends0
 
   implicit none
 
+! Declare externals
+  external :: mpi_allgather,mpi_allgatherv
+
   integer(i_kind),dimension(m_0:m_1):: indexloc
   integer(i_kind) i
   
@@ -660,6 +663,10 @@ subroutine gather_rmstends(rmstend_loc,rmstend)
 
   real(r_kind),intent(in   ) :: rmstend_loc(2,m_0:m_1)
   real(r_kind),intent(  out) :: rmstend(nvmodes_keep)
+
+! Declare externals
+  external :: mpi_type_contiguous,mpi_type_commit,mpi_allgatherv,&
+    mpi_type_free
 
   real(r_kind),dimension(2,(sp_a%jcap+1)*nvmodes_keep)::work
   integer(i_kind) i,ii,mode,mpi_string1
@@ -775,6 +782,10 @@ subroutine inmi_coupler_sd2ew1(mype)
 
 
   integer(i_kind),intent(in   ) :: mype
+
+! Declare externals
+  external :: mpi_finalize,mpi_alltoall,mpi_type_contiguous,mpi_type_commit,&
+    mpi_alltoallv,mpi_type_free
 
   integer(i_kind) i,ii,ii0,ilat,imode,j,mm1,nlonloc,ipe,ilatm,ilon,mpi_string1
   real(r_kind),dimension(nlat,nvmodes_keep):: mode2_list
@@ -897,6 +908,9 @@ subroutine inmi_coupler_sd2ew(u_sd1,v_sd1,m_sd1,u_sd2,v_sd2,m_sd2,uvm_ew,mype)
   real(r_kind),dimension(lat2,lon2,nvmodes_keep)  ,intent(in   ) :: u_sd2,v_sd2,m_sd2
   real(r_kind),dimension(nlon,2,3,nlatm_0:nlatm_1),intent(  out) :: uvm_ew
 
+! Declare externals
+  external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,mpi_type_free
+
   real(r_kind),allocatable,dimension(:,:,:)::sendbuf,recvbuf
   integer(i_kind) ilat,imode,j,mm1,ilatm,ilon,mpi_string1
 
@@ -962,6 +976,9 @@ subroutine inmi_coupler_ew2sd1(mype)
 
   implicit none
 
+! Declare externals
+  external :: mpi_alltoall,mpi_type_contiguous,mpi_type_commit,&
+    mpi_alltoallv,mpi_type_free
 
   integer(i_kind),intent(in   ) :: mype
 
@@ -1068,6 +1085,9 @@ subroutine inmi_coupler_ew2sd(u_sd1,v_sd1,m_sd1,u_sd2,v_sd2,m_sd2,uvm_ew,mype)
   real(r_kind),dimension(lat2,lon2,nvmodes_keep)  ,intent(  out) :: u_sd2,v_sd2,m_sd2
   real(r_kind),dimension(nlon,2,3,nlatm_0:nlatm_1),intent(in   ) :: uvm_ew
 
+! Declare externals
+  external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,mpi_type_free
+
   real(r_kind),allocatable,dimension(:,:,:)::sendbuf,recvbuf
   integer(i_kind) ilat,imode,j,mm1,ilatm,ilon,mpi_string1,ilonloc
 
@@ -1150,6 +1170,9 @@ subroutine inmi_ew_trans(uvm_ew,uvm_ewtrans)
   real(r_kind),dimension(nlon,2,3,nlatm_0:nlatm_1)    ,intent(in   ) :: uvm_ew
   real(r_kind),dimension(2,0:sp_a%jcap,2,3,nlatm_0:nlatm_1),intent(  out) :: uvm_ewtrans
 
+! Declare externals
+  external :: spffte
+
   integer(i_kind) i,j,k
   real(r_kind),dimension(2,0:nlon/2,2)::halfwave
   real(r_kind),dimension(50000+4*sp_a%imax)::tmpafft
@@ -1199,6 +1222,9 @@ subroutine inmi_ew_invtrans_ad(uvm_ew,uvm_ewtrans)
 
   real(r_kind),dimension(nlon,2,3,nlatm_0:nlatm_1)    ,intent(in   ) :: uvm_ew
   real(r_kind),dimension(2,0:sp_a%jcap,2,3,nlatm_0:nlatm_1),intent(  out) :: uvm_ewtrans
+
+! Declare externals
+  external :: spffte
 
   integer(i_kind) i,j,k
   real(r_kind) fnlon,fnlon2
@@ -1259,6 +1285,9 @@ subroutine inmi_ew_invtrans(uvm_ew,uvm_ewtrans)
   real(r_kind),dimension(nlon,2,3,nlatm_0:nlatm_1)    ,intent(  out) :: uvm_ew
   real(r_kind),dimension(2,0:sp_a%jcap,2,3,nlatm_0:nlatm_1),intent(in   ) :: uvm_ewtrans
 
+! Declare externals
+  external :: spffte
+
   integer(i_kind) i,j,k
   real(r_kind),dimension(2,0:nlon/2,2)::halfwave
   real(r_kind),dimension(50000+4*sp_a%imax)::tmpafft
@@ -1316,6 +1345,9 @@ subroutine inmi_ew_trans_ad(uvm_ew,uvm_ewtrans)
 
   real(r_kind),dimension(nlon,2,3,nlatm_0:nlatm_1)    ,intent(  out) :: uvm_ew
   real(r_kind),dimension(2,0:sp_a%jcap,2,3,nlatm_0:nlatm_1),intent(in   ) :: uvm_ewtrans
+
+! Declare externals
+  external :: spffte
 
   integer(i_kind) i,j,k
   real(r_kind) invnlon,invnlon2
@@ -1526,6 +1558,10 @@ subroutine inmi_coupler_ew2ns1(mype)
 
   integer(i_kind),intent(in   )::mype
 
+! Declare externals
+  external :: mpi_finalize,mpi_allreduce,mpi_alltoall,mpi_type_contiguous,&
+    mpi_type_commit,mpi_alltoallv,mpi_type_free
+
   integer(i_kind) i,ip12,ipe,j,k,m,nn,m1,m2,ilat,imode,imode1,imode2
   integer(i_kind) mpi_string1,ibad,ibad0,loop
   real(r_kind),dimension(0:sp_a%jcap,-nvmodes_keep:nvmodes_keep)::mmode2_list
@@ -1675,6 +1711,9 @@ subroutine inmi_coupler_ew2ns(uvm_ewtrans,uvm_ns)
   real(r_kind),dimension(2,0:sp_a%jcap,2,3,nlatm_0:nlatm_1),intent(in   ) :: uvm_ewtrans
   real(r_kind),dimension(3,2,nlat,2,m_0:m_1)          ,intent(  out) :: uvm_ns
 
+! Declare externals
+  external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,mpi_type_free
+
   integer(i_kind) ip12,j,m,mm,ilat,ilatm,imode,mpi_string1,loop
   real(r_kind),allocatable,dimension(:,:,:)::sendbuf,recvbuf
 
@@ -1745,6 +1784,9 @@ subroutine inmi_coupler_ns2ew(uvm_ewtrans,uvm_ns)
 
   real(r_kind),dimension(2,0:sp_a%jcap,2,3,nlatm_0:nlatm_1),intent(  out) :: uvm_ewtrans
   real(r_kind),dimension(3,2,nlat,2,m_0:m_1)          ,intent(in   ) :: uvm_ns
+
+! Declare externals
+  external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,mpi_type_free
 
   integer(i_kind) ip12,j,m,mm,ilat,ilatm,imode,mpi_string1,loop
   real(r_kind),allocatable,dimension(:,:,:)::sendbuf,recvbuf

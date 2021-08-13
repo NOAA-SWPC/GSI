@@ -52,6 +52,9 @@ subroutine antest_maps0_glb(mype,theta0f,z0f,theta2f,z2f,theta3f,z3f)
   real(r_single) ,intent(in   ) :: theta3f(pf2aP3%nlatf,pf2aP3%nlonf,nsig1o)
   real(r_single) ,intent(in   ) :: z3f(pf2aP3%nlatf,pf2aP3%nlonf,nsig1o)
 
+! Declare externals
+  external :: mpi_finalize,mpi_allreduce,mpi_reduce
+
   character(len=*),parameter::myname='antest_maps0_glb'
   real(r_kind),dimension(nlat,nlon,nsig1o):: hwork
   real(r_kind) tempf(nlat,nlon), &

@@ -86,6 +86,10 @@ subroutine get_gefs_for_regional
   use obsmod, only: l_wcp_cwm
   implicit none
 
+! Declare externals
+  external :: stop2,w3movdat,w3fs21,general_read_gfsatm_nems,general_read_gfsatm_nc,general_read_gfsatm,&
+    compute_nmm_surfacep,genqsat,mpi_barrier
+
   type(sub2grid_info) grd_gfs,grd_mix,grd_gfst
   type(get_wrf_mass_ensperts_class) :: wrf_mass_ensperts
   type(spec_vars) sp_gfs
@@ -2061,6 +2065,9 @@ subroutine sub2grid_1a(sub,grid,gridpe,mype)
   integer(i_kind), intent(in)::gridpe,mype
   real(r_single),dimension(lat2,lon2),intent(in):: sub
   real(r_single),dimension(nlat,nlon),intent(out)::grid
+
+! Declare externals
+  external :: mpi_gatherv
 
   real(r_single),dimension(lat1*lon1):: zsm
   real(r_single),dimension(itotsub):: work1

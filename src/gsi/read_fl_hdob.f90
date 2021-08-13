@@ -86,6 +86,10 @@ subroutine read_fl_hdob(nread,ndata,nodata,infile,obstype,lunout,gstime,twind,si
      real(r_kind)    , intent(in   ) :: gstime 
      real(r_kind)    , intent(in   ) :: prsl_full(nlat,nlon,nsig)
    
+!    Declare externals
+     external :: stop2,openbf,datelen,closbf,readlc,ufbint,w3fs21,upftbv,&
+       grdcrd1,fpvsx_ad,count_obs
+
 !    Declare local variables
 !    Logical variables
      logical :: outside 

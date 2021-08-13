@@ -41,6 +41,9 @@ integer(i_kind)     , intent(in   ) :: kbgn,kend
 real(r_kind)        , intent(in   ) :: psec(kbgn:kend)
 type(control_vector), intent(inout) :: ydcv
 
+! Declare externals
+external :: stop2
+
 integer(i_kind) :: indx,ival,iloc,iend,ilen,ioff,jj
 
 ! Look for starting index
@@ -116,6 +119,9 @@ IMPLICIT NONE
 type(control_vector), intent(in   ) :: ydcv
 integer(i_kind)     , intent(in   ) :: kbgn,kend
 real(r_kind)        , intent(  out) :: psec(kbgn:kend)
+
+! Declare externals
+external :: stop2,mpl_bcast
 
 integer(i_kind) :: indx,ival,iloc,iend,ilen,ioff,jj
 real(r_kind) :: work(nval2d)

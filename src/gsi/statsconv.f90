@@ -116,6 +116,9 @@ subroutine statsconv(mype,&
   real(r_kind),dimension(npres_print,nconvtype,5,3),intent(in   ) :: bwork
   integer(i_kind),dimension(ndat,3)                ,intent(in   ) :: ndata
 
+! Declare externals
+  external :: dtast
+
 ! Declare local variables
   character(100) mesage
 

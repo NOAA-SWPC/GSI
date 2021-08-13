@@ -161,6 +161,9 @@ contains
     integer(i_kind) ,intent(in   ) :: jcap,jcap_test,nlat_a,nlon_a
     logical,optional,intent(in   ) :: eqspace
 
+!   Declare externals
+    external :: spwget,spffte,splat,splegend
+
 !   Declare local variables    
     integer(i_kind) i,ii1,j,l,m,jhe,n
     integer(i_kind) :: ldafft

@@ -1825,6 +1825,9 @@ contains
 !EOP
 !-------------------------------------------------------------------------
 
+!   Declare externals
+    external :: stop2
+
 !   Declare local variables
     integer(i_kind) k,kk,l
     real(r_kind) dprs,toa_prs_kpa
@@ -1903,6 +1906,9 @@ contains
 !
 !EOP
 !-------------------------------------------------------------------------
+
+!   Declare externals
+    external :: compute_fact10,SFC_WTQ_FWD
 
 !   Declare local variables
     character(len=*),parameter::myname_=myname//'*load_fact10'
@@ -2033,6 +2039,9 @@ contains
 !
 !EOP
 !-------------------------------------------------------------------------
+
+!   Declare externals
+    external :: compute_fact10,SFC_WTQ_FWD
 
 !   Declare local parameters
     character(len=*),parameter::myname_=myname//'*comp_fact10'
@@ -2274,6 +2283,8 @@ contains
    real(r_kind),dimension(:,:,:), intent(in   ) :: a
    integer(i_kind)              , intent(in   ) :: mype
 
+! declare externals
+   external :: mpi_allreduce
 
 ! local variables
    integer(i_kind) :: i,j,k
@@ -2345,6 +2356,8 @@ contains
    real(r_kind),dimension(:,:), intent(in   ) :: a
    integer(i_kind)            , intent(in   ) :: mype
 
+! declare externals
+   external :: mpi_allreduce
 
 ! local variables
    integer(i_kind) :: i,j

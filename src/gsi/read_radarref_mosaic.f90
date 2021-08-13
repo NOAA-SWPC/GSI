@@ -61,6 +61,11 @@ subroutine read_radarref_mosaic(nread,ndata,infile,obstype,lunout,twind,sis,nobs
   integer(i_kind),dimension(npe) ,intent(inout) :: nobs
   real(r_kind),     intent(in   ) :: twind
   character(20),    intent(in)    :: sis
+
+! Declare externals
+  external :: getcount_bufr,openbf,datelen,stop2,ufbint,&
+    count_obs,closbf
+
 !
 !  For reflectiivty mosaic
 !

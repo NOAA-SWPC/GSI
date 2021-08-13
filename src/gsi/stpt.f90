@@ -120,6 +120,9 @@ subroutine stpt(thead,dval,xval,out,sges,nstep,rpred,spred)
   type(gsi_bundle),intent(in) :: dval
   type(gsi_bundle),intent(in) :: xval
 
+! Declare externals
+  external :: vqc_stp
+
 ! Declare local variables
   integer(i_kind) ier,istatus,isst
   integer(i_kind) j1,j2,j3,j4,j5,j6,j7,j8,kk,n,ix

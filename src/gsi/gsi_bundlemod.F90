@@ -668,6 +668,9 @@ CONTAINS
 !noBOC
     character(len=*),parameter :: myname_=myname//'*set0_'
 
+!   Declare externals
+    external :: stop2
+
     integer(i_kind) :: im,jm,km,i,ii,nd,n1d,n2d,n3d,ndim1d,ndim2d,ndim3d,ntotal
     integer(i_kind) :: mold2(2,2), mold3(2,2,2),ndim3d1,km1
 
@@ -899,6 +902,9 @@ CONTAINS
 !noBOC
     character(len=*),parameter :: myname_=myname//'*set2_'
 
+!   Declare externals
+    external :: stop2
+
     integer(i_kind) :: i,ii,nd,n1d,ndim1d,ntotal
 
     n1d = -1
@@ -1028,6 +1034,9 @@ CONTAINS
 !-------------------------------------------------------------------------
 !noBOC
     character(len=*),parameter :: myname_=myname//'*create1_'
+
+!   Declare externals
+    external :: stop2
 
     integer(i_kind) :: i,ii,nd,n1d,n2d,n3d,ndim1d,ndim2d,ndim3d,ntotal
     integer(i_kind) :: im,jm,km,km1,ndim3d1
@@ -1390,6 +1399,10 @@ CONTAINS
 !noBOC
 
     character(len=*),parameter::myname_=myname//'*create3_'
+
+!   Declare externals
+    external :: stop2
+
     integer(i_kind) ::  i,k,n1d,n2d,n3d,im,jm,km,this_bundle_kind
     character(len=MAXSTR),allocatable::names1d(:),names2d(:),names3d(:)
     integer(i_kind),allocatable::levels(:)
@@ -3167,6 +3180,10 @@ CONTAINS
 !noBOC
 
   character(len=*),parameter::myname_='copy_'
+
+! Declare externals
+  external :: stop2
+
   integer(i_kind) :: ii
   logical :: samedim
 
@@ -3281,6 +3298,10 @@ CONTAINS
 !noBOC
 
   character(len=*),parameter::myname_='assignR8_const_'
+
+! Declare externals
+  external :: stop2
+
   integer(i_kind) :: ii
 
   if (bundo%AllKinds<0 ) then
@@ -3331,6 +3352,10 @@ CONTAINS
 !noBOC
 
   character(len=*),parameter::myname_='assignR4_const_'
+
+! Declare externals
+  external :: stop2
+
   integer(i_kind) :: ii
 
   if (bundo%AllKinds<0 ) then
@@ -3377,6 +3402,8 @@ subroutine hadamard_upd_(zst,yst,xst)
   type(gsi_bundle), intent(in   ) :: yst
   type(gsi_bundle), intent(in   ) :: xst
   character(len=*),parameter::myname_='hadamard_upd_st_'
+! Declare externals
+  external :: stop2
   integer(i_kind) :: ii
 
   if(yst%ndim/=xst%ndim.or.yst%ndim/=zst%ndim) then
@@ -3470,6 +3497,8 @@ subroutine self_add_st(yst,xst)
   type(gsi_bundle), intent(inout) :: yst
   type(gsi_bundle), intent(in   ) :: xst
   character(len=*),parameter::myname_='self_add_st'
+! Declare externals
+  external :: stop2
   integer(i_kind) :: ii
 
   if(yst%ndim/=xst%ndim) then
@@ -3536,6 +3565,8 @@ subroutine self_add_R8scal(yst,pa,xst)
   real(r_double),   intent(in   ) :: pa
   type(gsi_bundle), intent(in   ) :: xst
   character(len=*),parameter::myname_='self_add_R8scal_'
+! Declare externals
+  external :: stop2
   integer(i_kind) :: ii
 
   if(yst%ndim/=xst%ndim) then
@@ -3602,6 +3633,8 @@ subroutine self_add_R4scal(yst,pa,xst)
   real(r_single),   intent(in   ) :: pa
   type(gsi_bundle), intent(in   ) :: xst
   character(len=*),parameter::myname_='self_add_R4scal_'
+! Declare externals
+  external :: stop2
   integer(i_kind) :: ii
 
   if(yst%ndim/=xst%ndim) then
@@ -3644,6 +3677,8 @@ subroutine self_mulR8_(yst,pa)
   type(gsi_bundle), intent(inout) :: yst
   real(r_double),   intent(in   ) :: pa
   character(len=*),parameter::myname_='self_mulR8_'
+! Declare externals
+  external :: stop2
   integer(i_kind) :: ii
 
   if (yst%AllKinds<0 ) then
@@ -3669,6 +3704,8 @@ subroutine self_mulR4_(yst,pa)
   type(gsi_bundle), intent(inout) :: yst
   real(r_single),     intent(in   ) :: pa
   character(len=*),parameter::myname_='self_mulR4_'
+! Declare externals
+  external :: stop2
   integer(i_kind) :: ii
 
   if (yst%AllKinds<0 ) then
@@ -4163,6 +4200,8 @@ end function sum3dR4_
 !noBOC
     integer(i_kind) :: i 
     character(len=*),parameter::myname_='print_'
+!   Declare externals
+    external :: stop2
     if (Bundle%AllKinds<0 ) then
        write(6,*) myname_, ':trouble with bundle precision bundle ', Bundle%AllKinds
        call stop2(999)

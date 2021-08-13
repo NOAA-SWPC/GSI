@@ -346,6 +346,9 @@ subroutine init_crtm(init_pass,mype_diaghdr,mype,nchanl,nreal,isis,obstype,radmo
   character(len=*), parameter :: myname_=myname//'*init_crtm'
   integer(i_kind), parameter :: length = 2621  ! lenth of GFL qsat table
 
+! declare externals
+  external :: stop2,genqsat
+
 ! local variables
   integer(i_kind) :: ier,ii,error_status,iderivative
   integer(i_kind) :: k, subset_start, subset_end
@@ -1106,6 +1109,9 @@ subroutine call_crtm(obstype,obstime,data_s,nchanl,nreal,ich, &
       reshape((/0.0_r_kind, 1.0_r_kind, 1.0_r_kind, 2.0_r_kind, 1.0_r_kind, &
                -1.0_r_kind, 1.0_r_kind, -1.0_r_kind/), (/4, 2/))
   real(r_kind),parameter:: jac_pert = 1.0_r_kind
+
+! Declare externals
+  external :: stop2,w3movdat
 
 ! Declare local variables  
   integer(i_kind):: iquadrant  
@@ -3069,6 +3075,9 @@ subroutine get_lai(data_s,nchanl,nreal,itime,ilate,lai_type,lai)
   real(r_kind),dimension(nchanl+nreal)  ,intent(in   ) :: data_s
   integer(i_kind)                       ,intent(in   ) :: itime, ilate,lai_type
   real(r_kind)                          ,intent(  out) :: lai
+
+! Declare externals
+  external :: w3movdat,w3doxdat
 
 ! Declare local variables
   integer(i_kind),dimension(8)::obs_time,anal_time

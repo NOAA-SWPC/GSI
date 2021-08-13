@@ -122,6 +122,11 @@ SUBROUTINE SFC_WTQ_FWD (psfc_in,tg,ps_in,tvs,qs,us,vs, &
 ! Von Karman constant
 
       REAL(r_kind), PARAMETER :: k_kar = 0.4_r_kind
+
+!
+! Declare externals
+      external :: DA_TP_To_Qs
+
 !
 ! Working variables
 
@@ -600,6 +605,11 @@ SUBROUTINE sfc_wtq_Lin(psfc_in, tg, ps_in, tvs, qs, us, vs, regime,           &
 ! Von Karman constant
 
       REAL(r_kind), PARAMETER :: k_kar = 0.4_r_kind
+
+!
+! Declare externals
+      external :: DA_TP_To_Qs,da_TP_To_Qs_Lin
+
 !
 ! Working variables
 
@@ -1205,6 +1215,9 @@ subroutine get_tlm_tsfc(tlm_tsfc,psges2,tgges,prsltmp2, &
   real(r_kind)   ,intent(in   ) :: psges2,tgges,prsltmp2,tvtmp,qtmp,utmp,vtmp,hsges,roges
   integer(i_kind),intent(in   ) :: regime,msges
   logical        ,intent(in   ) :: iqtflg
+
+! Declare externals
+  external :: sfc_wtq_lin
 
   real(r_kind) perturb(6),u10_prime,v10_prime,q2_prime
   real(r_kind) sig1

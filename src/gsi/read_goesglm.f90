@@ -67,6 +67,10 @@ subroutine read_goesglm(nread,ndata,nodata,infile,obstype,lunout,twindin,sis)
   real(r_kind),parameter:: r180 = 180.0_r_kind
   real(r_kind),parameter:: r360 = 360.0_r_kind
 
+! Declare externals
+  external :: openbf,datelen,ufbint,grdcrd1,w3fs21,closbf,stop2,&
+    convert_to_flash_rate
+
 !--- Declare local variables
   logical lob
   logical outside
@@ -453,6 +457,9 @@ subroutine convert_to_flash_rate   &
   integer(i_kind),intent(inout)               :: ndata_flash
   real(r_kind),intent(inout),dimension(nreal,ndata_strike)  :: cdata_strike
   real(r_kind),intent(inout),dimension(nreal,ndata_flash_h) :: cdata_flash_h
+
+! Declare externals
+  external :: convert_time
 
   real(r_kind),allocatable,dimension(:) :: gtim_central
   real(r_kind),allocatable,dimension(:) :: glon_central

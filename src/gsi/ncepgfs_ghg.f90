@@ -155,6 +155,9 @@ module ncepgfs_ghg
 !  ---  declare passed variables - output:
    real(r_kind), dimension(:,:,:),       intent(out  ) :: atmco2
 
+!  ---  declare externals
+   external :: stop2
+
 !  ---  declare local variables:
    real(r_kind), allocatable, dimension(:)             :: xlatsdeg
    real(r_kind), allocatable, dimension(:,:,:)         :: co2_Tintrp
@@ -435,6 +438,9 @@ module ncepgfs_ghg
 
 !  ---  declare passed variables - output:
    real(r_kind), dimension(:,:,:),       intent(out  ) :: atmghg
+
+!  ---  declare externals
+   external :: stop2
 
 !  ---  declare local variables:
    real(r_kind), allocatable, dimension(:)             :: xlatsdeg

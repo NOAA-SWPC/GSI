@@ -69,6 +69,11 @@ logical             , intent(in   ) :: lupdfgs
 integer(i_kind)     , intent(in   ) :: nprt
 character(len=*)    , intent(in   ) :: calledby
 
+! Declare externals
+external :: control2state,ensctl2state,model_tl,evaljo,evalqlim,model_ad,&
+  ensctl2state_ad,control2state_ad,strong_baldiag_inc,view_st,inc2guess,&
+  write_all,prt_guess,update_guess
+
 ! Declare local variables  
 character(len=*), parameter :: myname='jgrad'
 type(control_vector) :: xnew, ynew 

@@ -448,6 +448,8 @@ subroutine allocate_cv(ycv)
   use hybrid_ensemble_parameters, only: grd_ens
   implicit none
   type(control_vector), intent(  out) :: ycv
+! Declare externals
+  external :: stop2
   integer(i_kind) :: ii,jj,nn,ndim,ierror,n_step,n_aens
   character(len=256)::bname
   character(len=max_varname_length)::ltmp(1) 
@@ -721,6 +723,8 @@ subroutine assign_cv2cv(ycv,xcv)
   implicit none
   type(control_vector), intent(inout) :: ycv
   type(control_vector), intent(in   ) :: xcv
+! Declare externals
+  external :: stop2
   integer(i_kind) :: ii
 
   if (xcv%lencv/=ycv%lencv) then
@@ -762,6 +766,8 @@ subroutine assign_array2cv(ycv,parray)
   implicit none
   type(control_vector), intent(inout) :: ycv
   real(r_kind)        , intent(in   ) :: parray(:)
+! Declare externals
+  external :: stop2
   integer(i_kind) :: ii
 
   if (size(parray)/=ycv%lencv) then
@@ -803,6 +809,8 @@ subroutine assign_cv2array(parray,ycv)
   implicit none
   real(r_kind)        , intent(  out) :: parray(:)
   type(control_vector), intent(in   ) :: ycv
+! Declare externals
+  external :: stop2
   integer(i_kind) :: ii
 
   if (size(parray)/=ycv%lencv) then
@@ -1046,6 +1054,9 @@ real(r_kind) function dot_prod_cv(xcv,ycv)
   implicit none
   type(control_vector), intent(in   ) :: xcv, ycv
 
+! Declare externals
+  external :: stop2
+
 ! local variables
   real(r_quad) :: dd(1)
 
@@ -1088,6 +1099,9 @@ real(r_quad) function qdot_prod_cv(xcv,ycv,mold)
   implicit none
   integer(i_kind)     , intent(in   ) :: mold
   type(control_vector), intent(in   ) :: xcv, ycv
+
+! Declare externals
+  external :: stop2
 
 ! local variables
   real(r_quad) :: dd(1)
@@ -1137,6 +1151,9 @@ real(r_quad) function qdot_prod_cv_eb(xcv,ycv,mold,eb)
   integer(i_kind)     , intent(in   ) :: mold
   character(len=*)    , intent(in   ) :: eb
   type(control_vector), intent(in   ) :: xcv, ycv
+
+! Declare externals
+  external :: stop2
 
 ! local variables
   real(r_quad) :: zz(nsubwin+1)
@@ -1311,6 +1328,8 @@ subroutine axpy(alpha,xcv,ycv)
   real(r_kind)        , intent(in   ) :: alpha
   type(control_vector), intent(in   ) :: xcv
   type(control_vector), intent(inout) :: ycv
+! Declare externals
+  external :: stop2
   integer(i_kind) :: ii
 
   if (xcv%lencv/=ycv%lencv) then
@@ -1494,6 +1513,9 @@ subroutine read_cv(xcv,cdfile)
   type(control_vector), intent(inout) :: xcv
   character(len=*)    , intent(in   ) :: cdfile
 
+! Declare externals
+  external :: stop2
+
   character(len=100) :: clfile
   character(len=5) :: clmype
   integer(i_kind):: iunit,ilen
@@ -1575,6 +1597,8 @@ real(r_kind) function maxval_cv(ycv)
 
 implicit none
 type(control_vector), intent(in   ) :: ycv
+! Declare externals
+external :: mpi_allreduce,stop2
 real(r_kind) :: zloc(1),zglo(1)
 
 zloc(1)=maxval(ycv%values(:))
@@ -1614,6 +1638,8 @@ real(r_quad) function qdot_product(x,y)
 
   implicit none
   real(r_kind),intent(in   ) :: x(:),y(:)
+  ! Declare externals
+  external :: stop2
   real(r_quad):: zz
   integer(i_kind) :: nx,ny,i
   nx=size(x)

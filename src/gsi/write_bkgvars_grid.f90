@@ -35,6 +35,9 @@ subroutine write_bkgvars_grid(a,b,c,d,mype)
   real(r_kind),dimension(lat2,lon2,nsig),intent(in   ) :: a,b,c
   real(r_kind),dimension(lat2,lon2)     ,intent(in   ) :: d
 
+! Declare externals
+  external :: gather_stuff2,baopenwt,wryte,baclose
+
   character(255):: grdfile
 
   real(r_kind),dimension(nlat,nlon,nsig):: ag,bg,cg
@@ -127,6 +130,9 @@ subroutine write_bkgvars2_grid
   use berror, only: dssv,dssvs
   use file_utility, only : get_lun
   implicit none
+
+! Declare externals
+  external :: gather_stuff2,baopenwt,wryte,baclose
 
   character(255):: grdfile
 

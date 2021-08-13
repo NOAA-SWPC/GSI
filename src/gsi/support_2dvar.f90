@@ -47,6 +47,9 @@ subroutine convert_binary_2d
   use obsmod, only: use_similarity_2dvar
   implicit none
 
+! Declare externals
+  external :: stop2
+
 ! Declare local parameters
   real(r_single),parameter:: one_single = 1.0_r_single
   real(r_single),parameter:: r45 = 45.0_r_single
@@ -541,6 +544,9 @@ subroutine read_2d_files(mype)
 ! Declare passed variables
   integer(i_kind),intent(in   ) :: mype
 
+! Declare externals
+  external :: w3fs21,mpi_bcast
+
 ! Declare local parameters
   real(r_kind),parameter:: r0_001=0.001_r_kind
 
@@ -739,6 +745,9 @@ subroutine read_2d_guess(mype)
 
 ! Declare passed variables
   integer(i_kind),intent(in   ) :: mype
+
+! Declare externals
+  external :: fill_mass_grid2t,mpi_alltoallv,mpi_barrier
 
 ! Declare local parameters
   real(r_kind),parameter:: r0_01=0.01_r_kind
@@ -1474,11 +1483,13 @@ subroutine wr2d_binary(mype)
 ! Declare passed variables
   integer(i_kind),intent(in   ) :: mype
 
+! Declare externals
+  external :: mpi_gatherv,fill_mass_grid2t,unfill_mass_grid2t
+
 ! Declare local parameters
   real(r_kind),parameter:: r225=225.0_r_kind
 
 ! Declare local variables
-
   character(len=*),parameter::myname='wr2d_binary'
   integer(i_kind) im,jm,lm
   integer(i_kind),allocatable::itemp1(:)
@@ -2074,6 +2085,9 @@ subroutine ndfdgrid_info
 !$$$ end documentation block
   implicit none
 
+! Declare externals
+  external :: abort
+
   namelist/navigationinfo/nx,ny,da8,alat18,elon18,elonv8,alatan8
 
   if (trim(cgrid) == 'conus') then
@@ -2224,6 +2238,9 @@ subroutine latlon_to_grid0(rlat8,rlon8,xx8,yy8)
   real(r_kind),intent(in   ) :: rlat8,rlon8
   real(r_kind),intent(  out) :: xx8,yy8
 
+! Declare externals
+  external :: w3fb11,w3fb06,w3fb08
+
   logical lambconform
   logical polarstereo
   logical lmercator
@@ -2269,6 +2286,9 @@ subroutine grid_to_latlon0(xx8,yy8,rlat8,rlon8)
 
   real(r_kind),intent(in   ) :: xx8,yy8
   real(r_kind),intent(  out) :: rlat8,rlon8
+
+! Declare externals
+  external :: w3fb12,w3fb07,w3fb09
 
   integer(i_kind) ierr
 
@@ -2419,6 +2439,9 @@ subroutine relocsfcob(rlon8,rlat8,cobtypein,cstationin,kxin)
   character(len=8) ,intent(in   ) :: cstationin
   integer(i_kind)  ,intent(in   ) :: kxin
 
+! Declare externals
+  external :: bilinear_2d0
+
 ! Declare local parameters
   integer(i_kind),parameter::npts=300
   real(r_single),parameter::dx=0.03125_r_single
@@ -2551,6 +2574,9 @@ subroutine mkvalley_file
   use gsi_io, only: verbose
 
   implicit none
+
+! Declare externals
+  external :: get_fldstd
 
   real(r_single) radius0,hdiff0
   real(r_single) radius2,hstdmin
@@ -3196,10 +3222,12 @@ subroutine apply_hilbertcurve(maxobs,obstype,cdata_usage)
 
 
 !Declare passed variables
-
   character(len=*),intent(in  ) :: obstype
   integer(i_kind),intent(in   ) :: maxobs
   real(r_kind)   ,intent(inout) :: cdata_usage(maxobs)
+
+!Declare externals
+  external :: hilbert,shuffle
 
 !Declare local variables
   real(r_kind),parameter:: epsilon=1.e-03_r_kind
@@ -3668,6 +3696,9 @@ subroutine shuffle(ngrps,ngrp0)
 !Declare passed variables
   integer(i_kind),intent(in)::  ngrps
   integer(i_kind),intent(out):: ngrp0
+
+!Declare externals
+  external :: w3fs21
 
 !Declare local variables
   integer(i_kind) iseed,nt

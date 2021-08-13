@@ -125,6 +125,10 @@ contains
   real(r_kind)                          ,intent(in   ) :: twindin
   real(r_kind),dimension(nlat,nlon,nsig),intent(in   ) :: prsl_full,hgtl_full
 
+! Declare externals
+  external :: stop2,getcount_bufr,openbf,datelen,ufbint,closbf,grdcrd1,w3fs21,&
+    fpvsx_ad,count_obs
+
 ! Declare local parameters
   real(r_kind),parameter:: r1_2 = 1.2_r_kind
   real(r_kind),parameter:: r50  = 50.0_r_kind

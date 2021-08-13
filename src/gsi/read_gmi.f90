@@ -125,6 +125,10 @@ subroutine read_gmi(mype,val_gmi,ithin,rmesh,jsatid,gstime,&
   integer(i_kind),dimension(npe)  ,intent(inout) :: nobs
   logical         ,intent(in   ) :: dval_use
 
+! Declare externals
+  external :: openbf,datelen,readmg,ufbint,ufbrep,w3fs21,zensun,&
+    closbf,grdcrd1,combine_radobs,count_obs
+
 ! Declare local parameters
   logical                   :: use_swath_edge
   integer(i_kind)           :: maxinfo

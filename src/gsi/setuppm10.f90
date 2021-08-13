@@ -131,6 +131,9 @@ subroutine setuppm10(obsLL,odiagLL,lunin,mype,nreal,nobs,isis,is,conv_diagsave)
   
 ! declare local variables  
   
+! declare externals
+  external :: stop2,tintrp2a11
+
   real(r_kind) rat_err2,dlat,dtime,dlon
   real(r_kind) cg_pm10,wgross,wnotgross,wgt,arg,exp_arg,term
   real(r_kind) :: pm10ges

@@ -73,6 +73,8 @@ subroutine  read_goesimgr_skycover(nread,ndata,nodata,infile,obstype,lunout,gsti
   real(r_kind)                          ,intent(in   ) :: twind,gstime
   real(r_kind),dimension(nlat,nlon,nsig),intent(in   ) :: prsl_full
 
+! Declare externals
+  external :: openbf,datelen,closbf,ufbint,w3fs21,grdcrd1,stop2,count_obs
 
 ! Declare local parameters
   real(r_kind),parameter:: r90  = 90.0_r_kind

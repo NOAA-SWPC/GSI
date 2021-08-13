@@ -93,7 +93,11 @@ subroutine read_amsr2(mype,val_amsr2,ithin,rmesh,jsatid,gstime,&
 ! Output variables
   integer(i_kind)  ,intent(inout) :: nread
   integer(i_kind)  ,intent(inout) :: ndata,nodata
-integer(i_kind),dimension(npe)  ,intent(inout) :: nobs
+  integer(i_kind),dimension(npe)  ,intent(inout) :: nobs
+
+! Declare externals
+  external :: openbf,datelen,ufbint,ufbrep,w3fs21,&
+    stop2,closbf,grdcrd1,combine_radobs,count_obs
 
 ! Number of channels for sensors in BUFR
   integer(i_kind),parameter :: N_AMSRCH  =  14  ! only channels 1-14 processed

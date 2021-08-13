@@ -196,6 +196,9 @@ subroutine mix_gfs_nmmb_vcoords(deta1 ,aeta1 ,eta1 ,deta2 ,aeta2 ,eta2 ,pdtop,pt
    real(r_single),dimension(nsig_max+1)   ,intent(  out) :: eta1m,eta2m
    integer(i_kind)                        ,intent(  out) :: nsigm_out
 
+   ! Declare externals
+   external :: stop2,outgrads1
+
    ! Declare local variables
    real(r_kind) ak_r(nsigr+1),bk_r(nsigr+1),p_r(nsigr+1)
    real(r_kind),dimension(:),allocatable:: p_g,dp_g ! (nsigg+1)
@@ -760,6 +763,9 @@ subroutine broadcast_gfs_stratosphere_vars
 
    implicit none
 
+!  Declare externals
+   external :: mpi_bcast
+
    call mpi_bcast(nsig_max,1,mpi_integer4,0,mpi_comm_world,ierror)
    call mpi_bcast(nsig_save,1,mpi_integer4,0,mpi_comm_world,ierror)
    call mpi_bcast(k0m,1,mpi_integer4,0,mpi_comm_world,ierror)
@@ -906,6 +912,9 @@ subroutine add_gfs_stratosphere
 
    implicit none
   
+!  Declare externals
+   external :: w3movdat,stop2,general_read_gfsatm_nems,general_read_gfsatm_nc,general_read_gfsatm
+
    type(sub2grid_info) grd_gfs,grd_mix,grd_gfst
    type(spec_vars) sp_gfs,sp_b
    real(r_kind),allocatable,dimension(:,:,:) :: pri_g,pri_r,prsl_g,prsl_r,prsl_m

@@ -1125,6 +1125,9 @@ type(gsi_bundle),dimension(nobs_bins),intent(in   ) :: sval
 type(gsi_bundle),dimension(nobs_bins),intent(inout) :: rval
 real(r_quad),               optional, intent(  out) :: pjc
 
+! Declare externals
+external :: enorm_state
+
 ! Declare local variables
 integer(i_kind) :: jj,idfi
 real(r_quad),parameter :: half_quad=0.5_r_quad

@@ -724,6 +724,10 @@ contains
 
     character(len=*),parameter:: fixfilename='cloudy_radiance_info.txt'
     character(len=*),parameter:: toptablename='radiance_mod_instr_input'
+
+!   Declare externals
+    external :: stop2
+
     integer(i_kind) :: lunin
     character(len=20) :: tablename
     character(len=10) :: obsname

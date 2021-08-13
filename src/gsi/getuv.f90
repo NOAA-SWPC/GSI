@@ -46,6 +46,9 @@ subroutine getuv(u,v,st,vp,iflg)
 
   real(r_kind),dimension(lat2,lon2,nsig),intent(inout):: u,v
 
+! Declare externals
+  external :: psichi2uv_reg,psichi2uvt_reg
+
 ! Declare local variables
   integer(i_kind) i,j,k
 

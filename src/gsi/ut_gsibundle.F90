@@ -89,6 +89,9 @@ character(len=16), parameter :: names3d(n3d) = (/  &
                                 'v               ',    &
                                 'tv              '    /)
 
+! Declare externals
+external :: merger,multi,edge,ensemble
+
 integer(i_kind)  ipnt, ierr
 
 type(GSI_Bundle) :: GSI_bundle_mix
@@ -466,6 +469,9 @@ type(GSI_Bundle) :: GSI_Bundle_mix
 !-------------------------------------------------------------------------
 !BOC
 
+! Declare externals
+external :: mimic_int_routines
+
 ! Pretend we now have 1d-fields
 integer(i_kind), parameter :: n3d = 3
 character(len=16), parameter :: names3d(n3d) = (/  &
@@ -559,6 +565,8 @@ implicit none
 !-------------------------------------------------------------------------
 !BOC
 type(gsi_bundle),intent(inout) :: bundle
+! Declare externals
+external :: stop2
 !real(r_kind),pointer,dimension(:,:,:)::pe
 real(r_kind),pointer,dimension(:)::r1pe
 integer(i_kind) ierr
@@ -691,6 +699,9 @@ integer(i_kind), parameter :: n_ens=2    ! a 2-member ensemble
 integer(i_kind), parameter :: lat2_ens=46
 integer(i_kind), parameter :: lon2_ens=72
 integer(i_kind), parameter :: nlev_ens=64
+
+! Declare externals
+external :: mimic_gsi
 
 integer(i_kind)  ierr
 integer(i_kind) nn, nval_reg, nval_ens, nval_len, ii

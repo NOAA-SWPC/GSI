@@ -71,6 +71,9 @@ subroutine general_sptez_s(sp,wave,grid,idir)
   real(r_kind),dimension(sp%nc)   ,intent(inout) :: wave
   real(r_kind),dimension(sp%ijmax),intent(inout) :: grid
 
+! Declare externals
+  external :: general_sptranf_s
+
 ! Declare local variables
   integer(i_kind) i
 
@@ -174,6 +177,9 @@ subroutine general_sptranf_s(sp_a,wave,grid,idir)
   integer(i_kind)              ,intent(in   ) :: idir
   real(r_kind),dimension(sp_a%nc)   ,intent(inout) :: wave
   real(r_kind),dimension(sp_a%ijmax),intent(inout) :: grid
+
+! Declare externals
+  external :: spsynth,spffte,spanaly
 
 ! Declare local variables
   integer(i_kind) i,j,jj,ijn,ijs,mp,kw,kwtop,imaxp2
@@ -342,6 +348,9 @@ subroutine general_sptranf_s_b(sp_a,sp_b,wave,grid,idir)
   integer(i_kind)              ,intent(in   ) :: idir
   real(r_kind),dimension(sp_b%nc)   ,intent(inout) :: wave
   real(r_kind),dimension(sp_a%ijmax),intent(inout) :: grid
+
+! Declare externals
+  external :: spsynth,spffte,splegend,stop2,spanaly
 
 ! Declare local variables
   integer(i_kind) i,j,ii,jj,ijn,ijs,mp,ifact,kw,kwtop,imaxp2
@@ -568,6 +577,9 @@ subroutine general_sptez_v(sp,waved,wavez,gridu,gridv,idir)
   real(r_kind),dimension(sp%nc)   ,intent(inout) :: waved,wavez
   real(r_kind),dimension(sp%ijmax),intent(inout) :: gridu,gridv
 
+! Declare externals
+  external :: general_sptranf_v
+
 ! Declare local variables
   integer(i_kind) i
 
@@ -682,6 +694,9 @@ subroutine general_sptranf_v(sp_a,sp_b,waved,wavez,gridu,gridv,idir)
   real(r_kind),dimension(sp_b%nc)   ,intent(inout) :: waved,wavez
   real(r_kind),dimension(sp_a%ijmax),intent(inout) :: gridu,gridv
 
+! Declare externals
+  external :: spdz2uv,spsynth,spffte,splegend,stop2,spanaly,&
+     spuv2dz
 
 ! Declare local variables
   integer(i_kind) i,j,ii,jj,ijn,ijs,ifact,kw,kwtop,imaxp2
@@ -977,6 +992,8 @@ subroutine general_sptranf_v_u(sp_a,sp_b,waved,wavez,gridu,gridv)
   real(r_kind),dimension(sp_b%nc)   ,intent(inout) :: waved,wavez
   real(r_kind),dimension(sp_a%ijmax),intent(inout) :: gridu,gridv
 
+! Declare externals
+  external :: spdz2uv,spsynth,spffte,splegend
 
 ! Declare local variables
   integer(i_kind) i,j,ii,jj,ijn,ijs,ifact,kw,kwtop,imaxp2
@@ -1177,6 +1194,8 @@ subroutine general_sptranf_v_v(sp_a,sp_b,waved,wavez,gridu,gridv)
   real(r_kind),dimension(sp_b%nc)   ,intent(inout) :: waved,wavez
   real(r_kind),dimension(sp_a%ijmax),intent(inout) :: gridu,gridv
 
+! Declare externals
+  external :: spdz2uv,spsynth,spffte,splegend
 
 ! Declare local variables
   integer(i_kind) i,j,ii,jj,ijn,ijs,ifact,kw,kwtop,imaxp2
@@ -1366,6 +1385,9 @@ subroutine general_sptez_s_b(sp_a,sp_b,wave,grid,idir)
   real(r_kind),dimension(sp_b%nc)   ,intent(inout) :: wave
   real(r_kind),dimension(sp_a%ijmax),intent(inout) :: grid
 
+! Declare externals
+  external :: general_sptranf_s_b
+
 ! Declare local variables
   integer(i_kind) i
 
@@ -1469,6 +1491,10 @@ subroutine general_sptez_v_b(sp_a,sp_b,waved,wavez,gridu,gridv,idir,iuvflag)
   integer(i_kind)              ,intent(in   ) :: idir,iuvflag
   real(r_kind),dimension(sp_b%nc)   ,intent(inout) :: waved,wavez
   real(r_kind),dimension(sp_a%ijmax),intent(inout) :: gridu,gridv
+
+! Declare externals
+  external :: general_sptranf_v,general_sptranf_v_u,general_sptranf_v_v,&
+    stop2
 
 ! Declare local variables
   integer(i_kind) i

@@ -241,11 +241,14 @@ subroutine setupt(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,conv_diagsav
   character(len=*),parameter :: myname='setupt'
 
 ! Declare external calls for code analysis
+  external:: gsd_terrain_match_surfTobs
   external:: SFC_WTQ_FWD
   external:: get_tlm_tsfc
-  external:: tintrp2a1,tintrp2a11
+  external:: tintrp2a1,tintrp2a11,tintrp2a11_csln
   external:: tintrp31
   external:: grdcrd1
+  external:: vqc_setup
+  external:: tune_pbl_height
   external:: stop2
 
 ! Declare local variables

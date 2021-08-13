@@ -162,6 +162,9 @@ contains
     real(r_kind),parameter:: rinv60 = 1.0_r_kind/60.0_r_kind
     real(r_double),parameter:: r1e5_double = 1.0e5_r_double
 
+!   Declare externals
+    external :: openbf,datelen,w3fs21,ufbint,stop2,mpi_allreduce,closbf,mpi_reduce,&
+      mpi_allgather,mpi_gather,mpi_finalize
 
     integer(i_kind) nazbin,nrbin,nelbin
     integer(i_kind) i,ibyte,idate,inbufr,iret,isubset,krad,levs,lundx,n_gates

@@ -103,6 +103,10 @@ subroutine read_goesimg(mype,val_img,ithin,rmesh,jsatid,gstime,&
   integer(i_kind) ,intent(in   ) :: mpi_comm_sub
   logical         ,intent(in   ) :: dval_use
 
+! Declare externals
+  external :: openbf,datelen,closbf,ufbint,ufbrep,w3fs21,grdcrd1,&
+    combine_radobs,count_obs
+
 ! Declare local parameters
   integer(i_kind),parameter:: nimghdr=13
   real(r_kind),parameter:: r360=360.0_r_kind

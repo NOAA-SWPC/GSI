@@ -61,6 +61,9 @@ subroutine read_nsstbufr(nread,ndata,nodata,gstime,infile,obstype,lunout, &
   integer(i_kind),dimension(npe),intent(inout):: nobs
   real(r_kind),intent(in):: gstime,twindin
 
+! Declare externals
+  external :: openbf,datelen,ufbint,grdcrd1,w3fs21,count_obs,closbf
+
 ! Declare local parameters
   integer(i_kind),parameter:: maxinfo = 18
   real(r_double),parameter:: d250 = 250.0_r_double

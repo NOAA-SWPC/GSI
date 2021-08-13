@@ -111,6 +111,10 @@ subroutine read_radar(nread,ndata,nodata,infile,lunout,obstype,twind,sis,hgtl_fu
   integer(i_kind),dimension(npe) ,intent(inout) :: nobs
   real(r_kind),dimension(nlat,nlon,nsig),intent(in):: hgtl_full
 
+! Declare externals
+  external :: openbf,datelen,readsb,readmg,ufbint,closbf,stop2,grdcrd1,w3fs21,&
+    getvrlocalinfo,count_obs
+
 ! Declare local parameters
   integer(i_kind),parameter:: maxlevs=1500
   integer(i_kind),parameter:: maxdat=22
@@ -2423,6 +2427,8 @@ subroutine read_radar_l2rw_novadqc(ndata,nodata,lunout,obstype,sis,nobs)
   integer(i_kind) ,intent(inout) :: ndata,nodata!,nread
   integer(i_kind),dimension(npe) ,intent(inout) :: nobs
 
+! Declare externals
+  external :: grdcrd1,count_obs
 
 ! Declare local parameters
   integer(i_kind),parameter:: maxlevs=1500
@@ -2801,6 +2807,9 @@ subroutine read_radar_l2rw(ndata,nodata,lunout,obstype,sis,nobs,hgtl_full)
   integer(i_kind) ,intent(inout) :: ndata,nodata
   integer(i_kind),dimension(npe) ,intent(inout) :: nobs
   real(r_kind),dimension(nlat,nlon,nsig),intent(in):: hgtl_full 
+
+! Declare externals
+  external :: openbf,datelen,w3fs21,ufbint,grdcrd1,count_obs
 
 ! Declare local parameters
   integer(i_kind),parameter:: maxlevs=1500

@@ -159,6 +159,9 @@ module lag_interp
     real(r_kind),intent(in   ) :: lon,lat,p
     real(r_kind),intent(  out) :: i,j,k
 
+!   Declare externals
+    external :: grdcrd1
+
     ! Use the function already implemented
     i=lon
     call grdcrd1(i,rlons,nlon,1)

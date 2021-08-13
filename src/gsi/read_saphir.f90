@@ -89,8 +89,11 @@ subroutine read_saphir(mype,val_tovs,ithin,isfcalc,&
   integer(i_kind),dimension(npe)  ,intent(inout) :: nobs
   logical         ,intent(in   ) :: dval_use
 
-! Declare local parameters
+! Declare externals
+  external :: stop2,openbf,ufbint,w3fs21,ufbrep,closbf,grdcrd1,&
+    combine_radobs,count_obs
 
+! Declare local parameters
   character(8),parameter:: fov_flag="crosstrk"
   integer(i_kind),parameter:: n1bhdr=12
   integer(i_kind),parameter:: n2bhdr=4

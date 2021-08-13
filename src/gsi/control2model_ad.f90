@@ -62,6 +62,10 @@ type(gsi_bundle)    ,intent(inout) :: rval(nsubwin)
 type(predictors)    ,intent(in   ) :: bval
 type(control_vector),intent(inout) :: grad
 
+! Declare externals
+external :: stop2,getuv,tv_to_tsen_ad,normal_rh_to_q_ad,getprs_ad,&
+  ckgcov_ad
+
 ! Declare local variables
 character(len=*),parameter::myname='control2model_ad'
 character(len=10),allocatable,dimension(:) :: gases

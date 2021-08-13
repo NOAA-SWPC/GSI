@@ -234,6 +234,10 @@ subroutine read_prepbufr(nread,ndata,nodata,infile,obstype,lunout,twindin,sis,&
   real(r_kind)                          ,intent(in   ) :: twindin
   real(r_kind),dimension(nlat,nlon,nsig),intent(in   ) :: prsl_full
 
+! Declare externals
+  external :: stop2,getcount_bufr,openbf,datelen,ufbint,closbf,ufbqcd,status,nemtab,&
+    grdcrd1,w3fs21,ufbevn,sonde_ext,ufbrep,reorg_metar_cloud,count_obs
+
 ! Declare local parameters
   real(r_kind),parameter:: r0_01 = 0.01_r_kind
   real(r_kind),parameter:: r0_75 = 0.75_r_kind
@@ -3212,6 +3216,9 @@ subroutine sonde_ext(obsdat,tpc,qcmark,obserr,drfdat,levsio,kx,vtcd)
   real(r_double),dimension(13,255), intent(inout) :: obsdat
   real(r_double),dimension(8,255), intent(inout) :: drfdat,qcmark,obserr
   real(r_double),dimension(255,20), intent(inout) :: tpc
+
+! Declare externals
+  external :: grdcrd
 
   real(r_kind) wim,wi
   real(r_kind),dimension(nsig) :: prsltmp,dpmdl

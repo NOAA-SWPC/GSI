@@ -155,6 +155,9 @@ subroutine read_iasi(mype,val_iasi,ithin,isfcalc,rmesh,jsatid,gstime,&
   integer(i_kind),dimension(npe)  ,intent(inout) :: nobs
   integer(i_kind)  ,intent(  out) :: ndata,nodata
   
+! Declare externals
+  external :: stop2,openbf,datelen,ufbint,grdcrd1,w3fs21,ufbrep,ufbseq,closbf,&
+    combine_radobs,count_obs
 
 ! BUFR file sequencial number
 !  character(len=512)  :: table_file

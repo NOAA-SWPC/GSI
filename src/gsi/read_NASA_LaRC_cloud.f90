@@ -42,6 +42,10 @@ subroutine  read_NASA_LaRC_cloud(nread,ndata,nouse,infile,obstype,lunout,sis,nob
   integer(i_kind) ,dimension(npe),intent(inout) :: nobs
 ! real(r_kind),dimension(nlat,nlon,nsig),intent(in):: hgtl_full
 
+! Declare externals
+  external :: read_NASALaRC_cloud_bufr_survey,read_NASALaRC_cloud_bufr,&
+    grdcrd1,count_obs
+
 ! Declare local parameters
   integer(i_kind),parameter:: maxdat=8
 
@@ -242,6 +246,8 @@ subroutine read_NASALaRC_cloud_bufr(satfile,atime,&
 !
   integer     phase_tmp
 !
+! Declare externals
+  external :: openbf,dxdump,datelen,ufbint,closbf
 !
 !  ** misc
       
@@ -351,6 +357,9 @@ subroutine read_NASALaRC_cloud_bufr_survey(satfile,east_time, west_time)
 !
   CHARACTER*40, intent(in)    ::   satfile
   integer(i_kind),intent(out) :: east_time, west_time 
+
+! Declare externals
+  external :: openbf,dxdump,datelen,ufbint,closbf
 
   INTEGER(i_kind) ::  obs_time
 

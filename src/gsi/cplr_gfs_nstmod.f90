@@ -133,6 +133,9 @@ subroutine deter_nst_(dlat_earth,dlon_earth,obstime,zob,tref,dtw,dtc,tz_tr)
      real(r_kind), intent(in ) :: dlat_earth,dlon_earth,obstime,zob
      real(r_kind), intent(out) :: tref,dtw,dtc,tz_tr
 
+!    Declare externals
+     external :: grdcrd1,cal_tztr_
+
 !    local variables
      real(r_kind):: dt_cool,z_c,dt_warm,z_w,c_0,c_d,w_0,w_d
      integer(i_kind) istyp00,istyp01,istyp10,istyp11

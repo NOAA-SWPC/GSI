@@ -78,6 +78,9 @@ subroutine read_lidar(nread,ndata,nodata,infile,obstype,lunout,twind,sis,nobs)
   integer(i_kind),dimension(npe),intent(inout) :: nobs
   real(r_kind)    ,intent(in   ) :: twind
 
+! Declare externals
+  external :: openbf,datelen,readmg,closbf,w3fs21,readsb,ufbint,grdcrd1,count_obs
+
 ! Declare local parameters
   integer(i_kind),parameter:: maxobs=2e6
   integer(i_kind),parameter:: maxdat=20     !wm change back to 20

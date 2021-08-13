@@ -49,6 +49,8 @@ subroutine reducedgrid_init(nlons,nlats,lats)
  ! of full grid in radians.
  integer, intent(in) :: nlons, nlats
  real(r_kind), intent(in) :: lats(nlats)
+! Declare externals
+ external :: fftpack_rffti
  integer nlonsred, nlat, nlon, n
  real(r_single) coslat, pi
  pi = 4.*atan(1.0)
@@ -100,6 +102,8 @@ subroutine regtoreduced(datareg,datared)
  ! reduced grid. 
  real(r_kind), intent(in), dimension(nlonsfull*nlatsfull):: datareg
  real(r_single), intent(out), dimension(nptsred) :: datared
+! Declare externals
+ external :: fftpack_rfftf,fftpack_rfftb
  integer nlon, nlat, n, nlonsred
  real datareg_lon(nlonsfull)
  real fftwork(2*nlonsfull+15)

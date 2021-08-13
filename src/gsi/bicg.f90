@@ -50,6 +50,9 @@ use bicglanczos, only:  pcglanczos, setup_pcglanczos, save_pcgprecond, pcgprecon
 
 implicit none
 
+! Declare externals
+external :: jgrad,bkerror,stop2,precond,prt_guess
+
 character(len=*), parameter :: myname='bicg'
 
 ! Declare local variables  

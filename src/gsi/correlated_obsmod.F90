@@ -744,6 +744,8 @@ subroutine decompose_(instrument,Evals,Evecs,ndim,lprt)
 !EOP
 !-------------------------------------------------------------------------
 !BOC
+! Declare externals
+  external :: SSYEV,DSYEV
   character(len=*),parameter :: myname_=myname//'decompose_'
   character*1 jobz
   integer(i_kind) lwork,info
@@ -1371,6 +1373,10 @@ logical function choleskydecom_inv_(Isubset,ErrorCov,UT,qcaj)
 !-------------------------------------------------------------------------
 !BOC
   character(len=*),parameter :: myname_=myname//'choleskydecom_inv_'
+
+! Declare externals
+  external :: SPOTRF,DPOTRF,STRTRI,DTRTRI
+
   integer(i_kind) ii,jj,ncp
   integer(i_kind) info,info1
 

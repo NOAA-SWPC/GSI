@@ -91,6 +91,9 @@ integer(i_kind)     , intent(in   ) :: nsim
 integer(i_kind)     , intent(in   ) :: maxvecs
 integer(i_kind)     , intent(in   ) :: nprt
 
+! Declare externals
+external :: stop2
+
 type(control_vector) :: ybar(maxvecs), sbar(maxvecs)
 type(control_vector) :: d,gg,aux,ztemp
 integer(i_kind) :: isim,jcour,jmin,jmax,ii,jj
@@ -433,6 +436,9 @@ real(r_kind)         , intent(inout) :: fn,fpn,t,tmin,tmax
 type (control_vector), intent(inout) :: xn,g,x
 type (control_vector), intent(in   ) :: d
 type (control_vector), intent(inout) :: ztemp
+
+! Declare externals
+external :: stop2,evaljgrad
 
 real(r_quad) :: fquad
 real(r_kind) :: tesf,tesd,tg,fg,fpg,td,ta,fa,fpa,d2,f,fp,ffn,fd,fpd, &

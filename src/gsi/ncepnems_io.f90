@@ -273,6 +273,9 @@ contains
     use gridmod, only: fv3_full_hydro
     implicit none
 
+!   Declare externals
+    external :: stop2,general_read_fv3atm_nems,general_read_gfsatm_nems,prt_guess
+
     character(len=*),parameter::myname_=myname//'*read_'
     character(24) filename
     integer(i_kind):: it, istatus, inner_vars, num_fields
@@ -546,6 +549,9 @@ contains
     integer(i_kind), intent(in):: month
     integer(i_kind), intent(in):: idd
 
+!   Declare externals
+    external :: general_read_nemsaero
+
 !   Declare local variables
     integer(i_kind) :: igfsco2, i, j, n, iret
     real(r_kind),dimension(lat2):: xlats
@@ -765,6 +771,10 @@ contains
     real(r_kind),dimension(grd%lat2,grd%lon2,grd%nsig),intent(  out) :: g_u,g_v,&
          g_vor,g_div,g_cwmr,g_q,g_oz,g_tv
     type(spec_vars)                       ,intent(in   ) :: sp_a
+
+!   Declare externals
+    external :: stop2,mpi_scatterv,general_sptez_v,general_sptez_s_b,&
+      mpi_alltoallv
 
 !   Declare local variables
     character(len=120) :: my_name = 'READ_NEMSATM'
@@ -1253,6 +1263,9 @@ contains
     integer(i_kind), dimension(nlat_sfc,nlon_sfc),         intent(out) :: isli
     real(r_single),  optional, dimension(nlat_sfc,nlon_sfc,nfldsfc), intent(out) :: tref,dt_cool,z_c,dt_warm,z_w,c_0,c_d,w_0,w_d
                                 
+!   Declare externals
+    external :: stop2
+
 !   Declare local parameters
     integer(i_kind), parameter :: nsfc_all=11
     integer(i_kind),dimension(7):: idate
@@ -1566,6 +1579,9 @@ contains
     integer(i_kind), dimension(nlat_sfc,nlon_sfc),         intent(out) :: isli
     real(r_single), optional, dimension(nlat_sfc,nlon_sfc,nfldsfc), intent(out) :: tref,dt_cool,z_c,dt_warm,z_w,c_0,c_d,w_0,w_d
 
+!   Declare externals
+    external :: mpi_bcast
+
 !   Declare local variables
     integer(i_kind):: iret,npts,nptsall
 
@@ -1651,6 +1667,9 @@ contains
 
 !   Declare passed variables
     integer(i_kind), dimension(nlat,nlon),   intent(  out) :: isli_anl
+
+!   Declare externals
+    external :: stop2
 
 !   Declare local parameters
     integer(i_kind),dimension(7):: idate
@@ -1771,6 +1790,8 @@ contains
     integer(i_kind),                               intent(in   ) :: iope
     integer(i_kind), dimension(nlat,nlon),         intent(  out) :: isli_anl
 
+!   Declare externals
+    external :: mpi_bcast
 
 !   Declare local variables
     integer(i_kind):: iret,npts
@@ -1836,6 +1857,9 @@ contains
     integer(i_kind),parameter    :: n_nst=9
     integer(i_kind),dimension(7) :: idate
     integer(i_kind),dimension(4) :: odate
+
+!   Declare externals
+    external :: stop2
 
 !   Declare local variables
     character(len=6)   :: filename
@@ -2015,6 +2039,9 @@ contains
     real(r_single), dimension(nlat_sfc,nlon_sfc,nfldnst), intent(  out) :: &
                     tref,dt_cool,z_c,dt_warm,z_w,c_0,c_d,w_0,w_d
 
+!   Declare externals
+    external :: mpi_bcast
+
 !   Declare local variables
     integer(i_kind):: iret,npts,nptsall
 
@@ -2116,6 +2143,9 @@ contains
     integer(i_kind),     intent(in) :: mype_out  ! mpi task to write output file
     type(gsi_bundle),    intent(in) :: gfs_bundle
     integer(i_kind),     intent(in) :: ibin      ! time bin
+
+!   Declare externals
+    external :: stop2,w3movdat,mpi_gatherv
 
 !-------------------------------------------------------------------------
 
@@ -2932,6 +2962,9 @@ contains
     type(gsi_bundle),    intent(in) :: gfs_bundle
     type(gsi_bundle),optional,intent(in) :: gfschem_bundle ! for aerosols
     integer(i_kind),     intent(in) :: ibin      ! time bin
+
+!   Declare externals
+    external :: stop2,w3movdat,mpi_gatherv
 
 !-------------------------------------------------------------------------
 
@@ -4344,6 +4377,8 @@ contains
 
 !   Declare local parameters
     character( 6),parameter:: fname_ges='sfcf06'
+!   Declare externals
+    external :: mpi_gatherv
 !   Declare local variables
     character(len=120) :: my_name = 'WRITE_NEMSSFC'
     character(len=1)   :: null = ' '
@@ -4587,6 +4622,10 @@ contains
     character(6), parameter:: fname_nstges = 'nstf06'
     character(6), parameter:: fname_nstanl = 'nstanl'
     character(6), parameter:: fname_dtfanl = 'dtfanl'
+
+!   Declare externals
+    external :: mpi_gatherv,stop2,int2_msk_glb_prep,int22_msk_glb,&
+      dtzm_2d
 
 !   Declare local variables
     integer(i_kind), parameter:: io_dtfanl = 54
@@ -5164,6 +5203,9 @@ contains
     integer(i_kind),  intent(in) :: stop_code, error_code
     logical, optional,intent(in) :: lprint
     
+!   Declare externals
+    external :: stop2
+
     if ( mype == 0 .or. present(lprint) ) then
        select case (trim(action))
        case('init')
@@ -5232,6 +5274,9 @@ contains
 
 ! !OUTPUT PARAMETERS:
     real(r_single), dimension(nlon_b,nlat_b),intent(  out) :: b
+
+!   Declare externals
+    external :: grdcrd1
 
 !   Declare local variables
     integer(i_kind) i,j,ix,iy,ixp,iyp

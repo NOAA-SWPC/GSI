@@ -69,6 +69,10 @@ subroutine obs_para(ndata,mype)
   integer(i_kind)                  ,intent(in   ) :: mype
   integer(i_kind),dimension(ndat,3),intent(in   ) :: ndata
 
+! Declare externals
+  external :: dislag,disobs,mpi_comm_split,MPI_COMM_SIZE,&
+    MPI_COMM_RANK
+
 ! Declare local variables
   integer(i_kind) lunout,is,ii
   integer(i_kind) mm1

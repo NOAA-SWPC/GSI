@@ -613,6 +613,9 @@ contains
     use mpeu_util, only: perr,die
     implicit none
 
+! !Declare externals
+    external :: stop2
+
 ! !INPUT PARAMETERS:
     integer(i_kind) i,j,k,ich,lunin,nlines
     integer(i_kind) ip,istat,n,ichan,nstep,edge1,edge2,ntlapupdate,icw,iaeros
@@ -1682,6 +1685,9 @@ contains
    integer(i_kind),parameter:: maxchn = 3000
    integer(i_kind),parameter:: maxdat = 100
    real(r_kind),   parameter:: atiny  = 1.0e-10_r_kind
+
+!  Declare externals
+   external :: linmm,mpi_barrier
 
 !  Declare local variables
    logical lexist

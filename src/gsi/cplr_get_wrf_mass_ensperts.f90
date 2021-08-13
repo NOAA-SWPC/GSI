@@ -62,6 +62,9 @@ contains
       type(gsi_bundle),allocatable, intent(inout) :: en_perts(:,:)
       integer(i_kind), intent(in   ):: nelen
       real(r_single),dimension(:,:,:),allocatable:: ps_bar
+
+!     Declare externals
+      external :: stop2,MPI_Barrier
   
       real(r_kind),dimension(grd_ens%lat2,grd_ens%lon2,grd_ens%nsig):: u,v,tv,cwmr,oz,rh
       real(r_kind),dimension(grd_ens%lat2,grd_ens%lon2):: ps
@@ -594,6 +597,10 @@ contains
       real(r_kind),dimension(grd_ens%nlat,grd_ens%nlon):: gg_ps
 
   !
+  ! Declare externals
+      external :: stop2,genqsat
+
+  !
   ! Declare local parameters
       real(r_kind),parameter:: r0_01 = 0.01_r_kind
       real(r_kind),parameter:: r10   = 10.0_r_kind
@@ -672,9 +679,9 @@ contains
       ny=s_n_len
       nz=b_t_len
       if (nx /= grd_ens%nlon .or. ny /= grd_ens%nlat .or. nz /= grd_ens%nsig) then
-       print *,trim(filename)//': ','incorrect grid size in netcdf file'
-       print *,trim(filename)//': ','nx,ny,nz,nlon,nlat,nsig',nx,ny,nz,grd_ens%nlon,grd_ens%nlat,grd_ens%nsig
-       call stop2(999)
+         print *,trim(filename)//': ','incorrect grid size in netcdf file'
+         print *,trim(filename)//': ','nx,ny,nz,nlon,nlat,nsig',nx,ny,nz,grd_ens%nlon,grd_ens%nlat,grd_ens%nsig
+         call stop2(999)
       endif
   
       dim(Time_id)=Time_len
@@ -956,6 +963,9 @@ contains
            gg_u,gg_v,gg_tv,gg_rh
       real(r_kind),optional,dimension(grd_ens%nlat,grd_ens%nlon):: gg_ps
 
+  ! Declare externals
+      external :: mpi_scatterv
+
   ! Declare local variables
       real(r_kind),allocatable,dimension(:):: wrk_send_2d
       integer(i_kind) :: k
@@ -985,7 +995,7 @@ contains
        g_rh(1,1,k),grd_ens%ijn_s(mype+1),mpi_rtype,iope,mpi_comm_world,ierror)       
     enddo
   ! for now, don't do anything with oz, cwmr
-    g_oz = 0.; g_cwmr = 0.
+    g_oz = 0._r_kind; g_cwmr = 0._r_kind
     deallocate(wrk_send_2d)
   end subroutine parallel_read_wrf_mass_step2  
 
@@ -1059,6 +1069,9 @@ contains
                                                     g_qnc,g_qni,g_qnr
       real(r_kind),dimension(grd_ens%lat2,grd_ens%lon2),intent(out):: g_ps
       character(24),intent(in):: filename
+  !
+  !   Declare externals
+      external :: stop2,genqsat,mpi_scatterv
   !
   !   Declare local variables
       real(r_single),allocatable,dimension(:):: temp_1d
@@ -1148,9 +1161,9 @@ contains
       ny=s_n_len
       nz=b_t_len
       if (nx /= grd_ens%nlon .or. ny /= grd_ens%nlat .or. nz /= grd_ens%nsig) then
-       print *,'incorrect grid size in netcdf file'
-       print *,'nx,ny,nz,nlon,nlat,nsig',nx,ny,nz,grd_ens%nlon,grd_ens%nlat,grd_ens%nsig
-       call stop2(999)
+         print *,'incorrect grid size in netcdf file'
+         print *,'nx,ny,nz,nlon,nlat,nsig',nx,ny,nz,grd_ens%nlon,grd_ens%nlat,grd_ens%nsig
+         call stop2(999)
       endif
 
       dim(Time_id)=Time_len
@@ -1295,35 +1308,35 @@ contains
       print *,'min/max u',minval(gg_u),maxval(gg_u)
       print *,'min/max v',minval(gg_v),maxval(gg_v)
 
-  if( w_exist )then
+      if( w_exist )then
   !
   ! READ W (m/s)
-      call nc_check( nf90_inq_varid(file_id,'W',var_id),&
-          myname_,'inq_varid W '//trim(filename) )
+         call nc_check( nf90_inq_varid(file_id,'W',var_id),&
+             myname_,'inq_varid W '//trim(filename) )
 
-      call nc_check( nf90_inquire_variable(file_id,var_id,ndims=ndim),&
-          myname_,'inquire_variable W '//trim(filename) )
-      allocate(dim_id(ndim))
+         call nc_check( nf90_inquire_variable(file_id,var_id,ndims=ndim),&
+             myname_,'inquire_variable W '//trim(filename) )
+         allocate(dim_id(ndim))
 
-      call nc_check( nf90_inquire_variable(file_id,var_id,dimids=dim_id),&
-          myname_,'inquire_variable W '//trim(filename) )
-      allocate(temp_3d(dim(dim_id(1)),dim(dim_id(2)),dim(dim_id(3))))
+         call nc_check( nf90_inquire_variable(file_id,var_id,dimids=dim_id),&
+             myname_,'inquire_variable W '//trim(filename) )
+         allocate(temp_3d(dim(dim_id(1)),dim(dim_id(2)),dim(dim_id(3))))
 
-      call nc_check( nf90_get_var(file_id,var_id,temp_3d),&
-          myname_,'get_var W '//trim(filename) )
+         call nc_check( nf90_get_var(file_id,var_id,temp_3d),&
+             myname_,'get_var W '//trim(filename) )
   !
   ! INTERPOLATE TO MASS GRID
-      do k=1,dim(dim_id(3))-1
-         do j=1,dim(dim_id(2))
-            do i=1,dim(dim_id(1))
-               gg_w(j,i,k)=.5*(temp_3d(i,j,k)+temp_3d(i,j,k+1))
+         do k=1,dim(dim_id(3))-1
+            do j=1,dim(dim_id(2))
+               do i=1,dim(dim_id(1))
+                  gg_w(j,i,k)=.5*(temp_3d(i,j,k)+temp_3d(i,j,k+1))
+               enddo
             enddo
          enddo
-      enddo
-      deallocate(temp_3d)
-      deallocate(dim_id)
-      print *,'min/max w',minval(gg_w),maxval(gg_w)
-  end if
+         deallocate(temp_3d)
+         deallocate(dim_id)
+         print *,'min/max w',minval(gg_w),maxval(gg_w)
+      end if
 
   !
   ! READ QR (kg/kg)
@@ -1493,31 +1506,31 @@ contains
       deallocate(dim_id)
       print *,'min/max qc',minval(gg_cwmr),maxval(gg_cwmr)
 
-  if( if_model_dbz .and. dbz_exist ) then
+      if( if_model_dbz .and. dbz_exist ) then
   !
   ! READ Reflectivity (dBZ)
-      call nc_check( nf90_inq_varid(file_id,'REFL_10CM',var_id),&
-          myname_,'inq_varid dBZ '//trim(filename) )
+         call nc_check( nf90_inq_varid(file_id,'REFL_10CM',var_id),&
+             myname_,'inq_varid dBZ '//trim(filename) )
 
-      call nc_check( nf90_inquire_variable(file_id,var_id,ndims=ndim),&
-          myname_,'inquire_variable dBZ '//trim(filename) )
-      allocate(dim_id(ndim))
+         call nc_check( nf90_inquire_variable(file_id,var_id,ndims=ndim),&
+             myname_,'inquire_variable dBZ '//trim(filename) )
+         allocate(dim_id(ndim))
 
-      call nc_check( nf90_inquire_variable(file_id,var_id,dimids=dim_id),&
-          myname_,'inquire_variable dBZ '//trim(filename) )
-      allocate(temp_3d(dim(dim_id(1)),dim(dim_id(2)),dim(dim_id(3))))
+         call nc_check( nf90_inquire_variable(file_id,var_id,dimids=dim_id),&
+             myname_,'inquire_variable dBZ '//trim(filename) )
+         allocate(temp_3d(dim(dim_id(1)),dim(dim_id(2)),dim(dim_id(3))))
 
-      call nc_check( nf90_get_var(file_id,var_id,temp_3d),&
-          myname_,'get_var dBZ '//trim(filename) )
+         call nc_check( nf90_get_var(file_id,var_id,temp_3d),&
+             myname_,'get_var dBZ '//trim(filename) )
 
-      gg_dbz = reshape(temp_3d,(/dim(dim_id(2)),dim(dim_id(1)),dim(dim_id(3))/),order=(/2,1,3/))
-      where( gg_dbz < 0.0_r_kind )
-        gg_dbz = 0.0_r_kind
-      end where
-      deallocate(temp_3d)
-      deallocate(dim_id)
-      print *,'min/max dBZ',minval(gg_dbz),maxval(gg_dbz)
-  end if
+         gg_dbz = reshape(temp_3d,(/dim(dim_id(2)),dim(dim_id(1)),dim(dim_id(3))/),order=(/2,1,3/))
+         where( gg_dbz < 0.0_r_kind )
+           gg_dbz = 0.0_r_kind
+         end where
+         deallocate(temp_3d)
+         deallocate(dim_id)
+         print *,'min/max dBZ',minval(gg_dbz),maxval(gg_dbz)
+      end if
 
   !
   ! READ QVAPOR (kg/kg)
@@ -1604,16 +1617,16 @@ contains
       end do
       print *,'min/max tv',minval(gg_tv),maxval(gg_tv)
 
-  if( dbz_exist .and. (.not. if_model_dbz) )then
-     gg_rho = (prsl/(gg_tv*rd))*r1000  
-      do k=1,nz
-        do i=1,nx
-          do j=1,ny
-            call hx_dart(gg_qr(j,i,k),gg_qg(j,i,k),gg_qs(j,i,k),gg_rho(j,i,k),tsn(j,i,k),gg_dbz(j,i,k),.false.)
-          enddo
-        enddo
-      enddo
-  end if
+      if( dbz_exist .and. (.not. if_model_dbz) )then
+         gg_rho = (prsl/(gg_tv*rd))*r1000  
+         do k=1,nz
+            do i=1,nx
+               do j=1,ny
+                  call hx_dart(gg_qr(j,i,k),gg_qg(j,i,k),gg_qs(j,i,k),gg_rho(j,i,k),tsn(j,i,k),gg_dbz(j,i,k),.false.)
+               enddo
+            enddo
+         enddo
+      end if
 
   !
   ! CALCULATE PSEUDO RELATIVE HUMIDITY IF USING RH VARIABLE
@@ -1786,6 +1799,9 @@ contains
     integer(i_kind),intent(in):: mype
     type(gsi_bundle),allocatable, intent(in   ) :: en_perts(:,:)
     integer(i_kind), intent(in   ):: nelen
+
+!   Declare externals
+    external :: stop2,write_spread_dualres
   
     type(gsi_bundle):: sube,suba
     type(gsi_grid):: grid_ens,grid_anl

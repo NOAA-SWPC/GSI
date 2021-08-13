@@ -275,6 +275,9 @@ subroutine genstats_gps(bwork,awork,toss_gps_sub,conv_diagsave,mype)
   real(r_kind),parameter:: r20   = 20.0_r_kind
   real(r_kind),parameter:: scale = 100.0_r_kind
 
+! Declare externals
+  external :: mpi_allreduce
+
 ! Declare local variables
   logical:: luse,muse,toss,save_jacobian
   integer(i_kind):: k,jsig,icnt,khgt,kprof,ikx,nn,j,nchar,nreal,mreal,ii,ioff
@@ -753,6 +756,9 @@ end subroutine contents_binary_diag_
 
 subroutine contents_netcdf_diag_
   use sparsearr, only: sparr2, readarray, fullarray
+  implicit none
+! Declare externals
+  external :: stop2
   integer(i_kind),dimension(miter) :: obsdiag_iuse
   integer(i_kind)                  :: obstype, obssubtype
   type(sparr2) :: dhx_dx

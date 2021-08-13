@@ -44,6 +44,9 @@ subroutine evaljo(pjo,kobs,kprt,louter)
   integer(i_kind),intent(in   ) :: kprt
   logical        ,intent(in   ) :: louter
 
+! Declare externals
+  external :: mpi_allreduce
+
 ! Declare local variables
   character(len=*), parameter :: myname='evaljo'
   integer(i_kind) :: ii,jj,ij,ilen

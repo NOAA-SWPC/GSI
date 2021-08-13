@@ -176,6 +176,9 @@ contains
   use constants, only : zero,one,zero_quad
   implicit none
 
+! Declare externals
+  external :: linmm
+
   integer(i_kind),parameter :: nthreshold=100
   real(r_kind),parameter :: atiny=1.0e-10_r_kind
   integer(i_kind) i,n,j,ii,jj,jpassive,ibin,ic,mp,mm,kpred

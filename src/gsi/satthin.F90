@@ -539,6 +539,9 @@ contains
     integer(i_kind),intent(in   ) :: mype,mype_io
     logical        ,intent(in   ) :: use_sfc,use_sfc_any
 
+! Declare externals
+    external :: splat,mpi_allgatherv,stop2,grdcrd
+
 ! Local variables
     real(r_kind),dimension(lat1*lon1):: zsm
     real(r_kind),dimension(itotsub):: work1
@@ -994,6 +997,9 @@ contains
     character(20)  ,intent(in   ) :: sis
     integer(i_kind),intent(in   ), optional :: it_mesh
 
+!   Declare externals
+    external :: grdcrd1
+
     integer(i_kind) ix,iy
     real(r_kind) dlat1,dlon1,dx,dy,dxx,dyy
 
@@ -1307,6 +1313,9 @@ contains
     real(r_kind)   ,intent(in   ) :: arr(n)
 
     integer(i_kind),intent(  out) :: indx(n)
+
+!   Declare externals
+    external :: stop2
 
 #ifdef ibm_sp
     real(r_kind),dimension(maxblock)::work

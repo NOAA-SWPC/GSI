@@ -55,6 +55,9 @@ subroutine combine_radobs(mype_sub,mype_root,&
   real(r_kind),dimension(itxmax)     ,intent(inout) :: data_crit
   real(r_kind),dimension(nele,itxmax),intent(inout) :: data_all
 
+! Declare externals
+  external :: mpi_allreduce,mpi_reduce
+
 ! Declare local variables
   integer(i_kind):: k,l,ndata1,ndata2,kk
   integer(i_kind):: ncounts,ncounts1

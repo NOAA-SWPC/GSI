@@ -382,6 +382,9 @@ subroutine anprewgt_reg(mype)
 ! Declare passed variables
   integer(i_kind),intent(in   ) :: mype
 
+! Declare externals
+  external :: antest_maps0,stop2
+
 ! Declare local parameters
   real(r_single),parameter:: vis0fmin=6000._r_single
   real(r_single),parameter:: vis0fmax=6000._r_single
@@ -2530,6 +2533,9 @@ subroutine get_background(mype)
 ! Declare passed variables
   integer(i_kind),intent(in   ) :: mype
 
+! Declare externals
+  external :: genqsat
+
 ! Declare local variables
   character(len=*),parameter::myname_=myname//'*get_background'
   integer(i_kind) i,j,k,l,mm1,k1,ivar,ier,istatus
@@ -2995,6 +3001,9 @@ subroutine get_theta_corrl_lenghts(mype)
 
 ! Declare passed variables
   integer(i_kind),intent(in   ) :: mype
+
+! Declare externals
+  external :: mpi_allreduce,w3fa03
 
 ! Declare local variables
   integer(i_kind) i,j,k,kp,km,k1
@@ -3546,6 +3555,9 @@ subroutine get_aspect_reg_ens(mype)
 
 ! Declare passed variables
   integer(i_kind),intent(in   ) :: mype
+
+! Declare externals
+  external :: stop2
 
 ! Declare local variables
   integer(i_kind),parameter::ntensmax=200   !max # of ens members
@@ -4202,6 +4214,9 @@ subroutine get_ensmber(kens,ifld,igrid,ntensmax,ifldlevs,truewind,unbalens, &
 
   logical        ,intent(in   ) :: truewind
   logical        ,intent(in   ) :: unbalens
+
+! Declare externals
+  external :: stop2,mpi_alltoallv,vert_smther,mpi_gatherv,unfill_mass_grid2t
 
 ! Declare local variables
   integer(i_kind) i,j,k,m,ivar,it
@@ -4954,6 +4969,9 @@ subroutine get2berr_reg_subdomain_option(mype)
 ! Declare passed variables
   integer(i_kind),intent(in   ) :: mype
 
+! Declare externals
+  external :: change_a2f,sub2slab_init_raf4,get_ampsub,mpi_allreduce,mpi_reduce,put_ampsub
+
 ! Declare local parameters
   real(r_single),parameter:: vis0fmin=6000._r_single
   real(r_single),parameter:: vis0fmax=6000._r_single
@@ -5686,6 +5704,9 @@ subroutine get_background_subdomain_option(mype)
 
 ! Declare passed variables
   integer(i_kind),intent(in   ) :: mype
+
+! Declare externals
+  external :: mpi_allreduce,get_fldstd,mpi_bcast,mpi_finalize
 
 ! Declare local parameters
 !    Great Lakes
@@ -6469,6 +6490,9 @@ subroutine isotropic_scales_subdomain_option(scale1,scale2,scale3,k,mype)
   real(r_kind)   ,intent(  out) :: scale2(lat2,lon2)
   real(r_kind)   ,intent(  out) :: scale3(lat2,lon2)
 
+! Declare externals
+  external :: mpi_allreduce
+
 ! Declare local parameters
 !    Great Lakes
   real(r_kind),parameter::flon1=-93._r_kind
@@ -6954,6 +6978,9 @@ subroutine change_a2f(sa,sf,pf2ap1,aspect,aspectf,inner_vars, &
   real(r_single),intent(inout):: aspectf(inner_vars,ipsf:ipef,jpsf:jpef,num_fields)
   integer(i_kind),intent(in):: inner_vars
   
+! Declare externals
+  external :: eigen_decomp,eigen_interpx,eigen_interpy,reconstruct_a
+
   integer(i_kind) i,iloc,j,jloc,k,inner_4,nsig_1,num_fields_1,mype,npe
   integer(i_kind) nlat,nlon,nlatf,nlonf
   real(r_kind),allocatable::wsa(:,:,:),wsf(:,:,:)
@@ -7077,6 +7104,9 @@ subroutine eigen_decomp(wa,da,nlat,nlon)
    integer(i_kind),intent(in):: nlat,nlon
    real(r_kind),intent(in)::   wa(4,nlat,nlon)
    real(r_kind),intent(inout)::da(7,nlat,nlon)
+
+!  Declare externals
+   external :: eigen
 
    real(r_kind) a(3),r(2,2)
    integer(i_kind) i,j

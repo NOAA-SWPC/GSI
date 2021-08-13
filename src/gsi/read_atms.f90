@@ -112,8 +112,11 @@ subroutine read_atms(mype,val_tovs,ithin,isfcalc,&
   logical         ,intent(in   ) :: dval_use
   type(rad_obs_type),intent(in ) :: radmod
 
-! Declare local parameters
+! Declare externals
+  external :: stop2,openbf,ufbint,w3fs21,ufbrep,closbf,grdcrd1,&
+    combine_radobs,count_obs
 
+! Declare local parameters
   character(8),parameter:: fov_flag="crosstrk"
   integer(i_kind),parameter:: n1bhdr=13
   integer(i_kind),parameter:: n2bhdr=4

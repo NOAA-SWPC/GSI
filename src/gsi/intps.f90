@@ -106,6 +106,9 @@ subroutine intps_(pshead,rval,sval)
   type(gsi_bundle),        intent(in   ) :: sval
   type(gsi_bundle),        intent(inout) :: rval
 
+! Declare externals
+  external :: vqc_int
+
 ! Declare local variables
   integer(i_kind) ier,istatus
   integer(i_kind) j1,j2,j3,j4,ibb,ikk

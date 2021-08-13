@@ -82,6 +82,9 @@ subroutine gsd_update_soil_tq(tinc,is_t,qinc,is_q,it)
   real(r_kind),dimension(lat2,lon2), intent(in) :: qinc
   integer,intent(in) ::  it   ! guess time level
 
+! Declare externals
+  external :: w3fs13,genqsat
+
 ! Declare local variables
   real(r_kind),dimension(lat2,lon2) :: csza
   integer(i_kind)  :: gmt,nday,iyear,imonth,iday
@@ -424,6 +427,9 @@ subroutine gsd_limit_ocean_q(qinc,it)
   integer(i_kind) istatus
   real(r_kind),dimension(lat2,lon2,nsig), intent(inout) :: qinc
   integer,intent(in) ::  it   ! guess time level
+
+! Declare externals
+  external :: genqsat
 
 ! Declare local variables
   logical ice

@@ -31,6 +31,9 @@ use jcmod, only: wgtdfi
 
 implicit none
 
+! Declare externals
+external :: stop2
+
 real(r_kind) :: tauc,rtdfi
 real(r_kind) :: zx(0:nobs_bins),zp(0:nobs_bins)
 real(r_kind) :: zd,zh,zl,zn,zr,zs,zt

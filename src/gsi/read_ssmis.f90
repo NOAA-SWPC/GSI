@@ -132,6 +132,10 @@ subroutine read_ssmis(mype,val_ssmis,ithin,isfcalc,rmesh,jsatid,gstime,&
   integer(i_kind) ,intent(in   ) :: mpi_comm_sub
   logical         ,intent(in   ) :: dval_use
 
+! Declare externals
+  external :: stop2,openbf,datelen,ufbint,ufbrep,w3fs21,&
+    zensun,closbf,grdcrd1,combine_radobs,count_obs
+
 ! Declare local variables
   character(7),parameter    :: fov_flag="conical"
   integer(i_kind),parameter :: maxchanl  =  24

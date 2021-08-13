@@ -43,6 +43,9 @@ subroutine get_semimp_mats(tbar,pbar,bhat,chat,amat,bmat,hmat,smat)
   real(r_kind),dimension(nsig,nsig),intent(  out) :: amat,bmat
   real(r_kind),dimension(nsig)     ,intent(  out) :: hmat,smat
 
+! Declare externals
+  external :: iminv
+
 ! Declare local variables
   real(r_kind),dimension(nsig-1,nsig-1):: zm
   real(r_kind),dimension(nsig-1,nsig):: tm,wtm

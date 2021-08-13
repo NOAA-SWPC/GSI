@@ -44,6 +44,9 @@ subroutine general_reload(grd,g_z,g_ps,g_tv,g_vor,g_div,g_u,g_v,g_q,g_oz,g_cwmr,
 !EOP
 !-------------------------------------------------------------------------
 
+!  Declare externals
+   external :: mpi_alltoallv
+
    integer(i_kind) i,j,k,ij,klev
    real(r_kind),dimension(grd%lat2*grd%lon2,npe):: sub
 
@@ -252,9 +255,6 @@ subroutine general_read_gfsatm(grd,sp_a,sp_b,filename,uvflag,vordivflag,zflag, &
 
    implicit none
 
-   ! Declare local parameters
-   integer(sigio_intkind):: lunges = 11
-
    ! Declare passed variables
    type(sub2grid_info)                   ,intent(in   ) :: grd
    type(spec_vars)                       ,intent(in   ) :: sp_a,sp_b
@@ -262,6 +262,13 @@ subroutine general_read_gfsatm(grd,sp_a,sp_b,filename,uvflag,vordivflag,zflag, &
    logical                               ,intent(in   ) :: uvflag,zflag,vordivflag,init_head
    integer(i_kind)                       ,intent(  out) :: iret_read
    type(gsi_bundle)                      ,intent(inout) :: gfs_bundle
+
+   ! Declare externals
+   external :: stop2,general_sptez_s_b,general_fill_ns,general_sptez_v_b,&
+     general_fillu_ns,general_fillv_ns
+
+   ! Declare local parameters
+   integer(sigio_intkind):: lunges = 11
 
    ! Declare local variables
    integer(i_kind):: iret,nlatm2,nlevs,icm
@@ -826,9 +833,6 @@ subroutine general_read_gfsatm_nems(grd,sp_a,filename,uvflag,vordivflag,zflag, &
 
    implicit none
 
-   ! Declare local parameters
-   real(r_kind),parameter:: r0_001 = 0.001_r_kind
-
    ! Declare passed variables
    type(sub2grid_info)                   ,intent(in   ) :: grd
    type(spec_vars)                       ,intent(in   ) :: sp_a
@@ -837,6 +841,12 @@ subroutine general_read_gfsatm_nems(grd,sp_a,filename,uvflag,vordivflag,zflag, &
    integer(i_kind)                       ,intent(in   ) :: it
    integer(i_kind)                       ,intent(  out) :: iret_read
    type(gsi_bundle)                      ,intent(inout) :: gfs_bundle
+
+   ! Declare externals
+   external :: stop2,general_fill_ns,general_filluv_ns,general_sptez_v,general_sptez_s_b
+
+   ! Declare local parameters
+   real(r_kind),parameter:: r0_001 = 0.001_r_kind
 
    real(r_kind),pointer,dimension(:,:)       :: ptr2d
    real(r_kind),pointer,dimension(:,:,:)     :: ptr3d
@@ -1674,9 +1684,6 @@ subroutine general_read_gfsatm_nc(grd,sp_a,filename,uvflag,vordivflag,zflag, &
 
    implicit none
 
-   ! Declare local parameters
-   real(r_kind),parameter:: r0_001 = 0.001_r_kind
-
    ! Declare passed variables
    type(sub2grid_info)                   ,intent(in   ) :: grd
    type(spec_vars)                       ,intent(in   ) :: sp_a
@@ -1684,6 +1691,13 @@ subroutine general_read_gfsatm_nc(grd,sp_a,filename,uvflag,vordivflag,zflag, &
    logical                               ,intent(in   ) :: uvflag,zflag,vordivflag,init_head
    integer(i_kind)                       ,intent(  out) :: iret_read
    type(gsi_bundle)                      ,intent(inout) :: gfs_bundle
+
+   ! Declare externals
+   external :: mpi_allreduce,stop2,general_fill_ns,general_filluv_ns,general_sptez_v,&
+     general_sptez_s_b
+
+   ! Declare local parameters
+   real(r_kind),parameter:: r0_001 = 0.001_r_kind
 
    real(r_kind),pointer,dimension(:,:)       :: ptr2d
    real(r_kind),pointer,dimension(:,:,:)     :: ptr3d

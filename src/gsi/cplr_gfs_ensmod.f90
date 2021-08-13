@@ -188,6 +188,8 @@ subroutine get_user_ens_gfs_fastread_(ntindex,atm_bundle, &
     type(sub2grid_info), intent(in   ) :: grd
     type(gsi_bundle),    intent(inout) :: atm_bundle(:)
 
+    ! Declaree externals
+    external :: mpi_allreduce
 
     ! Declare internal variables
     character(len=*),parameter :: myname_='get_user_ens_gfs_fastread_'
@@ -913,6 +915,9 @@ subroutine parallel_read_gfsnc_state_(en_full,m_cvars2d,m_cvars3d,nlon,nlat,nsig
    real(r_single),   intent(inout) :: en_full(iasm:iaemz,jasm:jaemz,kasm:kaemz,masm:maemz)
    character(len=*), intent(in   ) :: filename
 
+   ! Declare externals
+   external :: stop2
+
    ! Declare local variables
    integer(i_kind) i,ii,j,jj,k,lonb,latb,levs,kr,ierror
    integer(i_kind) k2,k3,k3u,k3v,k3t,k3q,k3cw,k3oz,kf
@@ -1285,6 +1290,10 @@ end subroutine move1_
     type(gsi_bundle),    intent(inout) :: atm_bundle
     integer(i_kind),     intent(  out) :: iret
 
+    ! Declare externals
+    external :: general_read_fv3atm_nems,general_read_gfsatm_nems,general_read_gfsatm_nc,&
+      general_read_gfsatm
+
     ! Declare internal variables
     character(len=*),parameter :: myname_='get_user_ens_gfs_member_'
     character(len=70) :: filename
@@ -1382,6 +1391,9 @@ subroutine put_gfs_ens(this,grd,member,ntindex,pert,iret)
     type(gsi_bundle),    intent(inout) :: pert
     integer(i_kind),     intent(  out) :: iret
 
+    ! Declare externals
+    external :: general_write_gfsatm
+
     ! Declare internal variables
     character(len=*),parameter :: myname_='put_gfs_ens'
     character(len=70) :: filename
@@ -1435,6 +1447,9 @@ subroutine non_gaussian_ens_grid_gfs(this,elats,elons)
     ! Declare passed variables
     class(ensemble), intent(inout) :: this
     real(r_kind), intent(out) :: elats(:),elons(:)
+
+    ! Declare externals
+    external :: stop2
 
     character(len=*),parameter :: myname_=myname//'non_gaussian_ens_grid'
 

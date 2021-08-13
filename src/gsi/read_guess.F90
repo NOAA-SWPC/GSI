@@ -128,6 +128,10 @@ subroutine read_guess(iyear,month,idd,mype)
   integer(i_kind),intent(in   ) :: idd
   integer(i_kind),intent(in   ) :: mype
 
+! Declare externals
+  external :: read_2d_guess,read_cmaq_guess,tpause,genqsat,&
+    read_gfs_ozone_for_regional
+
 ! Declare local variables
   character(24) filename
   logical :: ice

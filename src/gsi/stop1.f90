@@ -27,7 +27,10 @@ subroutine stop2(ierror_code)
   use gsi_io, only: verbose
   implicit none
 
-  integer(i_kind) ierror_code
+  integer(i_kind),intent(in) :: ierror_code
+
+! Declare externals
+  external :: mpi_abort
 
   if (verbose) then
      write(6,*)'****STOP2****  ABORTING EXECUTION w/code=',ierror_code

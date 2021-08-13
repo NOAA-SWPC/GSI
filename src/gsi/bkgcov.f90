@@ -48,6 +48,9 @@ subroutine bkgcov(cstate)
 ! Passed Variables
   type(gsi_bundle),intent(inout) :: cstate
 
+! Declare externals
+  external :: bkgvar,frfhvo,smoothrf
+
 ! Local Variables
   integer(i_kind) n,n3d,istatus,nlevs
   real(r_kind),dimension(nlat*nlon*s2g_raf%nlevs_alloc):: hwork
@@ -143,6 +146,9 @@ subroutine ckgcov(z,cstate,nval_lenz)
   type(gsi_bundle),intent(inout) :: cstate
   real(r_kind),dimension(nval_lenz),intent(in   ) :: z
 
+! Declare externals
+  external :: sqrt_smoothrf,frfhvo,bkgvar
+
 ! Local Variables
   integer(i_kind) k,n3d,istatus,nlevs
   real(r_kind),dimension(nlat*nlon*s2g_raf%nlevs_alloc):: hwork
@@ -227,6 +233,9 @@ subroutine ckgcov_ad(z,cstate,nval_lenz)
   integer(i_kind)    ,intent(in   ) :: nval_lenz
   type(gsi_bundle),intent(inout) :: cstate
   real(r_kind),dimension(nval_lenz),intent(inout) :: z
+
+! Declare externals
+  external :: bkgvar,frfhvo,sqrt_smoothrf_ad
 
 ! Local Variables
   integer(i_kind) k,n3d,istatus,nlevs

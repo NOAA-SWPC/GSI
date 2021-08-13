@@ -165,6 +165,9 @@ contains
 
     real(r_kind),parameter:: r20=20.0_r_kind
 
+!   Declare externals
+    external :: datelen,openbf,ufbqcd,openmb,ufbint,writsb,closbf
+
     integer(i_kind) ludx,nobs,nlev,idate
     character(8) subset,sid(1)
     real(r_kind),dimension(1):: typ
@@ -533,6 +536,9 @@ contains
 !$$$
     use constants, only: zero, one
     implicit none
+
+!   Declare externals
+    external :: w3movdat
 
     integer(i_kind) lumk                          ! output unit
     integer(i_kind) ilev, isnd

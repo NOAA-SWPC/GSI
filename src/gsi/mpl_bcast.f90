@@ -20,6 +20,9 @@ integer(i_kind),intent(in   ) :: root
 integer(i_kind),intent(in   ) :: klen
 real(r_kind)   ,intent(inout) :: pvals(klen)
 
+! Declare externals
+external :: mpi_bcast,stop2
+
 ! ----------------------------------------------------------
 
 if (npe>1.and.klen>0) then

@@ -119,7 +119,7 @@ subroutine setupdbz(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,radardbz_d
 
 ! Declare external calls for code analysis
   external:: tintrp2a1, tintrp2a11
-  external:: tintrp3
+  external:: tintrp3, tintrp31
   external:: grdcrd
   external:: stop2
 ! Declare local variables

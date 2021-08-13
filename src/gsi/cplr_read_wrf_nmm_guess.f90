@@ -125,6 +125,10 @@ contains
     class(read_wrf_nmm_guess_class),intent(inout) :: this
     integer(i_kind),intent(in):: mype
   
+  ! Declare externals
+    external :: mpi_scatterv,mpi_file_open,mpi_file_read_at,to_native_endianness_i4,&
+      mpi_file_close,fill_nmm_grid2,half_nmm_grid2,mpi_reduce
+
   ! Declare local parameters
     type(read_wrf_mass_guess_class) :: wrf_mass 
   ! Declare local variables
@@ -1083,6 +1087,9 @@ contains
     class(read_wrf_nmm_guess_class),intent(inout) :: this
     integer(i_kind),intent(in):: mype
   
+  ! Declare externals
+    external :: fill_nmm_grid2,half_nmm_grid2,mpi_alltoallv,mpi_reduce
+
   ! Declare local parameters
     character(len=*),parameter :: myname='read_wrf_nmm_netcdf_guess:: '
   
@@ -1735,6 +1742,9 @@ contains
     class(read_wrf_nmm_guess_class),intent(inout) :: this
     integer(i_kind),intent(in):: mype
   
+  ! Declare externals
+    external :: mpi_reduce
+
   ! Declare local parameters
   
   ! Declare local variables

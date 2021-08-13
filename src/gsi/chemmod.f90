@@ -157,6 +157,10 @@ contains
 !   prgmmr: pagowski                date: 2010-09-13
 
 ! assigns conversion factors between AIRNow pm units and model units
+    implicit none
+
+!   Declare externals
+    external :: stop2
 
     real(r_kind) :: obs2model_anowbufr_pm
     
@@ -176,6 +180,8 @@ contains
 
 !   prgmmr: pagowski                date: 2010-09-13
 !   allocates and assigns initial values to pm2_5_guess
+    implicit none
+
     integer(i_kind) :: i,j,k
 
     allocate(pm2_5_guess(lat2,lon2,nsig))
@@ -194,6 +200,8 @@ contains
 
 !   prgmmr: pagowski                date: 2010-09-13
 !   allocates and assigns initial values to aerotot_guess
+    implicit none
+
     integer(i_kind) :: i,j,k
 
     allocate(aerotot_guess(lat2,lon2,nsig))
@@ -216,6 +224,7 @@ contains
 !  2019-03-21 Martin  - cleaned up contribution from S-W Wei at UAlbany     
 
 !initialiazes default values to &CHEM namelist parameters
+    implicit none
     
     berror_chem=.false.
     oneobtest_chem=.false.
@@ -301,6 +310,9 @@ contains
     real(r_kind),parameter :: r100 = 100.0_r_kind
     real(r_kind),parameter :: r360 = 360.0_r_kind
     
+! declare externals
+    external :: stop2,grdcrd1,count_obs
+
 ! declare local variables
     logical outside
     

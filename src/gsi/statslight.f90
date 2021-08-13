@@ -48,6 +48,9 @@ subroutine statslight(mype,i_light,bwork,awork,i_ref,ndata)
   real(r_kind),dimension(npres_print,nlighttype,5,3),intent(in   ) :: bwork
   integer(i_kind),dimension(ndat,3)                 ,intent(in   ) :: ndata
 
+! Declare externals
+  external :: dtast
+
 ! Declare local variables
   character(100) mesage
 

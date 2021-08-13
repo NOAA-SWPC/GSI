@@ -192,6 +192,9 @@ real(r_kind)    , intent(inout)         :: preduc
 integer(i_kind) , intent(inout)         :: kmaxit
 logical         , intent(in)            :: lsavevecs
 
+! Declare externals
+external :: stop2,precond,jgrad,bkerror,SSTEQR,DSTEQR
+
 type(control_vector)      :: grad0,xtry,ytry,gradw,dirx,diry,dirw
 real(r_kind), allocatable :: alpha(:),beta(:),delta(:),gam(:)
 real(r_kind), allocatable :: zdiag(:),ztoff(:),zwork(:)
@@ -808,6 +811,9 @@ subroutine setup_pcgprecond()
 
 IMPLICIT NONE
 
+! Declare externals
+external :: stop2
+
 INTEGER(i_kind)                :: jj,jk,ii,iunit
 CHARACTER(LEN=13)              :: clfile
 
@@ -891,12 +897,15 @@ IMPLICIT NONE
 TYPE(CONTROL_VECTOR) , INTENT(INout)  :: xcvx
 TYPE(CONTROL_VECTOR) , INTENT(INOUT) :: ycvx
 
+! Declare externals
+external :: bkerror,stop2
+
 REAL(r_kind)        :: zdp(NVCGLPC)
 INTEGER(i_kind)     :: jk, ji
  
 ycvx=zero
 do jk=1,NVCGLPC
-   zdp(jk) = 0.
+   zdp(jk) = 0._r_kind
 enddo
 
 !Apply B

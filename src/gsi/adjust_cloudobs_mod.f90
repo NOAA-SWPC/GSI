@@ -395,6 +395,9 @@ subroutine adjust_goescldobs(goescld,timeobs,dlat_earth,dlon_earth, &
   real(r_kind),intent(inout) :: low_cldamt,mid_cldamt,hig_cldamt
   real(r_kind),intent(inout) :: tcamt
 
+! declare externals
+  external :: w3movdat
+
 ! declare local variables
   integer(i_kind),parameter,dimension(12):: mday=(/0,31,59,90,&
        120,151,181,212,243,273,304,334/)

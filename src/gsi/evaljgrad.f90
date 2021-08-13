@@ -84,6 +84,10 @@ logical             , intent(in   ) :: lupdfgs
 integer(i_kind)     , intent(in   ) :: nprt
 character(len=*)    , intent(in   ) :: calledby
 
+! Declare externals
+external :: control2model,ensctl2model,model_tl,evaljo,evalqlim,model_ad,ensctl2model_ad,&
+  control2model_ad,strong_baldiag_inc,inc2guess,view_st,write_all,update_guess
+
 ! Declare local variables  
 character(len=*), parameter :: myname='evaljgrad'
 type(gsi_bundle) :: sval(nobs_bins), rval(nobs_bins)

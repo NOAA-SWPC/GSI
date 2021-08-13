@@ -110,6 +110,9 @@ end subroutine berror_get_dims_reg
 !      2014-10-15 - Zhu - adopted from m_berror_stat to make code structure similar
 !EOP ___________________________________________________________________
 
+! Declare externals
+  external :: stop2
+
   character(len=*),parameter :: myname_=myname//'::berror_set_reg'
   logical found
 

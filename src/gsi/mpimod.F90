@@ -112,6 +112,9 @@ module mpimod
   public :: mpi_mode_wronly
   public :: mpi_character
 
+! Declare externals
+  external :: mpi_comm_group,mpi_group_incl,mpi_comm_create,mpi_group_free
+
 #ifdef HAVE_ESMF
   integer(i_kind) :: mpi_comm_world
 #endif

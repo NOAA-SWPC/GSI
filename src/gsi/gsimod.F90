@@ -59,7 +59,7 @@
                        l4dvar,nhr_obsbin,nhr_subwin,nwrvecs,iorthomax,&
                        lbicg,lsqrtb,lcongrad,lbfgsmin,ltlint,ladtest,ladtest_obs, lgrtest,&
                        idmodel,clean_4dvar,iwrtinc,lanczosave,jsiga,ltcost,liauon, &
-		       l4densvar,ens_nstarthr,lnested_loops,lwrite4danl,nhr_anal,thin4d,tau_fcst,efsoi_order
+                       l4densvar,ens_nstarthr,lnested_loops,lwrite4danl,nhr_anal,thin4d,tau_fcst,efsoi_order
   use gsi_4dvar, only: mPEs_observer
   use m_obsdiags, only: alwaysLocal => obsdiags_alwaysLocal
   use obs_ferrscale, only: lferrscale
@@ -135,7 +135,7 @@
      range_max,elev_angle_max,initialize_superob_radar,l2superob_only,radar_sites,radar_box,radar_rmesh,radar_zmesh
   use m_berror_stats,only : berror_stats ! filename if other than "berror_stats"
   use lag_fields,only : infile_lag,lag_nmax_bal,&
-                        &lag_vorcore_stderr_a,lag_vorcore_stderr_b,lag_modini
+                        lag_vorcore_stderr_a,lag_vorcore_stderr_b,lag_modini
   use lag_interp,only : lag_accur
   use lag_traj,only   : lag_stepduration
   use hybrid_ensemble_parameters,only : l_hyb_ens,uv_hyb_ens,aniso_a_en,generate_ens,&
@@ -1276,6 +1276,10 @@
   use gsi_4dcouplermod, only: gsi_4dcoupler_parallel_init
   use gsi_4dcouplermod, only: gsi_4dcoupler_setservices
   implicit none
+
+! Declare externals
+  external :: mpi_comm_size,mpi_comm_rank,w3tagb,stop2,convert_fv3_regional
+
   character(len=*),parameter :: myname_='gsimod.gsimain_initialize'
   integer:: ier,ios
   real(r_kind):: varqc_max,c_varqc_new
@@ -1829,6 +1833,10 @@
 !EOC
 
 !---------------------------------------------------------------------------
+
+! Declare externals
+  external :: gsisub
+
   logical :: init_pass_
   logical :: last_pass_
  
@@ -1864,6 +1872,10 @@
   use m_obsdiags, only: obsdiags_destroy
 
   implicit none
+
+! Decalre externals
+  external :: mpi_comm_rank,w3tage,mpi_finalize
+
 ! Deallocate arrays
 ! RTodling debug: PROG HANGS; needs ATTENTION
   call mpi_comm_rank(mpi_comm_world,mype,ierror)

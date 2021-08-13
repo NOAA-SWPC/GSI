@@ -71,6 +71,9 @@ subroutine gsi_inquire (lbytes,lexist,filename,mype)
   character(len=*),intent(in   ) :: filename
   integer(i_kind) ,intent(in   ) :: mype
 
+! Declare externals
+  external :: system
+
   character(len=256) command, fname
 
 #if defined(__INTEL_COMPILER) && (__INTEL_COMPILER < 1110)
@@ -168,6 +171,9 @@ subroutine read_obs_check (lexist,filename,jsatid,dtype,minuse,nread)
   character(len=*),intent(in)     :: dtype
   integer(i_kind) ,intent(in)     :: minuse
   integer(i_kind) ,intent(inout)  :: nread
+
+! Declare externals
+  external :: openbf,datelen,readmg,closbf,ufbint
 
   integer(i_kind) :: lnbufr,idate,idate2,iret,kidsat
   integer(i_kind) :: ireadsb,ireadmg,kx,nc,said
@@ -751,6 +757,20 @@ subroutine read_obs(ndata,mype)
 !   Declare passed variables
     integer(i_kind)                  ,intent(in   ) :: mype
     integer(i_kind),dimension(ndat,3),intent(  out) :: ndata
+
+!   Declare externals
+    external :: w3fs21,stop2,mpi_allreduce,prt_guessfc2,mpi_allgatherv,read_fl_hdob,&
+      read_prepbufr,read_satmar,read_mitm_mxtm,read_goesimgr_skycover,read_satwnd,&
+      read_sfcwnd,read_rapidscat,read_nsstbufr,read_modsbufr,read_radarref_mosaic,&
+      read_lightning,read_lightning_grid,read_NASA_LaRC_cloud,read_nasa_larc,&
+      read_radar_wind_ascii,read_radar,read_radar_l2rw,read_radar_l2rw_novadqc,&
+      read_dbz_nc,read_dbz_mrms_detect_format,read_dbz_mrms_sparse_netcdf,&
+      read_dbz_mrms_netcdf,read_lag,read_lidar,read_tcps,read_anowbufr,&
+      read_pblh,read_wcpbufr,read_bufrtovs,read_atms,read_saphir,read_airs,&
+      read_iasi,read_cris,read_goesndr,read_ssmi,read_amsre,read_ssmis,&
+      read_amsr2,read_goesimg,read_gmi,read_seviri,read_abi,read_ahi,&
+      read_avhrr_navy,read_avhrr,read_ozone,read_co,read_pcp,read_gps,&
+      read_aerosol,read_goesglm,mpi_bcast
 
 !   Declare local parameters
     integer(i_llong),parameter:: lenbuf=8388608_i_llong  ! lenbuf=8*1024*1024

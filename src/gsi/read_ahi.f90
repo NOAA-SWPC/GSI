@@ -80,6 +80,10 @@ subroutine read_ahi(mype,val_img,ithin,rmesh,jsatid,gstime,&
   integer(i_kind) ,intent(in   ) :: mpi_comm_sub
   logical         ,intent(in)    :: dval_use
 
+! Declare externals
+  external :: openbf,datelen,readmg,closbf,ufbint,ufbrep,grdcrd1,w3fs21,&
+    combine_radobs,count_obs
+
 ! Declare local parameters
   integer(i_kind),parameter:: nimghdr=11
   real(r_kind),parameter:: r360=360.0_r_kind

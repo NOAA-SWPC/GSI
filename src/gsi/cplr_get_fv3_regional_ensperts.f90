@@ -52,6 +52,9 @@ contains
       integer(i_kind), intent(in   ):: nelen
       real(r_single),dimension(:,:,:),allocatable,intent(inout):: ps_bar
   
+!     Declare externals
+      external :: stop2,mpi_barrier
+
       real(r_kind),dimension(grd_ens%lat2,grd_ens%lon2,grd_ens%nsig):: u,v,tv,oz,rh
       real(r_kind),dimension(grd_ens%lat2,grd_ens%lon2):: ps
   
@@ -348,6 +351,9 @@ contains
       real(r_kind),parameter:: r10   = 10.0_r_kind
       real(r_kind),parameter:: r100  = 100.0_r_kind
   !
+  ! Declare externals
+      external :: genqsat
+  !
   !   Declare local variables
       
       integer(i_kind):: i,j,k,kp
@@ -505,6 +511,9 @@ contains
     integer(i_kind),intent(in):: mype
     type(gsi_bundle),allocatable, intent(in   ) :: en_perts(:,:)
     integer(i_kind), intent(in   ):: nelen
+
+!   Declare externals
+    external :: stop2,write_spread_dualres
   
     type(gsi_bundle):: sube,suba
     type(gsi_grid):: grid_ens,grid_anl

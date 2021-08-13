@@ -292,8 +292,6 @@ subroutine read_(dfile,dtype,dplat,dsis, &      ! intent(in), keys for type mana
 !     call extOzone_read(dtype,dplat,dsis,dfile,...)
 !
 
-  character(len=*), parameter:: myname_=myname//'::read_'
-
   integer(kind=i_kind), intent(out):: nread     ! number of obs record reads in this call
   integer(kind=i_kind),dimension(npe), intent(inout):: nobs     ! number of obs record reads in this call
   integer(kind=i_kind), intent(out):: npuse     ! nnmber of "preofiles" retained in this call
@@ -307,6 +305,11 @@ subroutine read_(dfile,dtype,dplat,dsis, &      ! intent(in), keys for type mana
 
   integer(kind=i_kind), intent(in ):: ithin     ! flag to thin data
   real   (kind=r_kind), intent(in ):: rmesh     ! thining mesh size (km)
+
+! Declare externals
+  external :: count_obs
+
+  character(len=*), parameter:: myname_=myname//'::read_'
 
   real(kind=r_kind),pointer,dimension(:,:):: p_out
 
@@ -508,6 +511,9 @@ subroutine oztot_ncread_(dfile,dtype,dsis, ozout,nmrecs,ndata,nodata, &
 
 
   integer(kind=i_kind), intent(in ):: ithin     ! flag to thin data
+
+! Declare externals
+  external :: grdcrd1,w3fs21
 
   character(len=*), parameter:: myname_=myname//'::oztot_ncRead_'
 
@@ -854,6 +860,8 @@ subroutine ozlev_ncread_(dfile,dtype,ozout,nmrecs,ndata,nodata, gstime,twind)
   real   (kind=r_kind), intent(in):: gstime ! analysis time (minute) from reference date
   real   (kind=r_kind), intent(in):: twind  ! input group time window (hour)
 
+! Declare externals
+  external :: grdcrd1,w3fs21
 
   character(len=*), parameter:: myname_=myname//'::ozlev_ncRead_'
 
@@ -1172,6 +1180,8 @@ subroutine ozlev_bufrread_(dfile,dtype,dsis, ozout,nmrecs,ndata,nodata, &
   real   (kind=r_kind), intent(in):: gstime ! analysis time (minute) from reference date
   real   (kind=r_kind), intent(in):: twind  ! input group time window (hour)
 
+! Declare externals
+  external :: openbf,datelen,readmg,closbf,readsb,ufbint,grdcrd1,w3fs21,ufbrep
 
   character(len=*),parameter:: myname_=myname//'::ozlev_bufrread_'
 

@@ -141,6 +141,9 @@ subroutine read_radar_wind_ascii(nread,ndata,nodata,infile,lunout,obstype,sis,hg
   real(r_kind),dimension(nlat,nlon,nsig),intent(in):: hgtl_full
   integer(i_kind),dimension(npe) ,intent(inout) :: nobs
 
+! Declare externals
+  external :: stop2,w3fs21,count_obs
+
 ! Declare local parameters
   real(r_kind),parameter :: four_thirds = 4.0_r_kind / 3.0_r_kind
   real(r_kind),parameter :: r8     = 8.0_r_kind

@@ -52,6 +52,10 @@
       integer(i_kind),dimension(npe),intent(inout):: nobs
       real(r_kind),intent(in):: twindin
 
+!     Declare externals
+      external :: mesgbc,openbf,datelen,ufbint,closbf,grdcrd1,w3fs21,&
+        ufbin3,count_obs
+
 !     Declare local parameters
       integer(i_kind),parameter:: MXNM=25                 ! max Nems, max Replications
       integer(i_kind),parameter:: MXRP=255                ! max Nems, max Replications

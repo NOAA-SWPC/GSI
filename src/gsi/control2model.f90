@@ -71,6 +71,10 @@ type(control_vector), intent(in   ) :: xhat
 type(gsi_bundle)    , intent(inout) :: sval(nsubwin)
 type(predictors)    , intent(inout) :: bval
 
+! Declare externals
+external :: stop2,ckgcov,getprs_tl,normal_rh_to_q,tv_to_tsen,&
+  getuv
+
 ! Declare local variables  	
 character(len=*),parameter:: myname ='control2model'
 real(r_kind),dimension(lat2,lon2,nsig) :: workst,workvp,workrh

@@ -53,6 +53,8 @@ subroutine rfdpar1(be,rate,m)
   integer(i_kind),parameter:: nn=12
   real(r_kind),parameter:: qcrit=0.001_r_kind
 
+! Declare externals
+  external :: zroots,stop2,linmm
 
   logical polish
   integer(i_kind) j2,jreal,ipow,jimag,kmod2,i
@@ -305,6 +307,9 @@ subroutine linmm(a,b,m,mm,na,nb)
   real(r_kind),dimension(na,*),intent(inout) :: a
   real(r_kind),dimension(nb,*),intent(inout) :: b
 
+! Declare externals
+  external :: ldum,udlmm
+
   integer(i_kind),dimension(m):: ipiv    ! <- numerical pivot sequence
   real(r_kind) d
 
@@ -349,6 +354,9 @@ subroutine ldum(a,ipiv,d,m,na)
   real(r_kind)                   ,intent(  out) :: d
 
   integer(i_kind),parameter:: nn=500
+
+! Declare externals
+  external :: stop2
 
   integer(i_kind) k,ibig,jm,i,jp,j
   real(r_kind) aa,aam,t,abig,ajji,aij,ajj
@@ -452,6 +460,9 @@ subroutine udlmm(a,b,ipiv,m,mm,na,nb)
   integer(i_kind),dimension(m)   ,intent(in   ) :: ipiv
   real(r_kind)   ,dimension(na,*),intent(in   ) :: a
   real(r_kind)   ,dimension(nb,*),intent(inout) :: b
+
+! Declare externals
+  external :: dsbvr
 
   integer(i_kind) k,i,l
   real(r_kind) s,aiii
@@ -557,6 +568,9 @@ subroutine zroots(a,m,roots,polish)
 
   integer(i_kind),parameter:: maxm=101
 
+! Declare externals
+  external :: laguer
+
   integer(i_kind) j,i,jj
   real(r_kind)::  small,twosmall2
   complex(r_kind) x,b,c
@@ -641,6 +655,9 @@ subroutine laguer(a,m,x,small,polish)
   real(r_kind)                ,intent(in   ) :: small
 
   integer(i_kind),parameter:: maxit=100
+
+! Declare externals
+  external :: stop2
 
   integer(i_kind) iter,j
   real(r_kind) abx,cdx,err,dxold

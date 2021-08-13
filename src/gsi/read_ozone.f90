@@ -121,6 +121,10 @@ subroutine read_ozone(nread,ndata,nodata,jsatid,infile,gstime,lunout, &
   integer(i_kind) ,intent(inout) :: ndata,nodata
   real(r_kind)    ,intent(in   ) :: gstime,twind,rmesh
 
+! Declare externals
+  external :: openbf,datelen,readmg,closbf,readsb,ufbint,grdcrd1,w3fs21,&
+    ufbseq,w3fs26,ufbrep,stop2,count_obs
+
 ! Declare local parameters
   real(r_kind),parameter:: r6   = 6.0_r_kind
   real(r_kind),parameter:: r76  = 76.0_r_kind

@@ -246,6 +246,9 @@ subroutine setupw(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,conv_diagsav
   external:: intrp2a11,tintrp2a1,tintrp2a11
   external:: tintrp31
   external:: grdcrd1
+  external:: windfactor
+  external:: getwdir
+  external:: vqc_setup
   external:: stop2
 
 ! Declare local variables

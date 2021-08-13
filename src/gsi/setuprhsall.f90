@@ -215,6 +215,10 @@ subroutine setuprhsall(ndata,mype,init_pass,last_pass)
   external:: statslight
   external:: stop2
   external:: w3tage
+  external:: gsdcloudanalysis
+  external:: write_all
+  external:: prt_guess
+  external:: MPI_Barrier
 
 ! Delcare local variables
   logical:: conv_diagsave,llouter,getodiag

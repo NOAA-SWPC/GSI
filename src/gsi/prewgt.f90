@@ -118,6 +118,11 @@ subroutine prewgt(mype)
 ! Declare passed variables
   integer(i_kind),intent(in   ) :: mype
 
+! Declare externals
+  external :: stop2,mpi_allgatherv,smoothww,get_randoms,rfdpar1,rfdpar2,&
+    bkgvar_rewgt,write_bkgvars_grid,smoothzo,compute_qvar3d,write_bkgvars2_grid,&
+    setwts,polcasl
+
 ! Declare local variables
   integer(i_kind) n,nrr,iii,jjj,nxg,i2,im,jm,j2
   integer(i_kind) i,j,k,ii,nn,nbuf,nmix,nxe,nor,ndx,ndy

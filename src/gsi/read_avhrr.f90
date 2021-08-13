@@ -108,6 +108,10 @@ subroutine read_avhrr(mype,val_avhrr,ithin,rmesh,jsatid,&
   integer(i_kind) ,intent(in   ) :: mpi_comm_sub
   logical         ,intent(in   ) :: dval_use
 
+! Declare externals
+  external :: rdgrbsst,openbf,ufbint,ufbrep,w3fs21,grdcrd1,closbf,&
+    combine_radobs,count_obs
+
 ! Declare local parameters
   character(6),parameter:: file_sst='SST_AN'
   integer(i_kind),parameter:: mlat_sst = 3000

@@ -45,6 +45,10 @@ subroutine tpause_t(km,p,t,h,ptp)
   real(r_kind),parameter:: ptplim(2)=(/500.0e2_r_kind, 50.0e2_r_kind/)
   real(r_kind),parameter:: gamtp=2.0e-3_r_kind
   real(r_kind),parameter:: hd=2.0e3_r_kind
+
+! Declare externals
+  external :: rsearch
+
   real(r_kind) gamu,gamd,td,gami,wtp,ttrop,htp
   real(r_kind),dimension(km):: hphd
   integer(i_kind) klim(2),k,kd(1),ktp,kmm2

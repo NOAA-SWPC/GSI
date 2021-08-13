@@ -37,6 +37,9 @@ subroutine polcasl(sl,sl1,sl2,mf,nf,mrr,nrr,nor,rs,df,nxe,nxg)
   real(r_kind),dimension(-nf:nf,-nf:nf),intent(  out) :: sl1,sl2
   real(r_kind),dimension(0:nrr)        ,intent(in   ) :: rs
 
+! Declare externals
+  external :: setwtt,polca
+
   integer(i_kind) nxp,nxg,nxe,j1,ir,j,i
   integer(i_kind),dimension(mf:nf,0:nxg-1):: inaxt
   integer(i_kind),dimension(0:nf,mf:nf):: inbat
@@ -263,6 +266,9 @@ subroutine setwtt(wtaxt,wtbat,inaxt,inbat,rs,df,qr,nxe,nxg,mrr,nrr,mf,nf,nor)
   real(r_kind)   ,dimension(0:nor-1,mf:nf,0:nxg-1),intent(  out) :: wtaxt
   real(r_kind)   ,dimension(0:nor-1,0:nf,mf:nf)   ,intent(  out) :: wtbat
 
+! Declare externals
+  external :: setq,lagw
+
   integer(i_kind) irp,nra,mra,iy,ir,ia,ixp,i,ic0,ib
   integer(i_kind) norm,norh,ix,nxgm
   
@@ -417,6 +423,9 @@ subroutine setwts(wtaxs,wtxrs,inaxs,inxrs,rs,df,nor,nxe,nf,mr,nr)
   integer(i_kind),dimension(0:nxe-1,mr:nr)           ,intent(  out) :: inxrs
   real(r_kind)   ,dimension(0:nor-1,nf,0:nxe-1)   ,intent(  out) :: wtaxs
   real(r_kind)   ,dimension(0:nor-1,0:nxe-1,mr:nr),intent(  out) :: wtxrs
+
+! Declare externals
+  external :: setq,lagw
  
   integer(i_kind) iy,ix,if1min,ia,ir,ig,nxem
   integer(i_kind) norm,norhm,norh

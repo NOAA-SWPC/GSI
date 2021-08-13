@@ -75,6 +75,10 @@ subroutine read_abi(mype,val_abi,ithin,rmesh,jsatid,&
   integer(i_kind),intent(in) :: mpi_comm_sub
   logical        ,intent(in) :: dval_use
 
+! Declare externals
+  external :: openbf,datelen,readmg,closbf,ufbint,grdcrd1,w3fs21,ufbrep,&
+    combine_radobs,count_obs
+
 ! Declare local parameters
   real(r_kind),parameter:: r70=70.0_r_kind
   real(r_kind),parameter:: r65=65.0_r_kind

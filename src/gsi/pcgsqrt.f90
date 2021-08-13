@@ -48,6 +48,9 @@ type(control_vector), intent(inout) :: xhat,gradx
 real(r_kind)        , intent(inout) :: costf
 integer(i_kind)     , intent(in   ) :: itermax,nprt
 
+! Declare externals
+external :: evaljgrad
+
 ! Declare local variables
 character(len=*), parameter :: myname='pcgsqrt'
 type(control_vector)        :: dirx,xtry,grtry,grad0,gradf

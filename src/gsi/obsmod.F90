@@ -975,6 +975,9 @@ contains
 
     integer(i_kind),intent(in   ) :: mype
 
+!   Declare externals
+    external :: system
+
     character(len=144):: command
     character(len=8):: pe_name
 
@@ -1016,6 +1019,9 @@ contains
 !$$$ end documentation block
     use mpimod, only: mype
     implicit none
+
+!   Declare externals
+    external :: stop2
 
     if (l4dvar) then
        offtime_data = .true.   ! .true. = ignore difference in obs ref time

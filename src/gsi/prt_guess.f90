@@ -54,6 +54,9 @@ subroutine prt_guess(sgrep)
 ! Declare passed variables
   character(len=*), intent(in   ) :: sgrep
 
+! Declare externals
+  external :: prt_guess2,mpi_allgather
+
 ! Declare local variables
   integer(i_kind), parameter :: nvars=13
   integer(i_kind) ii,istatus,ier,icf 
@@ -189,7 +192,7 @@ subroutine prt_guess(sgrep)
 
 ! Gather contributions
   call mpi_allgather(zloc,3*nvars+3,mpi_rtype, &
-                   & zall,3*nvars+3,mpi_rtype, mpi_comm_world,ierror)
+                     zall,3*nvars+3,mpi_rtype, mpi_comm_world,ierror)
 
   if (mype==0) then
      zmin=zero
@@ -280,6 +283,9 @@ subroutine prt_guess2(sgrep)
 
 ! Declare passed variables
   character(len=*), intent(in   ) :: sgrep
+
+! Declare externals
+  external :: mpi_allgather
 
 ! Declare local variables
 ! integer(i_kind), parameter :: nvars=17 
@@ -542,7 +548,7 @@ subroutine prt_guess2(sgrep)
 
 ! Gather contributions
   call mpi_allgather(zloc,3*nvars+3,mpi_rtype, &
-                   & zall,3*nvars+3,mpi_rtype, mpi_comm_world,ierror)
+                     zall,3*nvars+3,mpi_rtype, mpi_comm_world,ierror)
 
   if (mype==0) then
      zmin=zero
@@ -754,6 +760,9 @@ subroutine prt_guesschem(sgrep)
 ! Declare passed variables
   character(len=*), intent(in   ) :: sgrep
 
+! Declare externals
+  external :: mpi_allgather
+
 ! Declare local variables
   integer(i_kind) nvars
   integer(i_kind) ii
@@ -795,7 +804,7 @@ subroutine prt_guesschem(sgrep)
 
 ! Gather contributions
   call mpi_allgather(zloc,3*nvars+1,mpi_rtype, &
-                   & zall,3*nvars+1,mpi_rtype, mpi_comm_world,ierror)
+                     zall,3*nvars+1,mpi_rtype, mpi_comm_world,ierror)
 
   if (mype==0) then
      zmin=zero

@@ -106,6 +106,10 @@ subroutine read_gps(nread,ndata,nodata,infile,lunout,obstype,twind, &
   real(r_kind),parameter:: r10000=10000.0_r_kind
   real(r_kind),parameter:: r360=360.0_r_kind
 
+! Declare externals
+  external :: openbf,datelen,readmg,closbf,ufbint,w3fs21,&
+    upftbv,ufbseq,grdcrd1,count_obs
+
 ! Declare local variables
   logical good,outside
   

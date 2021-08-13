@@ -56,6 +56,9 @@ subroutine read_mitm_mxtm(nread,ndata,nodata,infile,obstype,lunout,gstime,sis,no
   real(r_kind)                          ,intent(in   ) :: gstime
   integer(i_kind),dimension(npe),intent(inout) :: nobs
 
+! Declare externals
+  external :: grdcrd1,count_obs
+
 ! Declare local parameters
   real(r_kind),parameter:: r90  = 90.0_r_kind
   real(r_kind),parameter:: r0_01 = 0.01_r_kind

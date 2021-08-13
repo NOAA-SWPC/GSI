@@ -1097,6 +1097,9 @@ end subroutine normal_new_factorization_rf_y
 
     implicit none
 
+!   Declare externals
+    external :: stop2
+
     type(gsi_grid)  :: grid_ens
 
     integer(i_kind) n,istatus,m
@@ -1175,15 +1178,19 @@ end subroutine normal_new_factorization_rf_y
     use get_wrf_mass_ensperts_mod, only: get_wrf_mass_ensperts_class
     use get_fv3_regional_ensperts_mod, only: get_fv3_regional_ensperts_class
     use get_wrf_nmm_ensperts_mod, only: get_wrf_nmm_ensperts_class
-  use hybrid_ensemble_parameters, only: region_lat_ens,region_lon_ens
+    use hybrid_ensemble_parameters, only: region_lat_ens,region_lon_ens
     use mpimod, only: mpi_comm_world
 
     implicit none
 
-   type(get_pseudo_ensperts_class) :: pseudo_enspert
-   type(get_wrf_mass_ensperts_class) :: wrf_mass_enspert
-   type(get_wrf_nmm_ensperts_class) :: wrf_nmm_enspert
-   type(get_fv3_regional_ensperts_class) :: fv3_regional_enspert
+!   Declare externals
+    external :: stop2,get_gefs_ensperts_dualres,en_perts_get_from_save,&
+      en_perts_get_from_save_fulldomain,get_gefs_for_regional,get_nmmb_ensperts
+
+    type(get_pseudo_ensperts_class) :: pseudo_enspert
+    type(get_wrf_mass_ensperts_class) :: wrf_mass_enspert
+    type(get_wrf_nmm_ensperts_class) :: wrf_nmm_enspert
+    type(get_fv3_regional_ensperts_class) :: fv3_regional_enspert
     type(gsi_bundle),allocatable:: en_bar(:)
     type(gsi_bundle):: bundle_anl,bundle_ens
     type(gsi_grid)  :: grid_anl,grid_ens
@@ -1435,6 +1442,9 @@ end subroutine normal_new_factorization_rf_y
     real(r_kind)    ,intent(inout) :: seed(nval2f,nscl)
     type(gsi_bundle),intent(inout) :: bundle_anl,bundle_ens
 
+!   Declare externals
+    external :: mpi_bcast,dlarnv,ckgcov,stop2,getuv
+
     real(r_kind),dimension(nval2f,nnnn1o,nscl):: z
     real(r_kind) vert1(vlevs)
     integer(i_llong) iseed
@@ -1633,6 +1643,9 @@ end subroutine normal_new_factorization_rf_y
     use berror, only: qvar3d
     implicit none
 
+!   Declare externals
+    external :: stop2
+
     integer(i_kind) i,j,k,n,istatus,m
     real(r_kind) qvar3d_ens(grd_ens%lat2,grd_ens%lon2,grd_ens%nsig,1)
     real(r_single),pointer,dimension(:,:,:):: w3=>NULL()
@@ -1695,6 +1708,9 @@ end subroutine normal_new_factorization_rf_y
     use hybrid_ensemble_parameters, only: l_hyb_ens,n_ens,ntlevs_ens
     use hybrid_ensemble_parameters, only: en_perts,ps_bar
     implicit none
+
+!   Declare externals
+    external :: stop2
 
     integer(i_kind) istatus,n,m
 
@@ -1760,6 +1776,9 @@ end subroutine normal_new_factorization_rf_y
     type(gsi_bundle),intent(inout) :: cvec
     type(gsi_bundle),intent(in)    :: a_en(n_ens)
     integer,intent(in)             :: ibin
+
+!   Declare externals
+    external :: stop2
 
     character(len=*),parameter :: myname_=trim(myname)//'*ensemble_forward_model'
     logical :: nogood
@@ -1912,6 +1931,9 @@ end subroutine normal_new_factorization_rf_y
     type(gsi_bundle),intent(inout) :: cvec
     type(gsi_bundle),intent(in)    :: a_en(n_ens)
     integer,intent(in)             :: ibin
+
+!   Declare externals
+    external :: stop2
 
     character(len=*),parameter::myname_=trim(myname)//'*ensemble_forward_model_dual_res'
     type(gsi_grid)   :: grid_ens,grid_anl
@@ -2083,6 +2105,9 @@ end subroutine normal_new_factorization_rf_y
     type(gsi_bundle),intent(inout) :: a_en(n_ens)
     integer,intent(in)             :: ibin
 
+!   Declare externals
+    external :: stop2
+
     character(len=*),parameter :: myname_=trim(myname)//'*ensemble_forward_model_ad'
     logical :: nogood
     integer(i_kind) :: i,j,k,n,im,jm,km,ic2,ic3,ipx,ipic,km_tmp
@@ -2214,7 +2239,10 @@ end subroutine normal_new_factorization_rf_y
 
     type(gsi_bundle),intent(inout) :: cvec
     type(gsi_bundle),intent(inout) :: a_en(n_ens)
-    integer,intent(in)             :: ibin
+    integer(i_kind),intent(in)     :: ibin
+
+!   Declare externals
+    external :: stop2
 
     character(len=*),parameter::myname_=trim(myname)//'*ensemble_forward_model_ad_dual_res'
     type(gsi_grid)   :: grid_ens,grid_anl
@@ -2353,6 +2381,9 @@ end subroutine normal_new_factorization_rf_y
     use gridmod, only: nlat,nlon,nnnn1o,regional,vlevs
     use berror, only: nx,ny,nf
     implicit none
+
+!   Declare externals
+    external :: mpi_alltoallv
 
     integer(i_kind),dimension(0:npe-1):: nh_0_all,nh_1_all,nv_0_all,nv_1_all
     integer(i_kind) nvert,nh_tot,nh_this,nn,nv_tot,nv_this,kchk,n,kk,i,k
@@ -2502,6 +2533,9 @@ end subroutine normal_new_factorization_rf_y
   real(r_kind),dimension(nh_0:nh_1,vlevs,nscl),intent(in   ) :: zsub
   real(r_kind),dimension(nval2f,nv_0:nv_1,nscl)         ,intent(  out) :: z
 
+! Declare externals
+  external :: mpi_alltoallv
+
   real(r_kind) zsub1(nh_0:nh_1,vlevs),work(nval2f*(nv_1-nv_0+1))
   integer(i_kind) i,ii,is,k
 ! integer(i_kind) ibadp,ibadm,kbadp,kbadm
@@ -2572,6 +2606,9 @@ subroutine sqrt_beta_s_mult_cvec(grady)
 
 ! Declare passed variables
   type(control_vector),intent(inout) :: grady
+
+! Declare externals
+  external :: stop2
 
 ! Declare local variables
   character(len=*),parameter::myname_=myname//'*sqrt_beta_s_mult_cvec'
@@ -2670,6 +2707,9 @@ subroutine sqrt_beta_s_mult_bundle(grady)
 
 ! Declare passed variables
   type(gsi_bundle),intent(inout) :: grady
+
+! Declare externals
+  external :: stop2
 
 ! Declare local variables
   character(len=*),parameter::myname_=myname//'*sqrt_beta_s_mult_bundle'
@@ -2893,6 +2933,9 @@ subroutine init_sf_xy(jcap_in)
   implicit none
 
   integer(i_kind),intent(in   ) :: jcap_in
+
+! Declare externals
+  external :: general_g2s0,general_s2g0,outgrads1
 
   integer(i_kind) i,ii,j,k,l,n,jcap,kk,nsigend
   real(r_kind),allocatable::g(:),gsave(:)
@@ -3217,6 +3260,9 @@ subroutine sf_xy(f,k_start,k_end)
   integer(i_kind),intent(in   ) :: k_start,k_end
   real(r_kind)   ,intent(inout) :: f(grd_ens%nlat,grd_ens%nlon,k_start:max(k_start,k_end))
 
+! Declare externals
+  external :: sfilter
+
   real(r_kind) work(grd_sploc%nlat,grd_sploc%nlon,1)
   integer(i_kind) k
   logical vector(k_start:max(k_start,k_end))
@@ -3280,6 +3326,9 @@ subroutine sqrt_sf_xy(z,f,k_start,k_end)
   integer(i_kind),intent(in   ) :: k_start,k_end
   real(r_kind)   ,intent(in   ) :: z(sp_loc%nc,k_start:max(k_start,k_end))
   real(r_kind)   ,intent(  out) :: f(grd_ens%nlat,grd_ens%nlon,k_start:max(k_start,k_end))
+
+! Declare externals
+  external :: general_s2g0
 
   real(r_kind) g(sp_loc%nc)
   real(r_kind) work(grd_sploc%nlat,grd_sploc%nlon,1)
@@ -3345,6 +3394,9 @@ subroutine sqrt_sf_xy_ad(z,f,k_start,k_end)
   integer(i_kind),intent(in   ) :: k_start,k_end
   real(r_kind)   ,intent(inout) :: z(sp_loc%nc,k_start:max(k_start,k_end))
   real(r_kind)   ,intent(inout) :: f(grd_ens%nlat,grd_ens%nlon,k_start:max(k_start,k_end))
+
+! Declare externals
+  external :: general_s2g0_ad
 
   real(r_kind) g(sp_loc%nc)
   real(r_kind) work(grd_sploc%nlat,grd_sploc%nlon,1)
@@ -3465,6 +3517,9 @@ subroutine bkerror_a_en(grady)
 ! Declare passed variables
   type(control_vector),intent(inout) :: grady
 
+! Declare externals
+  external :: stop2
+
 ! Declare local variables
   integer(i_kind) ii,ip,istatus
 
@@ -3549,6 +3604,9 @@ subroutine bkgcov_a_en_new_factorization(a_en)
 ! Passed Variables
 ! real(r_kind),dimension(grd_loc%latlon1n,n_ens),intent(inout) :: a_en
   type(gsi_bundle),intent(inout) :: a_en(n_ens)
+
+! Declare externals
+  external :: stop2
 
 ! Local Variables
   integer(i_kind) ii,k,iflg,iadvance,iback,is,ie,ipnt,istatus
@@ -3651,6 +3709,9 @@ subroutine ckgcov_a_en_new_factorization(z,a_en)
 ! Passed Variables
   type(gsi_bundle),intent(inout) :: a_en(n_ens)
   real(r_kind),dimension(nval_lenz_en),intent(in   ) :: z
+
+! Declare externals
+  external :: stop2
 
 ! Local Variables
   integer(i_kind) ii,k,iadvance,iback,is,ie,ipnt,istatus
@@ -3762,6 +3823,9 @@ subroutine ckgcov_a_en_new_factorization_ad(z,a_en)
   type(gsi_bundle),intent(inout) :: a_en(n_ens)
   real(r_kind),dimension(nval_lenz_en),intent(inout) :: z
 
+! Declare externals
+  external :: stop2
+
 ! Local Variables
   integer(i_kind) ii,k,iadvance,iback,is,ie,ipnt,istatus
   real(r_kind) hwork(grd_loc%nlat*grd_loc%nlon*(grd_loc%kend_alloc-grd_loc%kbegin_loc+1))
@@ -3868,6 +3932,9 @@ subroutine hybens_grid_setup
   use gridmod, only: region_lat,region_lon,region_dx,region_dy
 
   implicit none
+
+! Declare externals
+  external :: stop2
 
   integer(i_kind) inner_vars,num_fields,ic3,k
   integer(i_kind) nord_e2a
@@ -4007,6 +4074,9 @@ subroutine hybens_localization_setup
    use gsi_io, only: verbose
 
    implicit none
+
+!  Declare externals
+   external :: stop2
 
    integer(i_kind),parameter   :: lunin = 47
    character(len=40),parameter :: fname = 'hybens_info'
@@ -4358,6 +4428,9 @@ subroutine sub2grid_1(sub,grid,gridpe,mype)
   real(r_kind),dimension(lat2,lon2),intent(in   ) :: sub
   real(r_kind),dimension(nlat,nlon),intent(  out) :: grid
 
+! Declare externals
+  external :: mpi_gatherv
+
   real(r_kind),dimension(lat1*lon1):: zsm
   real(r_kind),dimension(itotsub):: work1
   integer(i_kind) mm1,i,j,k
@@ -4634,6 +4707,9 @@ subroutine general_sub2grid_1_ens(sub,grid,gridpe,mype,grd)
   real(r_kind),dimension(grd%lat2,grd%lon2),intent(in   ) :: sub
   real(r_kind),dimension(grd%nlat,grd%nlon),intent(  out) :: grid
 
+! Declare externals
+  external :: mpi_gatherv
+
   real(r_kind),dimension(grd%lat1,grd%lon1):: zsm
   real(r_kind),dimension(grd%itotsub):: work1
   integer(i_kind) mm1,i,i0,j,j0,k
@@ -4695,6 +4771,9 @@ subroutine sub2grid_1_ens(sub,grid,gridpe,mype)
   integer(i_kind)                  ,intent(in   ) :: gridpe,mype
   real(r_kind),dimension(grd_ens%lat2,grd_ens%lon2),intent(in   ) :: sub
   real(r_kind),dimension(grd_ens%nlat,grd_ens%nlon),intent(  out) :: grid
+
+! Declare externals
+  external :: mpi_gatherv
 
   real(r_kind),dimension(grd_ens%lat1,grd_ens%lon1):: zsm
   real(r_kind),dimension(grd_ens%itotsub):: work1
@@ -4761,6 +4840,9 @@ subroutine get_region_lat_lon_ens(region_lat_ens,region_lon_ens,rlat_e,rlon_e,nl
   real(r_kind),intent(in):: rlat_e(nlat_e),rlon_e(nlon_e)
   integer(i_kind),intent(in):: nlon_e,nlat_e
   real(r_kind),intent(out):: region_lat_ens(nlat_e,nlon_e),region_lon_ens(nlat_e,nlon_e)
+
+! Declare externals
+  external :: outgrads1
 
   integer(i_kind) i,j,k
   logical make_test_maps
@@ -4850,6 +4932,9 @@ subroutine get_region_dx_dy_ens(region_dx_ens,region_dy_ens)
   implicit none
 
   real(r_kind),intent(out):: region_dx_ens(nlat_ens,nlon_ens),region_dy_ens(nlat_ens,nlon_ens)
+
+! Declare externals
+  external :: outgrads1
 
   integer(i_kind) i,j
   logical make_test_maps

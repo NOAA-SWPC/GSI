@@ -72,6 +72,9 @@ subroutine strong_bal_correction(u_t,v_t,t_t,ps_t,mype,psi,chi,t,ps,bal_diagnost
   real(r_kind),dimension(lat2,lon2,nsig),intent(inout) :: psi,chi,t
   real(r_kind),dimension(lat2,lon2)     ,intent(inout) :: ps
 
+! Declare externals
+  external :: fmg_strong_bal_correction
+
   if(.not.regional) then
 
 !    global option:
@@ -166,6 +169,9 @@ subroutine strong_bal_correction_ad(u_t,v_t,t_t,ps_t,mype,psi,chi,t,ps,uvflag)
   real(r_kind),dimension(lat2,lon2,nsig),intent(inout) :: psi,chi,t
   real(r_kind),dimension(lat2,lon2)     ,intent(inout) :: ps
   logical,intent(in):: uvflag
+
+! Declare externals
+  external :: fmg_strong_bal_correction_ad
 
   logical update
 

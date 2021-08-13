@@ -188,12 +188,14 @@ subroutine gsi_rfv3io_get_grid_specs(fv3filenamegin,ierr)
   use mpimod, only: mpi_comm_world,mpi_itype,mpi_rtype
 
   implicit none
+  type (type_fv3regfilenameg),intent(in   ) :: fv3filenamegin
+  integer(i_kind),intent(  out) :: ierr
+! Declare externals
+  external :: stop2
   integer(i_kind) gfile_grid_spec
-  type (type_fv3regfilenameg) :: fv3filenamegin
   character(:),allocatable    :: grid_spec
   character(:),allocatable    :: ak_bk
   character(len=:),allocatable :: coupler_res_filenam 
-  integer(i_kind),intent(  out) :: ierr
   integer(i_kind) i,k,ndimensions,iret,nvariables,nattributes,unlimiteddimid
   integer(i_kind) len,gfile_loc
   character(len=128) :: name
@@ -404,6 +406,9 @@ subroutine read_fv3_files(mype)
 
 ! Declare local parameters
     real(r_kind),parameter:: r0_001=0.001_r_kind
+
+! Declare externals
+    external :: w3fs21,mpi_bcast
 
 ! Declare local variables
     logical(4) fexist
@@ -784,6 +789,8 @@ subroutine gsi_fv3ncdf2d_read(fv3filenamegin,it,ges_z)
     integer(i_kind),intent(in) :: it   
     real(r_kind),intent(in),dimension(:,:),pointer::ges_z
     type (type_fv3regfilenameg),intent(in) :: fv3filenamegin
+!   Declare externals
+    external :: mpi_scatterv
     character(len=128) :: name
     integer(i_kind),allocatable,dimension(:):: dim_id,dim
     real(r_kind),allocatable,dimension(:):: work
@@ -794,8 +801,8 @@ subroutine gsi_fv3ncdf2d_read(fv3filenamegin,it,ges_z)
     integer(i_kind) iret,gfile_loc,i,k,len,ndim
     integer(i_kind) ndimensions,nvariables,nattributes,unlimiteddimid
     integer(i_kind) kk,n,ns,j,ii,jj,mm1
-      character(len=:),allocatable :: sfcdata   !='fv3_sfcdata'
-      character(len=:),allocatable :: dynvars   !='fv3_dynvars'
+    character(len=:),allocatable :: sfcdata   !='fv3_sfcdata'
+    character(len=:),allocatable :: dynvars   !='fv3_dynvars'
 
     sfcdata= fv3filenamegin%sfcdata
     dynvars= fv3filenamegin%dynvars
@@ -977,6 +984,8 @@ subroutine gsi_fv3ncdf2d_read_v1(filenamein,varname,varname2,work_sub,mype_io)
     character(*)   ,intent(in   ) :: varname,varname2,filenamein
     real(r_kind)   ,intent(out  ) :: work_sub(lat2,lon2) 
     integer(i_kind)   ,intent(in   ) :: mype_io
+!   Declare externals
+    external :: mpi_scatterv
     real(r_kind),allocatable,dimension(:,:,:):: uu
     integer(i_kind),allocatable,dimension(:):: dim_id,dim
     real(r_kind),allocatable,dimension(:):: work
@@ -1080,6 +1089,8 @@ subroutine gsi_fv3ncdf_read(filenamein,varname,varname2,work_sub,mype_io)
     character(*)   ,intent(in   ) :: varname,varname2,filenamein
     real(r_kind)   ,intent(out  ) :: work_sub(lat2,lon2,nsig) 
     integer(i_kind)   ,intent(in   ) :: mype_io
+!   Declare externals
+    external :: mpi_scatterv
     character(len=128) :: name
     real(r_kind),allocatable,dimension(:,:,:):: uu
     integer(i_kind),allocatable,dimension(:):: dim_id,dim
@@ -1198,6 +1209,8 @@ subroutine gsi_fv3ncdf_read_v1(filenamein,varname,varname2,work_sub,mype_io)
     character(*)   ,intent(in   ) :: varname,varname2,filenamein
     real(r_kind)   ,intent(out  ) :: work_sub(lat2,lon2,nsig) 
     integer(i_kind)   ,intent(in   ) :: mype_io
+!   Declare externals
+    external :: mpi_scatterv
     character(len=128) :: name
     real(r_kind),allocatable,dimension(:,:,:):: uu
     real(r_kind),allocatable,dimension(:,:,:):: temp0 
@@ -1311,6 +1324,8 @@ subroutine gsi_fv3ncdf_readuv(dynvarsfile,ges_u,ges_v)
     character(*)   ,intent(in   ):: dynvarsfile
     real(r_kind)   ,intent(out  ) :: ges_u(lat2,lon2,nsig) 
     real(r_kind)   ,intent(out  ) :: ges_v(lat2,lon2,nsig) 
+!   Declare externals
+    external :: mpi_scatterv
     character(len=128) :: name
     real(r_kind),allocatable,dimension(:,:,:):: uu,temp1
     integer(i_kind),allocatable,dimension(:):: dim_id,dim
@@ -1459,6 +1474,8 @@ subroutine gsi_fv3ncdf_readuv_v1(dynvarsfile,ges_u,ges_v)
     character(*)   ,intent(in   ):: dynvarsfile
     real(r_kind)   ,intent(out  ) :: ges_u(lat2,lon2,nsig) 
     real(r_kind)   ,intent(out  ) :: ges_v(lat2,lon2,nsig) 
+!   Declare externals
+    external :: mpi_scatterv
     character(len=128) :: name
     real(r_kind),allocatable,dimension(:,:,:):: uu,temp0
     integer(i_kind),allocatable,dimension(:):: dim
@@ -1684,6 +1701,9 @@ subroutine gsi_fv3ncdf_writeuv(dynvars,varu,varv,mype_io,add_saved)
     integer(i_kind),intent(in   ) :: mype_io
     logical        ,intent(in   ) :: add_saved
 
+!   Declare externals
+    external :: mpi_gatherv
+
     integer(i_kind) :: ugrd_VarId,gfile_loc,vgrd_VarId
     integer(i_kind) i,j,mm1,n,k,ns,kr,m
     real(r_kind),allocatable,dimension(:):: work
@@ -1842,6 +1862,9 @@ subroutine gsi_fv3ncdf_writeps(filename,varname,var,mype_io,add_saved)
     logical        ,intent(in   ) :: add_saved
     character(*)   ,intent(in   ) :: varname,filename
 
+!   Declare externals
+    external :: mpi_gatherv
+
     integer(i_kind) :: VarId,gfile_loc
     integer(i_kind) i,j,mm1,k,kr,kp
     real(r_kind),allocatable,dimension(:):: work
@@ -1959,6 +1982,9 @@ subroutine gsi_fv3ncdf_writeuv_v1(dynvars,varu,varv,mype_io,add_saved)
     integer(i_kind),intent(in   ) :: mype_io
     logical        ,intent(in   ) :: add_saved
 
+!   Declare externals
+    external :: mpi_gatherv
+
     integer(i_kind) :: gfile_loc
     integer(i_kind) :: u_wgrd_VarId,v_wgrd_VarId
     integer(i_kind) :: u_sgrd_VarId,v_sgrd_VarId
@@ -2044,15 +2070,15 @@ subroutine gsi_fv3ncdf_writeuv_v1(dynvars,varu,varv,mype_io,add_saved)
        call check( nf90_inq_varid(gfile_loc,'v_s',v_sgrd_VarId) )
        call check( nf90_inq_varid(gfile_loc,'v_w',v_wgrd_VarId) )
 
-          allocate( workbu_w2(nlon_regional+1,nlat_regional))
-          allocate( workbv_w2(nlon_regional+1,nlat_regional))
-          allocate( workbu_s2(nlon_regional,nlat_regional+1))
-          allocate( workbv_s2(nlon_regional,nlat_regional+1))
+       allocate( workbu_w2(nlon_regional+1,nlat_regional))
+       allocate( workbv_w2(nlon_regional+1,nlat_regional))
+       allocate( workbu_s2(nlon_regional,nlat_regional+1))
+       allocate( workbv_s2(nlon_regional,nlat_regional+1))
 !!!!!!!!  readin work_b !!!!!!!!!!!!!!!!
-          call check( nf90_get_var(gfile_loc,u_sgrd_VarId,work_bu_s) )
-          call check( nf90_get_var(gfile_loc,u_wgrd_VarId,work_bu_w) )
-          call check( nf90_get_var(gfile_loc,v_sgrd_VarId,work_bv_s) )
-          call check( nf90_get_var(gfile_loc,v_wgrd_VarId,work_bv_w) )
+       call check( nf90_get_var(gfile_loc,u_sgrd_VarId,work_bu_s) )
+       call check( nf90_get_var(gfile_loc,u_wgrd_VarId,work_bu_w) )
+       call check( nf90_get_var(gfile_loc,v_sgrd_VarId,work_bv_s) )
+       call check( nf90_get_var(gfile_loc,v_wgrd_VarId,work_bv_w) )
 
        if(add_saved)then
           allocate( workau2(nlat,nlon),workav2(nlat,nlon))
@@ -2183,6 +2209,9 @@ subroutine gsi_fv3ncdf_writeps_v1(filename,varname,var,mype_io,add_saved)
     logical        ,intent(in   ) :: add_saved
     character(*)   ,intent(in   ) :: varname,filename
 
+!   Declare externals
+    external :: mpi_gatherv
+
     integer(i_kind) :: VarId,gfile_loc
     integer(i_kind) i,j,mm1
     real(r_kind),allocatable,dimension(:):: work
@@ -2277,6 +2306,9 @@ subroutine gsi_fv3ncdf_write(filename,varname,var,mype_io,add_saved)
     integer(i_kind),intent(in   ) :: mype_io
     logical        ,intent(in   ) :: add_saved
     character(*)   ,intent(in   ) :: varname,filename
+
+!   Declare externals
+    external :: mpi_gatherv
 
     integer(i_kind) :: VarId,gfile_loc
     integer(i_kind) i,j,mm1,k,kr,ns,n,m
@@ -2386,6 +2418,9 @@ subroutine gsi_fv3ncdf_write_fv3_dz(filename,varname,varinc,mype_io,add_saved)
     integer(i_kind),intent(in   ) :: mype_io
     logical        ,intent(in   ) :: add_saved
     character(*)   ,intent(in   ) :: varname,filename
+
+!   Declare externals
+    external :: mpi_gatherv
 
     integer(i_kind) :: VarId,gfile_loc
     integer(i_kind) i,j,mm1,k,kr,ns,n,m
@@ -2498,6 +2533,9 @@ subroutine gsi_fv3ncdf_write_v1(filename,varname,var,mype_io,add_saved)
     integer(i_kind),intent(in   ) :: mype_io
     logical        ,intent(in   ) :: add_saved
     character(*)   ,intent(in   ) :: varname,filename
+
+!   Declare externals
+    external :: mpi_gatherv
 
     integer(i_kind) :: VarId,gfile_loc
     integer(i_kind) :: ilev0

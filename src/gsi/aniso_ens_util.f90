@@ -380,6 +380,9 @@ subroutine ens_intpcoeffs_reg(ngrds,igbox,iref,jref,igbox0f,ensmask,enscoeff,gbl
   real(r_kind)   ,intent(  out) :: enscoeff(4,nlat,nlon,ngrds)
   real(r_kind),   intent(  out) :: gblend(pf2aP1%nlatf,pf2aP1%nlonf,2)
 
+! Declare externals
+  external :: w3fb11,w3fb12,mpi_allreduce
+
 ! Declare local variables
   integer(i_kind),parameter::ijadjust=4
   integer(i_kind) iy,jx,jxp
@@ -910,6 +913,9 @@ subroutine pges_minmax(mype,nt,pmin,pmax)
   integer(i_kind),intent(in   ) :: mype
   integer(i_kind),intent(in   ) :: nt
   real(r_kind)   ,intent(  out) :: pmin(nsig),pmax(nsig)
+
+! Declare externals
+  external :: mpi_allreduce
 
 ! Declare local variables
   integer(i_kind):: k,ierror

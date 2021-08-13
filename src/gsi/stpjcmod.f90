@@ -1008,6 +1008,9 @@ subroutine stpjcdfi(rval,sval,pen,b,c)
 
   real(r_quad),intent(out) :: pen,b,c
 
+! Declare externals
+  external :: enorm_state_red
+
 ! Declare local variables
   integer(i_kind) :: jj,idfi
   real(r_quad) :: pjc,rjc

@@ -36,6 +36,10 @@ subroutine load_mrms_data_info (mrms_listfile,nrows0,ntot_mrms,nrows_mrms,nrows,
    real(r_kind) ,intent(inout),dimension(nrows):: time_window
 
    character(len=*),parameter:: tbname_mrms='OBS_INPUT_MRMS::'
+
+!  Declare externals
+   external :: stop2
+
    integer(i_kind) luin_mrms,ii0,itype_mrms
    character(len=256),allocatable,dimension(:):: utable_mrms_list
    character(len=256),allocatable,dimension(:):: utable_mrms

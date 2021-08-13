@@ -103,7 +103,10 @@ subroutine setupvwnd10m(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,conv_d
 
 ! Declare external calls for code analysis
   external:: tintrp2a1,tintrp2a11
+  external:: grdcrd1
   external:: stop2
+  external:: windfactor
+  external:: getwdir
 
 ! Declare local parameters
   real(r_kind),parameter:: r0_7=0.7_r_kind

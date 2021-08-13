@@ -207,6 +207,9 @@ integer(i_kind)     , intent(in   ) :: iobsconv
 
 logical             , intent(in   ) :: lsavevecs
 
+! Decalre externals
+external :: stop2,evaljgrad,test_obsens,SSTEQR,DSTEQR,SPTSV,DPTSV
+
 character(len=*), parameter :: myname='congrad'
 type(control_vector)        :: grad0,zww
 type(control_vector)        :: gradf
@@ -1001,6 +1004,8 @@ implicit none
 type(gsi_bundle),intent(inout) :: siga  ! analysis errors
 integer(i_kind), intent(  out) :: ivecs ! 
 integer(i_kind), intent(  out) :: rc    ! error return code
+! declare externals
+external :: control2model,bkg_stddev
 ! local variables
 type(control_vector) :: aux
 type(gsi_bundle)     :: mval(nsubwin)
@@ -1079,6 +1084,9 @@ subroutine save_precond(ldsave)
 IMPLICIT NONE
 
 logical, intent(in   ) :: ldsave
+
+! Declare externals
+external :: stop2,SPOTRF,DPOTRF
 
 REAL(r_kind), ALLOCATABLE :: zmat(:,:)
 INTEGER(i_kind) :: ii,jj, info, iunit, ivecs
@@ -1259,6 +1267,9 @@ subroutine setup_precond()
 !$$$ end documentation block
 
   IMPLICIT NONE
+
+! Declare externals
+  external :: stop2,ALLGATHER_CVSECTION,SET_CVSECTION,SSYEV,DSYEV
 
   INTEGER(i_kind), allocatable :: indarr(:)
   REAL(r_kind), allocatable :: zq(:),zlam(:),zU(:,:),zUUT(:,:),zwork(:),zzz(:)
@@ -1598,6 +1609,9 @@ IMPLICIT NONE
 TYPE(CONTROL_VECTOR),INTENT(INOUT) :: ycvx
 INTEGER(i_kind)     ,INTENT(IN   ) :: kmat
 
+! Declare externals
+external :: stop2
+
 REAL(r_kind) :: zevals(NVCGLPC),zdp(NVCGLPC)
 INTEGER(i_kind) :: jk, ji
 
@@ -1654,6 +1668,9 @@ subroutine read_lanczos(kmaxit)
 IMPLICIT NONE
 
 integer(i_kind) , intent(inout) :: kmaxit
+
+! Declare externals
+external :: stop2,mpl_bcast
 
 integer(i_kind) :: jj, iunit, kiter, ilen
 character(len=17) :: clfile

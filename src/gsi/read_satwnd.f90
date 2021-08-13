@@ -130,8 +130,11 @@ subroutine read_satwnd(nread,ndata,nodata,infile,obstype,lunout,gstime,twind,sis
   real(r_kind)                          ,intent(in   ) :: twind
   real(r_kind),dimension(nlat,nlon,nsig),intent(in   ) :: prsl_full
 
-! Declare local parameters
+! Declare externals
+  external :: getcount_bufr,openbf,datelen,stop2,ufbint,closbf,w3fs21,ufbrep,&
+    ufbseq,grdcrd1,count_obs
 
+! Declare local parameters
   real(r_kind),parameter:: r1_2= 1.2_r_kind
   real(r_kind),parameter:: r3_33= 3.33_r_kind
   real(r_kind),parameter:: r6= 6.0_r_kind

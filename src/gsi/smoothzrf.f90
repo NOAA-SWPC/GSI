@@ -345,6 +345,9 @@ subroutine smoothzo(vx,samp,rate,iv,jx,dsv)
   real(r_kind),dimension(ndeg),intent(in   ) :: rate
   real(r_kind),dimension(lon2,nsig),intent(out):: dsv
  
+! Declare external
+  external :: rfdparv,rfhvo
+
   integer(i_kind) i,k,m
   real(r_kind),dimension(nsig):: dss
   real(r_kind),dimension(nsig,nsig):: p1

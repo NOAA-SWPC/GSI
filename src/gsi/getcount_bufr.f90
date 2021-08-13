@@ -26,6 +26,9 @@ use file_utility, only : get_lun
    character(len=*)                      ,intent(in ) :: inpfile
    integer(i_kind)                       ,intent(out) :: nmsg,nsub 
 
+!  Declare externals
+   external :: openbf,closbf
+
 !  Declare local parameters
 
    character(len=8)  :: subset

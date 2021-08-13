@@ -92,6 +92,9 @@ contains
     integer(i_kind),intent(in   ) :: mype,mype_io
     integer(i_kind),intent(out  ) :: ierr
 
+!   Declare externals
+    external :: stop2
+
     integer(i_kind) iret
 
     if(mype==mype_io) then
@@ -144,6 +147,9 @@ contains
     character(*)   ,intent(in   ) :: file_name        !  input file name
     character(*)   ,intent(in   ) :: message          !  info to appear in write statement on status of file open
     integer(i_kind),intent(in   ) :: mype,mype_io
+
+!   Declare externals
+    external :: stop2,w3movdat
 
     integer(i_kind) iret,nrec
     integer(i_kind) idate(7),jdate(7),nfhour,nfminute,nfsecondn,nfday,ihrst,idat(3)
@@ -280,6 +286,9 @@ contains
     character(*)   ,intent(in   ) :: message          !  info to appear in write statement on status of file open
     integer(i_kind),intent(in   ) :: mype,mype_io
 
+!   Declare externals
+    external :: stop2
+
     integer(i_kind) iret
 
     if(mype==mype_io) then
@@ -346,6 +355,9 @@ contains
     real(r_kind)   ,intent(  out) :: var(lat2*lon2)
     integer(i_kind),intent(in   ) :: mype,mype_io
     logical,optional,intent(inout):: good_var
+
+!   Declare externals
+    external :: mpi_bcast,stop2,mpi_scatterv
 
     integer(i_kind) i,iret,j,mm1,n
     real(r_kind) work(itotsub)
@@ -451,6 +463,9 @@ contains
 
     integer(i_kind),intent(in   ) :: mype,mype_io
     logical,optional,intent(inout):: good_var
+
+!   Declare externals
+    external :: mpi_bcast,stop2,mpi_scatterv
 
     integer(i_kind) i,iret,j,mm1,n
 
@@ -589,6 +604,9 @@ contains
     integer(i_kind),intent(in   ) :: mype,mype_io
     logical        ,intent(in   ) :: add_saved
 
+!   Declare externals
+    external :: mpi_gatherv,stop2
+
     integer(i_kind) i,iret,j,mm1,n
     real(r_kind) work(itotsub),work_sub(lat1,lon1)
     real(r_kind) work_a(nlat,nlon)
@@ -661,6 +679,9 @@ contains
     real(r_kind)   ,intent(in   ) :: var_i(lat2,lon2), var_r(lat2,lon2), var_l(lat2,lon2), var_t(lat2,lon2)
     integer(i_kind),intent(in   ) :: mype,mype_io
 !   logical        ,intent(in   ) :: add_saved
+
+!   Declare externals
+    external :: mpi_gatherv,stop2
 
     integer(i_kind) i,iret,j,mm1,n
     real(r_kind) work_t(itotsub),work_sub_t(lat1,lon1)
@@ -968,6 +989,9 @@ contains
     integer(i_kind),intent(in   ) :: mype,mype_io
     logical,optional,intent(inout):: good_var
 
+!   Declare externals
+    external :: mpi_bcast,stop2,mpi_scatterv
+
     integer(i_kind) i,iret,j,mm1,n
 
     real(r_kind) work_qi(itotsub)
@@ -1108,6 +1132,9 @@ contains
     real(r_kind)   ,intent(in   ) :: var_i(lat2,lon2), var_r(lat2,lon2), var_l(lat2,lon2), var_s(lat2,lon2)
     integer(i_kind),intent(in   ) :: mype,mype_io
 !   logical        ,intent(in   ) :: add_saved
+
+!   Declare externals
+    external :: mpi_gatherv,stop2
 
     integer(i_kind) i,iret,j,mm1,n
     real(r_kind) work_s(itotsub),work_sub_s(lat1,lon1)

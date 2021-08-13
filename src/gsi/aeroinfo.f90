@@ -243,6 +243,9 @@ contains
     use obsmod, only: iout_aero
     implicit none
 
+!   Declare externals
+    external :: stop2
+
     character(len=1)   :: cflg
     character(len=120) :: crecord
     character(len=80)  :: fname = 'aeroinfo'

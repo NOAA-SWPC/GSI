@@ -108,6 +108,9 @@ subroutine read_files(mype)
 ! Declare passed variables
   integer(i_kind),intent(in   ) :: mype
 
+! Declare externals
+  external :: stop2,w3fs21,mpi_bcast,mpi_barrier
+
 ! Declare local parameters
   integer(i_kind),parameter:: lunsfc=11
   integer(i_kind),parameter:: lunatm=12

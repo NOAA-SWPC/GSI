@@ -54,6 +54,9 @@ subroutine q_diag(it,mype)
   integer(i_kind),intent(in   ) :: it   ! time slot
   integer(i_kind),intent(in   ) :: mype
 
+! Declare externals
+  external :: mpi_reduce,mpi_gatherv
+
 ! Declare local variables
   integer(i_kind):: i,j,jj,k,mype_out,mm1,istatus,ier,n_actual_clouds
   real(r_kind):: qrms_neg,qrms_sat,rhrms_neg,rhrms_sat

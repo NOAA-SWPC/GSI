@@ -103,6 +103,13 @@ contains
     real(r_kind),parameter:: r225=225.0_r_kind
     type(read_wrf_mass_guess_class) :: wrf_mass_guess
   
+  ! Declare externals
+    external :: mpi_file_open,mpi_file_read_at,mpi_file_write_at,&
+      mpi_file_iread_at,stop2,mpi_wait,to_native_endianness_r4,&
+      to_native_endianness_i4,fill_mass_grid2t,unfill_mass_grid2t_ldmk,&
+      unfill_mass_grid2t,fill_mass_grid2u,unfill_mass_grid2u,&
+      fill_mass_grid2v,unfill_mass_grid2v,mpi_file_close
+
   ! Declare local variables
     real(r_single),allocatable::tempa(:,:),tempb(:,:)
     real(r_single),allocatable::temp1(:,:),temp1u(:,:),temp1v(:,:)
@@ -1447,6 +1454,9 @@ contains
     real(r_single) ,intent(  out) :: tempa(itotsub,kbegin_loc:kend_loc)
     real(r_single) ,intent(in   ) :: all_loc(lat1*lon1*num_fields)
   
+!   Declare externals
+    external :: mpi_alltoallv
+
     integer(i_kind) k
     integer(i_kind) sendcounts(0:npe-1),sdispls(0:npe),recvcounts(0:npe-1),rdispls(0:npe)
   
@@ -1669,6 +1679,9 @@ contains
     integer(i_kind),intent(in   ) :: jbegin(0:npe),jend(0:npe-1)
     integer(i_kind),intent(in   ) :: kbegin(0:npe),kend(0:npe-1)
   
+!   Declare externals
+    external :: mpi_scatterv
+
     integer(i_long) sendbuf(im_jbuf*lm_jbuf*(min(jend_loc,jm_jbuf)-jbegin_loc+1))
     integer(i_long) recvbuf(im_jbuf*jm_jbuf*(kend_loc-kbegin_loc+1))
     integer(i_long) recvcounts(0:npe-1),displs(0:npe)
@@ -1849,6 +1862,11 @@ contains
     character(len=*),parameter::myname='wrwrfmassa_netcdf'
     real(r_kind),parameter:: r225=225.0_r_kind
   
+  ! Declare externals
+    external :: stop2,mpi_gatherv,fill_mass_grid2t,unfill_mass_grid2t,&
+      fill_mass_grid2u,unfill_mass_grid2u,fill_mass_grid2v,unfill_mass_grid2v,&
+      unfill_mass_grid2t_ldmk
+
   ! Declare local variables
     integer(i_kind) im,jm,lm
     real(r_single),allocatable::temp1(:),temp1u(:),temp1v(:),tempa(:),tempb(:)
@@ -2989,6 +3007,9 @@ contains
     character(1)   ,intent(inout) :: chdrbuf(2048)
     integer(i_kind),intent(in   ) :: iyear,imonth,iday,ihour,iminute,isecond
   
+!   Declare externals
+    external :: stop2
+
     character(2) c_two
     character(4) c_four
     character(1) c2(2),d2(2),c4(4),d4(4)

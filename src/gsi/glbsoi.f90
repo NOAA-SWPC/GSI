@@ -166,6 +166,10 @@ subroutine glbsoi
 
 ! Declare passed variables
 
+! Declare externals
+  external :: isetprm,openbf,exitbufr,gsdcloudanalysis,write_all,prt_guess,prewgt_reg,&
+    prewgt,init_jcdfi,view_cv_ad,setuprhsall,stop2,sqrtmin,bicg,view_cv
+
 ! Declare local variables
   logical laltmin
 

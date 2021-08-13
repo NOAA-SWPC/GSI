@@ -75,8 +75,11 @@ subroutine read_sfcwnd(nread,ndata,nodata,infile,obstype,lunout,gstime,twind,sis
   real(r_kind)                          ,intent(in   ) :: twind
   real(r_kind),dimension(nlat,nlon,nsig),intent(in   ) :: prsl_full
 
-! Declare local parameters
+! Declare externals
+  external :: openbf,datelen,getcount_bufr,stop2,ufbint,closbf,ufbrep,w3fs21,&
+    grdcrd1,count_obs
 
+! Declare local parameters
   real(r_kind),parameter:: r6= 6.0_r_kind
   real(r_kind),parameter:: r90= 90.0_r_kind
   real(r_kind),parameter:: r110= 110.0_r_kind

@@ -231,6 +231,9 @@ subroutine gscond_ad_im_ix_( im, ix, km, dt, sl, ps, rhc, advt, advq, &
   real(r_kind)   ,intent(in   ) :: t_in(km,ix)
   real(r_kind)   ,intent(  out) :: t_out(km,ix)
 
+! debine externals
+  external :: fpvsx_ad
+
 !==============================================
 ! define local variables
 !==============================================

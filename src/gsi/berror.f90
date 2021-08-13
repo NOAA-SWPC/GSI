@@ -672,6 +672,9 @@ contains
 
     real(r_kind),parameter:: tin = 0.2e-3_r_kind
 
+!   Declare externals
+    external :: stop2,rfdparv
+
     integer(i_kind) i,j,k,n,nynx
     integer(i_kind) ihwlb
     integer(i_kind) ntax,iloc

@@ -80,6 +80,10 @@ subroutine read_anowbufr(nread,ndata,nodata,gstime,&
   real(r_kind), parameter :: anow_missing=1.0e11_r_kind,&
         conc_missing = anow_missing-1
 
+! declare externals
+  external :: openbf,datelen,ufbint,grdcrd1,w3movdat,&
+    w3fs21,closbf,count_obs
+
 ! declare local variables
   logical outside
   

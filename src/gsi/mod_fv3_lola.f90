@@ -130,6 +130,9 @@ subroutine generate_anl_grid(nx,ny,grid_lon,grid_lont,grid_lat,grid_latt)
   real(r_kind)   , intent(inout) :: grid_lat(nx+1,ny+1)   ! fv3 cell corner latitudes
   real(r_kind)   , intent(inout) :: grid_latt(nx,ny)      ! fv3 cell center latitudes
 
+! Declare externals
+  external :: rotate2deg,unrotate2deg,grdcrd1
+
   integer(i_kind) i,j,ir,jr,n
   real(r_kind),allocatable,dimension(:,:) :: xc,yc,zc,gclat,gclon,gcrlat,gcrlon,rlon_in,rlat_in
   real(r_kind),allocatable,dimension(:,:) :: glon_an,glat_an

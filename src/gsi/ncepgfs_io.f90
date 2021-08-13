@@ -123,6 +123,9 @@ contains
     use general_specmod, only: general_init_spec_vars,general_destroy_spec_vars,spec_vars
     implicit none
 
+!   Declare externals
+    external :: stop2,general_read_gfsatm
+
     character(24) filename
     logical:: l_cld_derived,zflag,inithead
     integer(i_kind):: it,nlon_b,num_fields,inner_vars
@@ -508,6 +511,9 @@ subroutine write_ghg_grid(a,char_ghg)
   real(r_kind),dimension(lat2,lon2,nsig),intent(in   ) :: a
   character(len=3),intent(in) :: char_ghg
 
+! Declare externals
+  external :: gather_stuff2,baopenwt,wryte,baclose
+
   character(255):: grdfile
 
   real(r_kind),dimension(nlat,nlon,nsig):: ag
@@ -588,6 +594,8 @@ end subroutine write_ghg_grid
     real(r_single),  dimension(nlat_sfc,nlon_sfc,nfldsfc), intent(  out) :: sfct,soil_moi,sno,soil_temp,veg_frac,fact10,sfc_rough 
     real(r_single),  dimension(nlat_sfc,nlon_sfc),         intent(  out) :: veg_type,soil_type,terrain
     integer(i_kind), dimension(nlat_sfc,nlon_sfc),         intent(  out) :: isli
+!   Declare external
+    external :: stop2
     integer(i_kind) :: latb,lonb
     integer(i_kind) :: iret,n,i,j
     type(sfcio_head) :: sfc_head
@@ -752,6 +760,8 @@ end subroutine write_ghg_grid
     real(r_single),  dimension(nlat_sfc,nlon_sfc),         intent(  out) :: veg_type,soil_type,terrain
     integer(i_kind), dimension(nlat_sfc,nlon_sfc),         intent(  out) :: isli
 
+!   Declare externals
+    external :: mpi_bcast
 
 !   Declare local variables
     integer(i_kind):: iret,npts,nptsall
@@ -818,6 +828,8 @@ end subroutine write_ghg_grid
     use gridmod, only: nlat,nlon
 
     integer(i_kind), dimension(nlat,nlon), intent(  out) :: isli_anl
+!   Declare externals
+    external :: stop2
     integer(i_kind) :: latb,lonb
     integer(i_kind) :: iret,i,j
     type(sfcio_head) :: sfc_head
@@ -898,6 +910,9 @@ end subroutine write_ghg_grid
     integer(i_kind)                      ,intent(in   ) :: iope
     integer(i_kind), dimension(nlat,nlon), intent(  out) :: isli_anl
 
+!   Declare externals
+    external :: mpi_bcast
+
 !   Declare local variables
     integer(i_kind):: iret,npts
 !-----------------------------------------------------------------------------
@@ -945,6 +960,8 @@ end subroutine write_ghg_grid
     use constants, only: two
     real(r_single), dimension(nlat_sfc,nlon_sfc,nfldnst),intent(  out) :: &
                     tref,dt_cool,z_c,dt_warm,z_w,c_0,c_d,w_0,w_d
+!   Declare externals
+    external :: stop2
     integer(i_kind) :: latb,lonb
     integer(i_kind) :: iret,n
     type(nstio_head) :: nst_head
@@ -1083,6 +1100,9 @@ end subroutine write_ghg_grid
     real(r_single), dimension(nlat_sfc,nlon_sfc,nfldnst),intent(  out) :: &
                     tref,dt_cool,z_c,dt_warm,z_w,c_0,c_d,w_0,w_d
 
+!   Declare externals
+    external :: mpi_bcast
+
 !   Declare local variables
     integer(i_kind):: iret,npts,nptsall
 
@@ -1182,6 +1202,10 @@ end subroutine write_ghg_grid
 
     integer(i_kind),intent(in   ) :: increment
     integer(i_kind),intent(in   ) :: mype_atm,mype_sfc
+
+!   Declare externals
+    external :: stop2,general_write_gfsatm
+
     character(24):: filename
     integer(i_kind) :: itoutsig,istatus,iret_write,nlon_b,ntlevs,it
 
@@ -1649,6 +1673,9 @@ end subroutine write_ghg_grid
 
     real(r_kind),parameter :: houra = zero_single
 
+!   Declare externals
+    external :: mpi_gatherv,stop2
+
 !   Declare local variables
     integer(sfcio_intkind):: iret
     integer(i_kind) latb,lonb,nlatm2
@@ -1876,6 +1903,9 @@ end subroutine write_ghg_grid
     integer(i_kind),parameter:: nprep=15
 
     real(r_kind),parameter :: houra = zero_single
+
+!   Declare externals
+    external :: mpi_gatherv,stop2,int2_msk_glb_prep,int22_msk_glb,dtzm_2d
 
 !   Declare local variables
     character(len=6) :: fname_sfcges,fname_sfcgcy,fname_sfctsk,fname_sfcanl,fname_nstges,fname_nstanl,fname_dtfanl
@@ -2262,6 +2292,9 @@ end subroutine write_ghg_grid
 !
 !-------------------------------------------------------------------------
 
+!   Declare externals
+    external :: mpi_gatherv
+
 !   Declare local variables
     integer(i_kind):: i,j,ip1,jp1,ilat,ilon,mm1
     real(r_kind),    dimension(lat1,lon1):: dtf_sub
@@ -2476,8 +2509,10 @@ end subroutine write_ghg_grid
 !
 !-------------------------------------------------------------------------
 
-!   Declare local parameters
+!   Declare externals
+    external :: mpi_gatherv,stop2,splat,int2_msk_glb_prep,int22_msk_glb
 
+!   Declare local parameters
     integer(sfcio_intkind),parameter:: io_nstges = 12
     integer(sfcio_intkind),parameter:: io_sfcges = 13
     integer(sfcio_intkind),parameter:: io_sfcgcy = 14
@@ -2927,7 +2962,6 @@ end subroutine write_ghg_grid
 !-------------------------------------------------------------------------
 
 !   Declare local parameters
-
     integer(sfcio_intkind),parameter:: io_nstges = 12
     integer(sfcio_intkind),parameter:: io_sfcges = 13
     integer(sfcio_intkind),parameter:: io_sfcgcy = 14
@@ -2936,6 +2970,9 @@ end subroutine write_ghg_grid
     integer(i_kind),parameter:: nprep=15
 
     real(r_kind),parameter :: houra = zero_single
+
+!   Declare externals
+    external :: mpi_gatherv,stop2,splat,int2_msk_glb_prep,int22_msk_glb
 
 !   Declare local variables
     character(len=14):: fname_sfcges,fname_sfcgcy,fname_nstges

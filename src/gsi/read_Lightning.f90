@@ -58,6 +58,11 @@ subroutine read_lightning(nread,ndata,infile,obstype,lunout,twind,sis,nobs)
   integer(i_kind),dimension(npe),intent(inout) :: nobs
   character(20),     intent(in)    :: sis
   real(r_kind),      intent(in   ) :: twind
+
+! Declare externals
+  external :: w3fs21,getcount_bufr,OPENBF,DATELEN,stop2,&
+    ufbint,grdcrd1,count_obs,closbf
+
 !
 !  For lightning
 !
@@ -332,6 +337,11 @@ subroutine read_lightning_grid(nread,ndata,infile,obstype,lunout,twind,sis,nobs)
   integer(i_kind),dimension(npe),intent(inout) :: nobs
   character(20),     intent(in)    :: sis
   real(r_kind),      intent(in   ) :: twind
+
+! Declare externals
+  external :: getcount_bufr,OPENBF,DATELEN,stop2,&
+    ufbint,count_obs,closbf
+
 !
 !  For lightning
 !

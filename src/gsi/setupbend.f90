@@ -181,7 +181,7 @@ subroutine setupbend(obsLL,odiagLL, &
   real(r_kind),dimension(100+7*nsig)      ,intent(inout) :: awork
   real(r_kind),dimension(max(1,nprof_gps)),intent(inout) :: toss_gps_sub
 
-  integer, intent(in):: is              ! index to GPSbend buffer variables
+  integer(i_kind), intent(in):: is      ! index to GPSbend buffer variables
   logical, intent(in):: init_pass       ! flag the pass for the first background bin
   logical, intent(in):: last_pass       ! flag the pass for the last background bin
   logical, intent(in):: conv_diagsave   ! save diagnostics file
@@ -201,6 +201,9 @@ subroutine setupbend(obsLL,odiagLL, &
   character(len=*),parameter :: myname='setupbend'
   real(r_kind),parameter:: crit_grad = 157.0_r_kind
   real(r_kind),parameter:: r790000=790000.0_r_kind
+
+! Declare externals
+  external :: stop2,tintrp2a1,tintrp2a11,grdcrd1,tintrp31
 
 ! Declare local variables
   integer(i_kind):: grids_dim

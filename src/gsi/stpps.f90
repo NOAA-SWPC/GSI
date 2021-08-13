@@ -96,6 +96,9 @@ subroutine stpps(pshead,rval,sval,out,sges,nstep)
   type(gsi_bundle)                    ,intent(in   ) :: rval,sval
   real(r_kind),dimension(max(1,nstep)),intent(in   ) :: sges
 
+! Declare externals
+  external :: vqc_stp
+
 ! Declare local variables
   integer(i_kind) j1,j2,j3,j4,kk,ier,istatus,ibb,ikk
   real(r_kind) val,val2,w1,w2,w3,w4

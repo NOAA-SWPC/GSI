@@ -72,6 +72,10 @@ subroutine read_gfs_ozone_for_regional
 
   implicit none
 
+! Declare externals
+  external :: stop2,w3movdat,general_read_gfsatm_nems,general_read_gfsatm_nc,general_read_gfsatm,&
+    mpi_allreduce
+
   type(sub2grid_info) grd_gfs,grd_mix,grd_gfst
   type(spec_vars) sp_gfs,sp_b
   real(r_kind),allocatable,dimension(:,:,:) :: pri,prsl

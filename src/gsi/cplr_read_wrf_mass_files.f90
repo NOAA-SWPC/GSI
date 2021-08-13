@@ -54,10 +54,12 @@ contains
     class(read_wrf_mass_files_class),intent(inout) :: this
     integer(i_kind),intent(in   ) :: mype
 
-  
   ! Declare local parameters
     real(r_kind),parameter:: r0_001=0.001_r_kind
   
+  ! Declare externals
+    external :: w3fs21,mpi_bcast
+
   ! Declare local variables
     logical(4) fexist
     character(6) filename

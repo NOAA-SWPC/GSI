@@ -52,6 +52,9 @@ subroutine compute_qvar3d
 
   implicit none
 
+! Declare externals
+  external :: genqsat
+
 ! Declare local variables
   logical ice
   integer(i_kind) :: i,j,k,it,n,np,iderivative,nrf3_q,nrf3_cw

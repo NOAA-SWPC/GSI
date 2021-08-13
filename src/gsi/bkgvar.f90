@@ -215,6 +215,10 @@ subroutine bkg_stddev(cvec,svec)
   type(gsi_bundle), intent(inout) :: cvec
   type(gsi_bundle), intent(inout) :: svec
 
+! Declare externals
+  external :: bkgvar,bkgvar_rewgt,getprs_tl,normal_rh_to_q,tv_to_tsen,&
+    getuv
+
 ! Declare local variables  	
   integer(i_kind) :: istatus
   real(r_kind),pointer,dimension(:,:)   :: cv_ps

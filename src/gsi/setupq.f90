@@ -203,10 +203,11 @@ subroutine setupq(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,conv_diagsav
   character(len=*),parameter:: myname='setupq'
 
 ! Declare external calls for code analysis
-  external:: tintrp2a1,tintrp2a11
+  external:: tintrp2a1,tintrp2a11,tintrp2a11_csln
   external:: tintrp31
   external:: grdcrd1
   external:: genqsat
+  external:: vqc_setup
   external:: stop2
 
 ! Declare local variables  

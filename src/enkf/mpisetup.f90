@@ -40,6 +40,9 @@ contains
 
 subroutine mpi_initialize()
 use mpimod, only : mpi_comm_world,npe,mype
+! Declare externals
+external :: mpi_init,mpi_comm_rank,mpi_comm_size,MPI_Comm_split_type,&
+  mpi_allreduce,MPI_COMM_GROUP,MPI_GROUP_INCL,MPI_COMM_CREATE
 integer ierr
 integer nuse,new_group,old_group,nshmemroot,np
 integer, dimension(:), allocatable :: useprocs, itasks
@@ -98,6 +101,8 @@ subroutine mpi_initialize_io(nanals)
 use mpimod, only : mpi_comm_world
 integer ierr,np,nuse,new_group,old_group
 integer, intent(in) :: nanals
+! Declare externals
+external :: MPI_COMM_GROUP,MPI_GROUP_INCL,MPI_COMM_CREATE
 integer, dimension(:), allocatable :: useprocs, itasks
 
 ! create communicator involving just tasks involved in reading

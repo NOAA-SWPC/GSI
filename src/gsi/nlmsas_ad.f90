@@ -289,6 +289,9 @@ subroutine nlmsas_ad_im_ix_(im,ix,km,jcap,delt,del,sl,rcs,&
   real(r_kind),    intent(inout) :: t1_ad(km,ix),q1_ad(km,ix),cwm1_ad(km,ix),u1_ad(km,ix),v1_ad(km,ix)
   real(r_kind),    intent(inout) :: rn1_ad(ix)
 
+! Declare externals
+  external :: fpvsx_ad
+
 ! Local variables and arrays
   logical,dimension(ix):: cnvflg,dwnflg,dwnflg2,flg
   logical,dimension(km,ix):: flgk
