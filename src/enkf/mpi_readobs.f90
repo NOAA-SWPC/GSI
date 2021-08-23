@@ -60,6 +60,9 @@ subroutine mpi_getobs(obspath, datestring, nobs_conv, nobs_oz, nobs_sat, nobs_to
                       obtime, oberrorig, obcode, obtype, &
                       biaspreds, diagused,  anal_ob, anal_ob_modens, anal_ob_cp, anal_ob_modens_cp, &
                       shm_win, shm_win2, indxsat, nanals, neigv)
+    ! Declare externals
+    external :: mpi_bcast,stop2,MPI_Win_allocate_shared,MPI_Win_shared_query,mpi_barrier,&
+      mpi_allreduce
     character*500, intent(in) :: obspath
     character*10, intent(in) :: datestring
     character(len=10) :: id,id2

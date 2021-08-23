@@ -358,6 +358,9 @@ subroutine get_satobs_data_bin(obspath, datestring, nobs_max, nobs_maxdiag, hx_m
   character(len=10), intent(in) :: id
   integer(i_kind), intent(in)   :: nanal, nmem
 
+! Declare externals
+  external :: stop2
+
   character*500 obsfile, obsfile2
   character(len=10) :: id2
   character(len=4) pe_name
@@ -668,6 +671,9 @@ subroutine get_satobs_data_nc(obspath, datestring, nobs_max, nobs_maxdiag, hx_me
 
   character(len=10), intent(in) :: id
   integer(i_kind), intent(in)   :: nanal, nmem
+
+! Declare externals
+  external :: stop2
 
   character*500 obsfile, obsfile2
   character(len=10) :: id2
@@ -1085,6 +1091,9 @@ subroutine write_satobs_data_bin(obspath, datestring, nobs_max, nobs_maxdiag, x_
   integer(i_kind), dimension(nobs_maxdiag), intent(in) :: x_used
   character(len=10), intent(in) :: id, id2, gesid2
 
+! Declare externals
+  external :: stop2
+
   character*500 obsfile,obsfile2
   character(len=4) pe_name
 
@@ -1273,6 +1282,9 @@ subroutine write_satobs_data_nc(obspath, datestring, nobs_max, nobs_maxdiag, &
   real(r_single),  dimension(nobs_max),     intent(in) :: x_fit, x_sprd
   integer(i_kind), dimension(nobs_maxdiag), intent(in) :: x_used
   character(len=10), intent(in) :: id, gesid
+
+! Declare externals
+  external :: stop2
 
   character*500 obsfile, obsfile2
   character(len=4) pe_name

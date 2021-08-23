@@ -78,6 +78,8 @@ subroutine init_controlvec()
 ! read table with control vector variables
 ! (code adapted from GSI state_vectors.f90 init_anasv routine
 implicit none
+! Declare externals
+external :: stop2
 character(len=*),parameter:: rcname='anavinfo'
 character(len=*),parameter:: tbname='control_vector_enkf::'
 character(len=256),allocatable,dimension(:):: utable
@@ -191,6 +193,8 @@ end subroutine init_controlvec
 subroutine read_control()
 ! read ensemble members on IO tasks
 implicit none
+! Declare externals
+external :: mpi_barrier,mpi_finalize,mpi_allreduce
 real(r_double)  :: t1,t2
 real(r_double), allocatable, dimension(:) :: qsat_tmp
 integer(i_kind) :: nb,nlev,ne
@@ -287,6 +291,9 @@ subroutine write_control(no_inflate_flag)
 ! for now, first nanals tasks are IO tasks.
 implicit none
 logical, intent(in) :: no_inflate_flag
+
+! Declare externals
+external :: mpi_reduce
 
 real(r_double)  :: t1,t2
 integer(i_kind) :: nb, nvar, ne

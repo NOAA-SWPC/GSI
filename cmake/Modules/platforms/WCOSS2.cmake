@@ -1,4 +1,4 @@
-macro (setAcorn)
+macro (setWCOSS2)
 
   message("Setting flags and paths for Cray")
   option(FIND_HDF5 "Try to Find HDF5 libraries" OFF)

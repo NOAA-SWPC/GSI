@@ -159,6 +159,8 @@ use convinfo, only: convinfo_read, init_convinfo, cvar_pg, nconvtype, ictype,&
                     ioctype
 use ozinfo, only: init_oz, ozinfo_read, pg_oz, jpch_oz, nusis_oz, nulev
 use covlocal, only: latval
+! Declare externals
+external :: mpi_reduce
 integer nob,j,ierr
 real(r_double) t1
 real(r_single) tdiff,tdiffmax,deglat,radlat,radlon
@@ -427,6 +429,8 @@ enddo
 end subroutine channelstats
 
 subroutine obsmod_cleanup()
+! Declare externals
+external :: MPI_Barrier,MPI_Win_free
 integer ierr
 ! deallocate module-level allocatable arrays
 if (allocated(obsprd_prior)) deallocate(obsprd_prior)

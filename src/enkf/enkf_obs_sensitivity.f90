@@ -151,6 +151,8 @@ subroutine read_ob_sens
 !
 !$$$ end documentation block
   implicit none
+  ! Declare externals
+  external :: stop2
   integer(i_kind) :: nob, nn
   real(r_kind) :: radlon,radlat
   real(r_single) :: deglat
@@ -311,6 +313,8 @@ subroutine print_ob_sens
 !
 !$$$ end documentation block
   implicit none
+  ! Declare externals
+  external :: mpi_reduce
   integer(i_kind) nob_conv(8,3),nob,iobtyp,ireg
   real(r_kind) sumsense_conv(8,3,3),rate_conv(8,3,3)
   integer(i_kind) nob_sat(jpch_rad),nchan,nn
@@ -335,13 +339,13 @@ subroutine print_ob_sens
   if(fso_calculate) then
      allocate(recbuf(nobstot))
      call mpi_reduce(obsense_kin,recbuf,nobstot,mpi_realkind,mpi_sum,0, &
-          & mpi_comm_world,ierr)
+            mpi_comm_world,ierr)
      if(nproc == 0) obsense_kin(1:nobstot) = recbuf(1:nobstot)
      call mpi_reduce(obsense_dry,recbuf,nobstot,mpi_realkind,mpi_sum,0, &
-          & mpi_comm_world,ierr)
+            mpi_comm_world,ierr)
      if(nproc == 0) obsense_dry(1:nobstot) = recbuf(1:nobstot)
      call mpi_reduce(obsense_moist,recbuf,nobstot,mpi_realkind,mpi_sum,0, &
-          & mpi_comm_world,ierr)
+            mpi_comm_world,ierr)
      if(nproc == 0) obsense_moist(1:nobstot) = recbuf(1:nobstot)
      deallocate(recbuf)
   end if

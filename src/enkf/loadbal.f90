@@ -144,6 +144,8 @@ subroutine load_balance()
 ! stated, assigns each new work item to the task that currently has the 
 ! smallest load.
 implicit none
+! Declare externals
+external :: mpi_allreduce
 integer(i_kind), allocatable, dimension(:) :: rtmp,numobs
 !real(r_single), allocatable, dimension(:) :: buffer
 integer(i_kind) np,i,n,nn,nob1,nob2,ierr
@@ -349,6 +351,9 @@ use controlvec, only: ncdim, grdin
 use params, only: nbackgrounds, ntasks_io, nanals_per_iotask
 implicit none
 
+! Declare externals
+external :: mpi_alltoallv
+
 integer(i_kind), allocatable, dimension(:) :: scounts, displs, rcounts
 real(r_single), allocatable, dimension(:) :: sendbuf,recvbuf
 integer(i_kind) :: np, nb, nn, n, nanal, i, ierr, ne
@@ -451,6 +456,8 @@ subroutine gather_chunks
 use controlvec, only: ncdim, grdin
 use params, only: nbackgrounds, ntasks_io, nanals_per_iotask
 implicit none
+! Declare externals
+external :: mpi_alltoallv
 integer(i_kind), allocatable, dimension(:) :: scounts, displs, rcounts
 real(r_single), allocatable, dimension(:) :: sendbuf,recvbuf
 integer(i_kind) :: np, nb, nn, nanal, n, i, ierr, ne

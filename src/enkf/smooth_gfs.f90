@@ -30,8 +30,10 @@ subroutine smooth(grids)
 ! smoothing controlled by parameter smoothparm.
 use specmod, only: sptez_s, init_spec_vars, isinitialized
 implicit none
-integer(i_kind) np,ierr,m,nmdim,nm,nn,n,delta,npmax
 real(r_single), intent(inout) :: grids(npts,ncdim) ! there are ncdim 2d grids.
+! Declare externals
+external :: mpi_allreduce
+integer(i_kind) np,ierr,m,nmdim,nm,nn,n,delta,npmax
 real(r_single) smoothfact ! smoothing parameter.
 real(r_kind) reggrd(nlons*nlats)
 real(r_kind), allocatable, dimension(:) :: specdat

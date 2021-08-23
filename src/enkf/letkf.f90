@@ -131,6 +131,9 @@ subroutine letkf_update()
 implicit none
 ! LETKF update.
 
+! Declare externals
+external :: expand_ens,mpi_reduce
+
 ! local variables.
 integer(i_kind) nob,nf,nanal,nens,&
                 i,nlev,nrej,npt,nn,nnmax,ierr
@@ -642,6 +645,8 @@ real(r_single),dimension(nobsl),intent(in)  :: dep
 real(r_single),dimension(nanals),intent(out)  :: wts_ensmean
 real(r_single),dimension(nanals,nanals/neigv),intent(out)  :: wts_ensperts
 real(r_single),dimension(:,:),allocatable, intent(inout) :: paens
+! Declare externals
+external :: stop2,dgemm,dsyevr,sgemm,ssyevr
 ! local variables.
 real(r_kind),allocatable,dimension(:,:) :: work3,evecs
 real(r_single),allocatable,dimension(:,:) :: swork2,pa,swork3,shxens
@@ -860,6 +865,8 @@ subroutine find_localobs(grdloc,obloc,rsqmax,nobstot,nobsl_max,sresults,nobsl)
    real(r_single), intent(in) :: obloc(3,nobstot)
    type(kdtree2_result),intent(inout) :: sresults(nobstot)
    integer, intent(out) :: nobsl
+   ! Declare externals
+   external :: stop2
    ! local variables.
    real(r_single) rsq(nobstot)
    integer(i_kind) indxob(nobstot)

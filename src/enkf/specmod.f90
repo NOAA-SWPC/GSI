@@ -519,6 +519,8 @@ subroutine sptranf_v(waved,wavez,gridun,gridus,gridvn,gridvs,idir)
   real(r_kind),dimension(nc):: waved,wavez
   real(r_kind),dimension(ijmax):: gridun,gridus,gridvn,gridvs
 
+! Declare externals
+  external :: spdz2uv,sptranf1,spuv2dz
 
 ! Declare local variables
   integer(i_kind) i,j,jj,ijn,ijs

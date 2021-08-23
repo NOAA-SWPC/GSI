@@ -110,6 +110,9 @@ program enkf_main
  use enkf_obs_sensitivity, only: init_ob_sens, print_ob_sens, destroy_ob_sens
 
  implicit none
+ ! Declare externals
+ external :: w3tagb,mpi_barrier,read_locinfo,write_logfile,w3tage
+
  integer(i_kind) nth,ierr
  real(r_double) t1,t2
  logical no_inflate_flag

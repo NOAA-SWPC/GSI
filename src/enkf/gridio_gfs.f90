@@ -76,6 +76,10 @@
   real(r_single), dimension(npts,ndim,ntimes,1), intent(out) :: grdin
   real(r_double), dimension(npts,nlevs,ntimes,1), intent(out) :: qsat
 
+! Declare externals
+  external :: mpi_comm_split,mpi_comm_rank,mpi_comm_size,stop2,&
+    mpi_gatherv,genqsat1,mpi_barrier,mpi_comm_free
+
   character(len=500) :: filename,sfcfilename
   character(len=7) charnanal
 
@@ -433,6 +437,9 @@
   logical, intent(in) :: reducedgrid
   real(r_single), dimension(npts,ndim,ntimes,nanal2-nanal1+1), intent(out) :: grdin
   real(r_double), dimension(npts,nlevs,ntimes,nanal2-nanal1+1), intent(out) :: qsat
+
+! Declare externals
+  external :: stop2,genqsat1
 
   character(len=500) :: filename
   character(len=500) :: filenamesfc
@@ -1039,6 +1046,11 @@
   integer, dimension(0:n3d), intent(in) :: levels
   real(r_single), dimension(npts,ndim,nbackgrounds,1), intent(inout) :: grdin
   logical, intent(in) :: no_inflate_flag
+
+! Declare externals
+  external :: mpi_comm_split,mpi_comm_rank,mpi_comm_size,mpi_barrier,mpi_bcast,&
+    stop2,w3movdat,mpi_allreduce,mpi_comm_free
+
   logical:: use_full_hydro
   character(len=500):: filenamein, filenameout
   real(r_kind), allocatable, dimension(:,:) :: vmassdiv,dpanl,dpfg,pressi
@@ -1848,6 +1860,10 @@
   integer, dimension(0:n3d), intent(in) :: levels
   real(r_single), dimension(npts,ndim,nbackgrounds,nanal2-nanal1+1), intent(inout) :: grdin
   logical, intent(in) :: no_inflate_flag
+
+! Declare externals
+  external :: stop2,w3movdat
+
   logical:: use_full_hydro
   character(len=500):: filenamein, filenameout
   real(r_kind), allocatable, dimension(:,:) :: vmassdiv,dpanl,dpfg,pressi
@@ -3306,6 +3322,10 @@
   integer, dimension(0:n3d), intent(in) :: levels
   real(r_single), dimension(npts,ndim,nbackgrounds,1), intent(inout) :: grdin
   logical, intent(in) :: no_inflate_flag
+
+  ! Declare externals
+  external :: stop2
+
   logical:: use_full_hydro
   character(len=500):: filenamein, filenameout
   integer(i_kind) :: i,j,k, nb, ne, nanal
@@ -3703,6 +3723,10 @@
   integer, dimension(0:n3d), intent(in) :: levels
   real(r_single), dimension(npts,ndim,nbackgrounds,1), intent(inout) :: grdin
   logical, intent(in) :: no_inflate_flag
+
+! Declare externals
+  external :: mpi_bcast,stop2
+
   logical:: use_full_hydro
   character(len=500):: filenamein, filenameout
   integer(i_kind) :: i,j,k, nb, ne, nanal, imem
@@ -4154,6 +4178,8 @@
   subroutine nccheck_incr(status)
     use netcdf
     integer, intent (in   ) :: status
+! Declare externals
+    external :: stop2
     if (status /= nf90_noerr) then
       print *, "fv3_increment netCDF error ", trim(nf90_strerror(status))
       call stop2(999)

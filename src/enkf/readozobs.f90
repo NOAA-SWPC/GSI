@@ -297,6 +297,9 @@ subroutine get_ozobs_data_bin(obspath, datestring, nobs_max, nobs_maxdiag, hx_me
   character(len=8), intent(in) :: id
   integer(i_kind), intent(in)  :: nanal, nmem
 
+! Declare externals
+  external :: stop2
+
   character*500    :: obsfile, obsfile2
   character(len=8) :: id2
   character(len=4) :: pe_name
@@ -575,6 +578,9 @@ subroutine get_ozobs_data_nc(obspath, datestring, nobs_max, nobs_maxdiag, hx_mea
   character(len=8), intent(in) :: id
   integer(i_kind), intent(in)  :: nanal, nmem
 
+! Declare externals
+  external :: stop2
+
   character*500    :: obsfile, obsfile2
   character(len=8) :: id2
   character(len=4) :: pe_name
@@ -825,6 +831,9 @@ subroutine write_ozobs_data_bin(obspath, datestring, nobs_max, nobs_maxdiag, x_f
   integer(i_kind), dimension(nobs_maxdiag), intent(in) :: x_used
   character(len=8), intent(in) :: id, id2, gesid2
 
+! Declare externals
+  external :: stop2
+
   character*500 :: obsfile, obsfile2
   character(len=4) pe_name
 
@@ -939,6 +948,8 @@ subroutine write_ozobs_data_nc(obspath, datestring, nobs_max, nobs_maxdiag, &
   integer(i_kind), dimension(nobs_maxdiag), intent(in) :: x_used
   character(len=8), intent(in) :: id, gesid
 
+! Declare externals
+  external :: stop2
 
   character*500 obsfile, obsfile2
   character(len=4) pe_name

@@ -67,6 +67,8 @@ subroutine init_statevec()
 ! (code adapted from GSI state_vectors.f90 init_anasv routine
 !  by Anna Shlyaeva, April 18, 2016)
 implicit none
+! Declare externals
+external :: stop2
 character(len=*),parameter:: rcname='anavinfo'
 character(len=*),parameter:: tbname='state_vector::'
 character(len=256),allocatable,dimension(:):: utable
@@ -167,6 +169,8 @@ end subroutine init_statevec
 subroutine read_state()
 ! read ensemble members on IO tasks,
 implicit none
+! Declare externals
+external :: mpi_barrier,mpi_finalize,mpi_allreduce
 integer(i_kind) nanal, i, nb, ne
 real(r_double), allocatable, dimension(:,:,:,:) :: qsat
 real(r_single), allocatable, dimension(:) :: state_mean

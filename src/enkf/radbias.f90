@@ -87,6 +87,9 @@ subroutine update_biascorr(niter)
 ! compute analysis increment (deltapredx) for bias correction coefficients
 ! given latest esimate of observation increments (obs - ensemble mean at ob
 ! locations). Upgraded deltapredx broadcast to all tasks.
+integer(i_kind), intent(in) :: niter
+! Declare externals
+external :: dgemm,sgemm,dgemv,sgemv,mpi_allreduce
 integer(i_kind) i,m,i1,i2,nn,n
 real(r_kind) increment(npred),biaserrvar,a(npred,npred),atmp(npred,npred)
 real(r_kind) inctmp(npred)
@@ -95,7 +98,6 @@ real(r_kind), allocatable, dimension(:,:) :: biaspredtmp
 real(r_kind), allocatable, dimension(:) :: obinc
 real(r_kind) deltapredx1(npred,jpch_rad)
 real(r_double) t1
-integer(i_kind), intent(in) :: niter
 integer(i_kind) ierr
 character(len=72) fmt
 write(fmt, '("(i2,1x,i4,1x,a20,1x,i4,",I0,"(1x,e10.3))")') npred
@@ -243,6 +245,8 @@ subroutine symminv(a,n)
   ! cholesky decomp inverse of a symm. matrix.
   integer, intent(in) :: n
   real(r_kind), intent(inout) :: a(n,n)
+  ! Declare externals
+  external :: dpotrf,dpotri,spotrf,spotri
   integer ierr,i,j
   if (r_kind == kind(1.d0)) then
      call dpotrf('L',n,a,n,ierr)

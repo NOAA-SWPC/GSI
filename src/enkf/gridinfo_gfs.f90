@@ -87,6 +87,9 @@ type(Dimension) :: londim,latdim,levdim
 character(len=120), intent(in) :: fileprefix
 logical, intent(in)            :: reducedgrid
 
+! Declare externals
+external :: stop2,mpi_bcast
+
 integer(i_kind) nlevsin, ierr, iunit, k, nn, idvc 
 character(len=500) filename
 integer(i_kind) iret,i,j,nlonsin,nlatsin

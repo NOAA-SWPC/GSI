@@ -130,6 +130,8 @@ call MPI_COMM_CREATE(MPI_COMM_WORLD,new_group,mpi_comm_io,ierr)
 end subroutine mpi_initialize_io
 
 subroutine mpi_cleanup()
+! Declare externals
+external :: mpi_barrier,mpi_finalize
 integer ierr
 flush(6,err=10)
 flush(0,err=10)

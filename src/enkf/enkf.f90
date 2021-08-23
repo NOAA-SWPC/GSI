@@ -150,6 +150,9 @@ subroutine enkf_update()
 use random_normal, only : rnorm, set_random_seed
 ! serial EnKF update.
 
+! Declare externals
+external :: mpi_bcast,mpi_allreduce,stop2,expand_ens,mpi_send,mpi_recv
+
 ! local variables.
 integer(i_kind) nob,nob1,nob2,nob3,npob,nf,nf2,ii,nobx,nskip,&
                 niter,i,nrej,npt,nuse,ncount,ncount_check,nb,np

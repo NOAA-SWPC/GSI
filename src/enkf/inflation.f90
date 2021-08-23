@@ -89,6 +89,8 @@ public :: inflate_ens
 contains
 
 subroutine inflate_ens()
+! Declare externals
+external :: mpi_allreduce,mpi_reduce
 
 integer(i_kind),parameter :: ndiag = 3
 !  Currently 3 diagnostic areas (ndiag =3)

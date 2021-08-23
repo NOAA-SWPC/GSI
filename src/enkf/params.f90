@@ -249,6 +249,8 @@ namelist /ozobs_enkf/sattypes_oz
 contains
 
 subroutine read_namelist()
+! Declare externals
+external :: stop2
 integer i,j,nb,np
 logical fexist
 real(r_single) modelspace_vloc_cutoff, modelspace_vloc_thresh

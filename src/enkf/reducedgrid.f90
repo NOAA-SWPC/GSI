@@ -131,6 +131,8 @@ subroutine reducedtoreg(datared,datareg)
  ! data on full grid.
  real(r_kind), intent(out), dimension(nlonsfull*nlatsfull) :: datareg
  real(r_single), intent(in), dimension(nptsred) :: datared
+ ! Declare externals
+ external :: fftpack_rfftf,fftpack_rfftb
  integer nlon, nlat, nlonsred, n
  real datared_lon(nlonsfull)
  real fftwork(2*nlonsfull+15)

@@ -481,6 +481,9 @@ subroutine get_convobs_data_nc(obspath, datestring, nobs_max, nobs_maxdiag,   &
   character(len=10), intent(in) :: id
   integer, intent(in)           :: nanal, nmem
 
+! Declare externals
+  external :: stop2
+
   real(r_double) t1,t2,tsum
   character(len=4) pe_name
   character*500 obsfile, obsfile2
@@ -952,6 +955,9 @@ subroutine get_convobs_data_bin(obspath, datestring, nobs_max, nobs_maxdiag,   &
   character(len=10), intent(in) :: id
   integer, intent(in)           :: nanal, nmem
 
+! Declare externals
+  external :: stop2
+
   real(r_double) t1,t2,tsum
   character(len=4) pe_name
   character*500 obsfile, obsfile2
@@ -1414,6 +1420,8 @@ subroutine write_convobs_data_bin(obspath, datestring, nobs_max, nobs_maxdiag, &
 
   character(len=10), intent(in) :: id, id2, gesid2
 
+! Declare externals
+  external :: stop2
 
   character*500 obsfile,obsfile2
   character(len=4) pe_name
@@ -1584,6 +1592,9 @@ subroutine write_convobs_data_nc(obspath, datestring, nobs_max, nobs_maxdiag, &
   integer(i_kind), dimension(nobs_maxdiag), intent(in) :: x_used
 
   character(len=10), intent(in) :: id, gesid
+
+! Declare externals
+  external :: stop2
 
   character*500 obsfile, obsfile2
   character(len=4) pe_name
