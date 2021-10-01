@@ -1812,6 +1812,9 @@ contains
                                                     g_qr,g_qs,g_qg,g_qnr,g_w
       character(255),intent(in):: filename
   !
+  !   Declare externals
+      external :: stop2,mpi_scatterv
+  !
   !   Declare local variables
       real(r_single),allocatable,dimension(:,:,:):: temp_3d
       real(r_kind),allocatable,dimension(:,:,:):: gg_qr,gg_qs,gg_qg
@@ -2357,10 +2360,14 @@ subroutine write_spread_dualres_qcld_regional(a,b,c,d,mype)
   use constants, only: zero
   implicit none
 
+  real(r_kind),dimension(grd_anl%lat2,grd_anl%lon2,grd_anl%nsig),intent(in):: a,b,c,d
   integer(i_kind),intent(in):: mype
+
+! Declare externals
+  external :: baopenwt,gather_stuff2,wryte,baclose
+
   character(255):: grdfile
 
-  real(r_kind),dimension(grd_anl%lat2,grd_anl%lon2,grd_anl%nsig),intent(in):: a,b,c,d
   real(r_kind),dimension(grd_anl%lat2,grd_anl%lon2,grd_anl%nsig,4):: g3in
 
   real(r_kind),dimension(grd_anl%nlat,grd_anl%nlon,grd_anl%nsig):: work8_3d

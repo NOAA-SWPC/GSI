@@ -74,6 +74,9 @@ subroutine read_radarref_directDA(nread,ndata,nodata,infile,obstype,lunout,twind
   real(r_kind),     intent(in   ) :: twind
   character(20),    intent(in)    :: sis
 
+! Declare externals
+  external :: stop2,getcount_bufr,openbf,datelen,ufbint,count_obs,closbf
+
 ! Declare local parameters
   real(r_kind),parameter:: r90  = 90.0_r_kind
   real(r_kind),parameter:: r360 = 360.0_r_kind

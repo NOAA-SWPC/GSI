@@ -93,6 +93,8 @@ contains
 
 !-------------------------------------------------------------------------
 
+! ! Declare externals
+    external :: stop2,mpi_barrier
 
     real(r_kind),pointer,dimension(:,:,:) ::uptr,vptr,tptr,qptr 
     real(r_kind),pointer,dimension(:,:) ::psptr 
@@ -298,8 +300,11 @@ contains
 
   subroutine ncceck_enspread(status)
     use netcdf, only: nf90_noerr,nf90_strerror
+    use kinds, only: i_kind
     implicit none
-    integer, intent (in   ) :: status
+    integer(i_kind), intent (in   ) :: status
+!   Declare externals
+    external :: stop2
     if (status /= nf90_noerr) then
       print *, "fv3 write enspread netCDF error ", trim(nf90_strerror(status))
       call stop2(999)

@@ -121,7 +121,7 @@ subroutine read_radar(nread,ndata,nodata,infile,lunout,obstype,twind,sis,hgtl_fu
 
 ! Declare externals
   external :: openbf,datelen,readsb,readmg,ufbint,closbf,stop2,grdcrd1,w3fs21,&
-    getvrlocalinfo,count_obs
+    get_azimuth_corrected,get_rdr_obshgttilt,beamelv,dhdrange,getvrlocalinfo,count_obs
 
 ! Declare local parameters
   integer(i_kind),parameter:: maxlevs=1500

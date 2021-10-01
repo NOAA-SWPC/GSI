@@ -772,7 +772,7 @@ subroutine read_obs(ndata,mype)
       read_sfcwnd,read_rapidscat,read_nsstbufr,read_modsbufr,read_radarref_mosaic,&
       read_lightning,read_lightning_grid,read_NASA_LaRC_cloud,read_nasa_larc,&
       read_radar_wind_ascii,read_radar,read_radar_l2rw,read_radar_l2rw_novadqc,&
-      read_dbz_nc,read_dbz_mrms_detect_format,read_dbz_mrms_sparse_netcdf,&
+      read_dbz_nc,read_radarref_directDA,read_dbz_mrms_detect_format,read_dbz_mrms_sparse_netcdf,&
       read_dbz_mrms_netcdf,read_lag,read_lidar,read_tcps,read_anowbufr,&
       read_pblh,read_wcpbufr,read_bufrtovs,read_atms,read_saphir,read_airs,&
       read_iasi,read_cris,read_goesndr,read_ssmi,read_amsre,read_ssmis,&

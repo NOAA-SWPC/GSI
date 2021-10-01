@@ -117,8 +117,9 @@ subroutine prewgt_reg(mype)
   real(r_kind),parameter:: r015         = 0.15_r_kind
 
 ! Declare externals
-  external :: rfdpar1,rfdpar2,smoothzo,compute_qvar3d,&
-    write_bkgvars2_grid
+  external :: rfdpar1,rfdpar2,smoothzo,smoothzo1,calc_corz_cld_qr,&
+    calc_corz_cld_qs,calc_corz_cld_qg,calc_corz_cld_qnr,&
+    stop2,compute_qvar3d,write_bkgvars2_grid
 
 ! Declare local variables
   integer(i_kind) k,i,ii
