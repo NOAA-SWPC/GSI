@@ -80,6 +80,10 @@ subroutine read_anowbufr(nread,ndata,nodata,gstime,&
   real(r_kind), parameter :: anow_missing=1.0e11_r_kind,&
         conc_missing = anow_missing-1
 
+! declare externals
+  external :: openbf,datelen,ufbint,grdcrd1,w3movdat,&
+    w3fs21,closbf,count_obs
+
 ! declare local variables
   logical outside
   
@@ -329,6 +333,7 @@ subroutine read_anowbufr(nread,ndata,nodata,gstime,&
 1000 continue
 
   call closbf(lunin)
+  close(lunin)
   
   if(diagnostic_reg .and. &
        ntest > 0) write(6,*)'read_airnow_bufr: ',&

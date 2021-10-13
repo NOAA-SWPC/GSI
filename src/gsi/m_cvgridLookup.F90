@@ -168,6 +168,9 @@ subroutine isubdom_index_(elat,elon,ilat,ilon)
   real(kind=r_kind),intent(in ):: elat,elon
   integer(kind=i_kind),intent(out):: ilat,ilon
 
+! Declare externals
+  external :: grdcrd1
+
   real(kind=r_kind):: dlat,dlon
   dlat=elat*deg2rad
   dlon=elon*deg2rad
@@ -313,6 +316,9 @@ subroutine get_Hij_(elat,elon,ij,wij)
   integer(i_kind),dimension(:),intent(inout)::  ij
   real   (r_kind),dimension(:),intent(inout):: wij
 
+! Declare externals
+  external :: grdcrd1
+
   real   (r_kind):: dlat,dlon
 _ENTRY_('get_Hij_')
   dlat=elat*deg2rad
@@ -333,6 +339,9 @@ subroutine get_Hijk_(elat,elon,dlev,ijk,wijk)
   real   (r_kind),intent(in):: elat,elon,dlev
   integer(i_kind),dimension(:),intent(inout)::  ijk
   real   (r_kind),dimension(:),intent(inout):: wijk
+
+! Declare externals
+  external :: grdcrd1
 
   real   (r_kind):: dlat,dlon
 _ENTRY_('get_Hijk_')
@@ -357,6 +366,9 @@ subroutine get_Dij_(elat,elon,dlat,dlon,ij,wij,jtype,asis)
   real   (r_kind),dimension(:),intent(inout):: wij
   integer(i_kind),intent(in)::  jtype
   logical,optional,intent(in):: asis
+
+! Declare externals
+  external :: grdcrd1
 
   real   (r_kind):: dlat_,dlon_
   integer(i_kind),dimension(4)::  ij_
@@ -422,6 +434,9 @@ subroutine get_Dijk_(elat,elon,dlat,dlon,dlev,ijk,wijk,jtype,asis)
   real   (r_kind),dimension(:),intent(inout):: wijk
   integer(i_kind) ,intent(in):: jtype
   logical,optional,intent(in):: asis
+
+! Declare externals
+  external :: grdcrd1
 
   integer(i_kind),dimension(8)::  ijk_
   real   (r_kind),dimension(8):: wijk_

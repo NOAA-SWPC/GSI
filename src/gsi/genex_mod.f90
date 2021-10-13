@@ -245,6 +245,9 @@ subroutine genex_create_info2(s,ias ,iae ,jas ,jae , &
    integer(i_kind) ,intent(in   ) :: ibsm,ibem,jbsm,jbem
    type(genex_info),intent(inout):: s
 
+!  Declare externals
+   external :: mpi_irecv,mpi_issend,mpi_wait
+
    integer(i_kind) istat(mpi_status_size)
    integer(i_kind) n,my_neb_l,my_neb_r
    integer(i_kind) irecv_l,irecv_r,isend_l,isend_r,iserr,irerr,ierr
@@ -403,6 +406,9 @@ subroutine genex_create_info3(s,ias ,iae ,jas ,jae ,kas ,kae , &
    integer(i_kind),intent(in   ) :: iasm,iaem,jasm,jaem,kasm,kaem
    integer(i_kind),intent(in   ) :: ibsm,ibem,jbsm,jbem,kbsm,kbem
    type(genex_info),intent(inout):: s
+
+!  Declare externals
+   external :: mpi_irecv,mpi_issend,mpi_wait
 
    integer(i_kind) istat(mpi_status_size)
    integer(i_kind) n,my_neb_l,my_neb_r
@@ -578,6 +584,9 @@ subroutine genex_create_info4(s,ias ,iae ,jas ,jae ,kas ,kae ,mas ,mae , &
    integer(i_kind),intent(in   ) :: iasm,iaem,jasm,jaem,kasm,kaem,masm,maem
    integer(i_kind),intent(in   ) :: ibsm,ibem,jbsm,jbem,kbsm,kbem,mbsm,mbem
    type(genex_info),intent(inout):: s
+
+!  Declare externals
+   external :: mpi_irecv,mpi_issend,mpi_wait
 
    integer(i_kind) istat(mpi_status_size)
    integer(i_kind) n,my_neb_l,my_neb_r
@@ -775,27 +784,6 @@ subroutine genex_destroy_info(s)
    if(associated(s%kabe_rc)) deallocate(s%kabe_rc)
    if(associated(s%mabs_rc)) deallocate(s%mabs_rc)
    if(associated(s%mabe_rc)) deallocate(s%mabe_rc)
-!   following is probably redundant
-   s%lefts => NULL()
-   s%rights => NULL()
-   s%numl => NULL()
-   s%numrc => NULL()
-   s%iabs_l => NULL()
-   s%iabe_l => NULL()
-   s%jabs_l => NULL()
-   s%jabe_l => NULL()
-   s%kabs_l => NULL()
-   s%kabe_l => NULL()
-   s%mabs_l => NULL()
-   s%mabe_l => NULL()
-   s%iabs_rc => NULL()
-   s%iabe_rc => NULL()
-   s%jabs_rc => NULL()
-   s%jabe_rc => NULL()
-   s%kabs_rc => NULL()
-   s%kabe_rc => NULL()
-   s%mabs_rc => NULL()
-   s%mabe_rc => NULL()
    s%lallocated=.false.
 
 end subroutine genex_destroy_info
@@ -831,6 +819,9 @@ subroutine genex2_r_single(s,a,b)
    type(genex_info),intent(in):: s
    real(r_single), intent(in   ) :: a(s%iasm:s%iaemz,s%jasm:s%jaemz)
    real(r_single), intent(  out) :: b(s%ibsm:s%ibemz,s%jbsm:s%jbemz)
+
+!  Declare externals
+   external :: mpi_irecv,mpi_issend,mpi_wait
 
    integer(i_kind) istat(mpi_status_size)
    integer(i_kind) n,my_neb_l,my_neb_r
@@ -927,6 +918,9 @@ subroutine genex2_r_double(s,a,b)
    real(r_double), intent(in   ) :: a(s%iasm:s%iaemz,s%jasm:s%jaemz)
    real(r_double), intent(  out) :: b(s%ibsm:s%ibemz,s%jbsm:s%jbemz)
 
+!  Declare externals
+   external :: mpi_irecv,mpi_issend,mpi_wait
+
    integer(i_kind) istat(mpi_status_size)
    integer(i_kind) n,my_neb_l,my_neb_r
    integer(i_kind) irecv_l,isend_r,iserr,irerr,ierr
@@ -1021,6 +1015,9 @@ subroutine genex3_r_single(s,a,b)
    type(genex_info),intent(in):: s
    real(r_single), intent(in   ) :: a(s%iasm:s%iaemz,s%jasm:s%jaemz,s%kasm:s%kaemz)
    real(r_single), intent(  out) :: b(s%ibsm:s%ibemz,s%jbsm:s%jbemz,s%kbsm:s%kbemz)
+
+!  Declare externals
+   external :: mpi_irecv,mpi_issend,mpi_wait
 
    integer(i_kind) istat(mpi_status_size)
    integer(i_kind) n,my_neb_l,my_neb_r
@@ -1123,6 +1120,9 @@ subroutine genex3_r_double(s,a,b)
    real(r_double), intent(in   ) :: a(s%iasm:s%iaemz,s%jasm:s%jaemz,s%kasm:s%kaemz)
    real(r_double), intent(  out) :: b(s%ibsm:s%ibemz,s%jbsm:s%jbemz,s%kbsm:s%kbemz)
 
+!  Declare externals
+   external :: mpi_irecv,mpi_issend,mpi_wait
+
    integer(i_kind) istat(mpi_status_size)
    integer(i_kind) n,my_neb_l,my_neb_r
    integer(i_kind) irecv_l,isend_r,iserr,irerr,ierr
@@ -1223,6 +1223,9 @@ subroutine genex4_r_single(s,a,b)
    type(genex_info),intent(in):: s
    real(r_single), intent(in   ) :: a(s%iasm:s%iaemz,s%jasm:s%jaemz,s%kasm:s%kaemz,s%masm:s%maemz)
    real(r_single), intent(  out) :: b(s%ibsm:s%ibemz,s%jbsm:s%jbemz,s%kbsm:s%kbemz,s%mbsm:s%mbemz)
+
+!  Declare externals
+   external :: mpi_irecv,mpi_issend,mpi_wait
 
    integer(i_kind) istat(mpi_status_size)
    integer(i_kind) n,my_neb_l,my_neb_r
@@ -1330,6 +1333,9 @@ subroutine genex4_r_double(s,a,b)
    type(genex_info),intent(in):: s
    real(r_double), intent(in   ) :: a(s%iasm:s%iaemz,s%jasm:s%jaemz,s%kasm:s%kaemz,s%masm:s%maemz)
    real(r_double), intent(  out) :: b(s%ibsm:s%ibemz,s%jbsm:s%jbemz,s%kbsm:s%kbemz,s%mbsm:s%mbemz)
+
+!  Declare externals
+   external :: mpi_irecv,mpi_issend,mpi_wait
 
    integer(i_kind) istat(mpi_status_size)
    integer(i_kind) n,my_neb_l,my_neb_r

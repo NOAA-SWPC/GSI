@@ -159,6 +159,9 @@ subroutine allreduce_(vdot,vsum,vmin,vmax,vdim,comm)
   real(r_kind)   ,intent(inout) :: vmin,vmax
   integer(i_kind),intent(inout) :: vdim
   integer        ,intent(in   ) :: comm
+
+! Declare externals
+  external :: mpi_allreduce, stop2
   
   integer(i_kind):: vdim_local
 

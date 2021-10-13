@@ -110,6 +110,10 @@ subroutine read_avhrr_navy(mype,val_avhrr,ithin,rmesh,jsatid,&
   integer(i_kind) ,intent(in   ) :: mpi_comm_sub
   logical         ,intent(in   ) :: dval_use
 
+! Declare externals
+  external :: rdgrbsst,openbf,status,nemtab,ufbint,ufbrep,w3fs21,grdcrd1,&
+    combine_radobs,count_obs,closbf
+
 ! Declare local parameters
   character(6),parameter:: file_sst='SST_AN'
   integer(i_kind),parameter:: mlat_sst = 3000
@@ -496,6 +500,7 @@ subroutine read_avhrr_navy(mype,val_avhrr,ithin,rmesh,jsatid,&
 900 continue
   call destroygrids
   call closbf(lnbufr)
+  close(lnbufr)
 
   if(diagnostic_reg.and.ntest>0) write(6,*)'READ_AVHRR_NAVY:  ',&
      'mype,ntest,disterrmax=',mype,ntest,disterrmax

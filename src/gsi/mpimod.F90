@@ -37,6 +37,7 @@ module mpimod
   use mpeu_mpif, only : mpi_real4
   use mpeu_mpif, only : mpi_max
   use mpeu_mpif, only : mpi_min
+  use mpeu_mpif, only : mpi_character
   use mpeu_mpif, only : mpi_offset_kind
   use mpeu_mpif, only : mpi_info_null
   use mpeu_mpif, only : mpi_mode_rdonly
@@ -109,6 +110,10 @@ module mpimod
   public :: mpi_mode_rdwr,mpi_byte
   public :: mpi_mode_create
   public :: mpi_mode_wronly
+  public :: mpi_character
+
+! Declare externals
+  external :: mpi_comm_group,mpi_group_incl,mpi_comm_create,mpi_group_free
 
 #ifdef HAVE_ESMF
   integer(i_kind) :: mpi_comm_world

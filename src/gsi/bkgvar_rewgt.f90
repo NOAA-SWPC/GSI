@@ -56,6 +56,9 @@ subroutine bkgvar_rewgt(sfvar,vpvar,tvar,psvar,mype)
   real(r_kind),dimension(lat2,lon2)     ,intent(inout) :: psvar
   integer(i_kind)                       ,intent(in   ) :: mype
 
+! Declare externals
+  external :: getpsichi,smooth2d,mpi_allreduce,write_bkgvars_grid
+
 ! Declare local variables
   character(len=*),parameter::myname='bkgvar_rewgt'
   real(r_kind),dimension(lat2,lon2,nsig):: bald,balt
@@ -222,15 +225,15 @@ subroutine bkgvar_rewgt(sfvar,vpvar,tvar,psvar,mype)
   do k=1,nsig
      do j=1,lon2
         do i=1,lat2
-           delpsi(i,j,k)=sqrt( delpsi(i,j,k)**two )
-           delchi(i,j,k)=sqrt( delchi(i,j,k)**two )
-           deltv (i,j,k)=sqrt( deltv (i,j,k)**two )
+           delpsi(i,j,k)=abs( delpsi(i,j,k) )
+           delchi(i,j,k)=abs( delchi(i,j,k) )
+           deltv (i,j,k)=abs( deltv (i,j,k) )
         end do
      end do
   end do
   do j=1,lon2
      do i=1,lat2
-        delps(i,j)=sqrt( delps(i,j)**two )
+        delps(i,j)=abs( delps(i,j) )
      end do
   end do
 
@@ -402,6 +405,9 @@ subroutine getpsichi(vordiv1,vordiv2,dpsichi)
   real(r_kind),dimension(lat2,lon2,nsig),intent(in   ) :: vordiv1,vordiv2
   real(r_kind),dimension(lat2,lon2,nsig),intent(  out) :: dpsichi
 
+! Declare externals
+  external :: general_g2s0,general_s2g0
+
 ! Declare local variables
   integer(i_kind) i,ii,j,k
 
@@ -494,6 +500,9 @@ subroutine smooth2d(subd1,subd2,subd3,subd4,nlevs,nsmooth,mype)
   real(r_kind)   ,intent(inout) :: subd2(lat2,lon2,nlevs)
   real(r_kind)   ,intent(inout) :: subd3(lat2,lon2,nlevs)
   real(r_kind)   ,intent(inout) :: subd4(lat2,lon2)
+
+! Declare externals
+  external :: stop2
 
   real(r_kind),dimension(g33p1%inner_vars,lat2,lon2,g33p1%num_fields)::worksub
   real(r_kind),dimension(g33p1%inner_vars,nlat,nlon,g33p1%kbegin_loc:g33p1%kend_alloc)::grd
@@ -671,6 +680,9 @@ subroutine gather_stuff2(f,g,mype,outpe)
   integer(i_kind),intent(in   ) :: mype,outpe
   real(r_kind)   ,intent(in   ) :: f(g1%lat2,g1%lon2)
   real(r_kind)   ,intent(  out) :: g(g1%nlat,g1%nlon)
+
+! Declare externals
+  external :: mpi_gatherv
 
   real(r_kind) fsm(g1%lat1,g1%lon1)
   real(r_kind),allocatable:: tempa(:)

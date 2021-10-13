@@ -51,12 +51,15 @@ subroutine antest_maps0(mype,theta0f,z0f)
   implicit none
 
   integer(i_kind),intent(in   ) :: mype
+  real(r_single) ,intent(in   ) :: theta0f(pf2aP1%nlatf,pf2aP1%nlonf,nsig1o)
+  real(r_single) ,intent(in   ) :: z0f(pf2aP1%nlatf,pf2aP1%nlonf,nsig1o)
+
+! Declare externals
+  external :: mpi_finalize,ansmoothrf,mpi_allreduce,mpi_reduce
+
   type(gsi_bundle):: bundle_work
   type(gsi_grid) :: grid
   character(2) :: names2dwork(1),names3dwork(4)
-
-  real(r_single) ,intent(in   ) :: theta0f(pf2aP1%nlatf,pf2aP1%nlonf,nsig1o)
-  real(r_single) ,intent(in   ) :: z0f(pf2aP1%nlatf,pf2aP1%nlonf,nsig1o)
 
   character(len=*),parameter::myname='antest_maps0'
   real(r_kind),dimension(lat2,lon2,nsig):: twork,qwork,stwork,vpwork
@@ -356,6 +359,10 @@ subroutine antest_maps0_subdomain_option(mype,theta0f,z0f)
   integer(i_kind),intent(in   ) :: mype
   real(r_single) ,intent(in   ) :: theta0f(lat2,lon2,nsig)
   real(r_single) ,intent(in   ) :: z0f(lat2,lon2,nsig)
+
+! Declare externals
+  external :: mpi_finalize,ansmoothrf_reg_subdomain_option,mpi_allreduce,&
+    mpi_reduce,outgrads1
 
   character(len=*),parameter::myname='antest_maps0_subdomain_option'
   real(r_kind),dimension(lat2,lon2,nsig):: twork,qwork,stwork,vpwork

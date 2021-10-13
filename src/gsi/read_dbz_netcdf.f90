@@ -117,7 +117,6 @@ subroutine read_dbz_mrms_netcdf(nread,ndata,nodata,infile,obstype,lunout,sis,nob
 !
 !$$$ end documentation block
   use netcdf
-  use mpimod,only:mype
   use kinds, only: r_kind,r_double,i_kind,r_single
   use constants, only: zero,half,one,two,deg2rad,rearth,rad2deg, &
                        one_tenth,r1000,r60,r60inv,r100,r400
@@ -142,7 +141,10 @@ subroutine read_dbz_mrms_netcdf(nread,ndata,nodata,infile,obstype,lunout,sis,nob
   real(r_kind),parameter:: r360=360.0_r_kind
   integer(i_kind),parameter:: maxdat=17         ! Used in generating cdata array
   integer (i_kind):: iyear,imon,iday,ihour,imin,isec
-  
+
+! Declare externals
+  external :: stop2,handle_err,w3fs21,count_obs
+
 !--Derived data type declaration
 
   type :: radar
@@ -766,7 +768,10 @@ subroutine read_dbz_mrms_sparse_netcdf(nread,ndata,nodata,infile,obstype,lunout,
   real(r_kind),parameter:: r360=360.0_r_kind
   integer(i_kind),parameter:: maxdat=17         ! Used in generating cdata array
   integer (i_kind):: iyear,imon,iday,ihour,imin,isec
-  
+
+! Declare externals
+  external :: stop2,handle_err,w3fs21,count_obs
+
 !--Derived data type declaration
 
   type :: radar
@@ -1290,6 +1295,9 @@ subroutine read_dbz_mrms_detect_format(infile,l_sparse_netcdf)
   integer(i_kind),parameter:: maxdat=17         ! Used in generating cdata array
   logical l_sparse_netcdf
   
+! Declare externals
+  external :: handle_err
+
 !--General declarations
 
 integer(i_kind) :: ncid,ierr,dimid3

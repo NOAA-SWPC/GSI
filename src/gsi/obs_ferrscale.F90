@@ -314,6 +314,9 @@ type(gsi_bundle), intent(inout) :: xout
 integer(i_kind)   , intent(in   ) :: nprt
 character(len=*)  , intent(in   ) :: calledby
 
+! Declare externals
+external :: model_tl,evaljo,model_ad
+
 ! Declare local variables  
 character(len=*), parameter :: myname='hrm1h_ferr_scale'
 type(gsi_bundle) :: sval(nobs_bins), rval(nobs_bins)

@@ -63,6 +63,11 @@ subroutine read_nasa_larc(nread,ndata,infile,obstype,lunout,twind,sis,nobs)
   integer(i_kind),dimension(npe) ,intent(inout) :: nobs
   real(r_kind),     intent(in   ):: twind
   character(20),    intent(in)   :: sis
+
+! Declare externals
+  external :: getcount_bufr,openbf,datelen,stop2,ufbint,&
+    count_obs,closbf
+
 !
 !  For LaRC
 !
@@ -199,6 +204,7 @@ subroutine read_nasa_larc(nread,ndata,infile,obstype,lunout,twind,sis,nobs)
     endif
 !
     call closbf(lunin)
+    close(lunin)
     return
 200 continue
     write(6,*) 'read_nasa_larc, Warning : cannot find LaRC data file'

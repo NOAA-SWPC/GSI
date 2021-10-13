@@ -48,6 +48,10 @@ use timermod, only: timer_ini, timer_fnl
 
 implicit none
 
+! Declare externals
+external :: stop2,prt_guess,prt_guesschem,evaljgrad,getsiga,pcgsqrt,&
+  test_obsens
+
 character(len=*), parameter :: myname='sqrtmin'
 
 ! Declare local variables  

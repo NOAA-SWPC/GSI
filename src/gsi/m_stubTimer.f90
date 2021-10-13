@@ -224,6 +224,9 @@ subroutine allflush(tm,lu,comm,root)
   integer(kind=i_kind), intent(in):: comm       ! communicator
   integer(kind=i_kind), intent(in):: root       ! root PE
 
+! Declare externals
+  external :: MPI_comm_rank
+
   character(len=*),parameter:: myname_=myname//'::allflush'
   integer(kind=MPI_ikind):: myPE,ier
 

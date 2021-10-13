@@ -75,6 +75,9 @@ subroutine rmpl_allreduce(klen,rpvals)
   integer(i_kind),intent(in   ) :: klen
   real(r_kind)   ,intent(inout) :: rpvals(:)
 
+! Declare externals
+  external :: mpi_allgather
+
 ! Declare local variables
   integer(i_kind) :: ii,jj
   real(r_kind)    :: zwork(klen,npe)
@@ -133,6 +136,9 @@ subroutine qmpl_allreduce1d(klen,qpvals)
 ! Declare passed variables
   integer(i_kind),intent(in   ) :: klen
   real(r_quad)   ,intent(inout) :: qpvals(:)
+
+! Declare externals
+  external :: mpi_allgather
 
 ! Declare local variables
   integer(i_kind) :: ii,jj
@@ -212,6 +218,9 @@ subroutine qmpl_allreduce2d(ilen,klen,pvals,pvnew)
   integer(i_kind)      ,intent(in   ) :: ilen,klen
   real(r_quad)         ,intent(inout) :: pvals(ilen,klen)
   real(r_quad),optional,intent(  out) :: pvnew(ilen,klen)
+
+! Declare externals
+  external :: mpi_allgather
 
 ! Declare local variables
   integer(i_kind) :: ii,kk,nn
@@ -307,6 +316,10 @@ subroutine mpl_allgatherq(idim,jdim,zloc,zall)
   integer(i_kind),intent(in   ) :: idim,jdim
   real(r_quad)   ,intent(in   ) :: zloc(idim)
   real(r_quad)   ,intent(  out) :: zall(idim,jdim)
+
+! Declare externals
+  external :: stop2,mpi_allgather
+
 #ifdef PGI
   real(r_kind)    :: zlocr(idim)
   real(r_kind)    :: zallr(idim,jdim)
@@ -367,6 +380,9 @@ subroutine rmpl_reduce(klen,iroot,rpvals)
 ! Declare passed variables
   integer(i_kind),intent(in   ) :: klen,iroot
   real(r_kind)   ,intent(inout) :: rpvals(klen)
+
+! Declare externals
+  external :: mpi_gather
 
 ! Declare local variables
   integer(i_kind) :: ii,jj
@@ -431,6 +447,9 @@ subroutine qmpl_reduce1d(klen,iroot,qpvals)
 ! Declare passed variables
   integer(i_kind),intent(in   ) :: klen,iroot
   real(r_quad)   ,intent(inout) :: qpvals(klen)
+
+! Declare externals
+  external :: mpi_gather
 
 ! Declare local variables
   integer(i_kind) :: ii,jj
@@ -515,6 +534,9 @@ subroutine qmpl_reduce2d(ilen,klen,iroot,pvals,pvnew)
   integer(i_kind)      ,intent(in   ) :: ilen,klen,iroot
   real(r_quad)         ,intent(inout) :: pvals(ilen,klen)
   real(r_quad),optional,intent(  out) :: pvnew(ilen,klen)
+
+! Declare externals
+  external :: mpi_gather
 
 ! Declare local variables
   integer(i_kind) :: ii,kk,nn

@@ -1308,6 +1308,9 @@ end subroutine uv2vordiv
   integer(i_kind)               ,intent(in   ) :: nx,ny
   real(r_kind)                  ,intent(in   ) :: r
   real(r_kind),dimension(nlat-1),intent(in   ) :: tau,yor
+
+! Declare externals
+  external :: stop2
   
 ! Declare local variables
   integer(i_kind) i,ix,iy,ltau,ltaui
@@ -1678,6 +1681,9 @@ end subroutine uv2vordiv
   integer(i_kind)                      ,intent(in   ) :: n,nbh1,nbh2,na
   real(r_kind),dimension(na,-nbh1:nbh2),intent(inout) :: a
 
+! Declare externals
+  external :: stop2
+
 ! Declare local variables
   integer(i_kind) j,jp,i,k,imost,jmost
   real(r_kind) ajj,aij,ajji
@@ -1797,6 +1803,9 @@ end subroutine uv2vordiv
   integer(i_kind),dimension(*),intent(  out) :: ipiv
   real(r_kind)                ,intent(  out) :: d
   real(r_kind),dimension(na,*),intent(inout) :: a
+
+! Declare externals
+  external :: stop2
 
 ! Declare local variables
   integer(i_kind) j,jp,ibig,jm,i,k

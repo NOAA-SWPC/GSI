@@ -75,6 +75,9 @@ subroutine stpco(colvkhead,rval,sval,out,sges,nstep)
   real(r_kind),dimension(max(1,nstep)),intent(in   ) :: sges
   real(r_quad),dimension(max(1,nstep)),intent(inout) :: out
 
+! Declare externals
+  external :: stop2
+
   out=zero_quad
 
   if(associated(colvkhead))then

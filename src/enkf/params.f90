@@ -24,12 +24,15 @@ module params
 ! program history log:
 !   2009-02-23  Initial version.
 !   2016-05-02  shlyaeva - Modification for reading state vector from table
-!   2016-11-29  shlyaeva - added nhr_state (hours for state fields to 
+!   2016-11-29  shlyaeva - added nhr_state (hours for state fields to
 !                          calculate Hx; nhr_anal is for IAU)
 !   2018-05-31  whitaker - added modelspace_vloc (for model-space localization using
 !                          modulated ensembles), nobsl_max (for ob selection
 !                          in LETKF and dfs_sort
 !                          (for using DFS in LETKF ob selection).
+!   2018-11-15  groff - Added ancillary parameters
+!                       for EFSOI calculations
+!   2019-03-20  CAPS(C. Tong) - added variables direct reflectivity DA capability
 !
 ! attributes:
 !   language: f95
@@ -55,6 +58,13 @@ integer(i_kind), public, parameter :: nsatmax_rad = 200
 integer(i_kind), public, parameter :: nsatmax_oz = 100
 character(len=20), public, dimension(nsatmax_rad) ::sattypes_rad, dsis
 character(len=20), public, dimension(nsatmax_oz) ::sattypes_oz
+! EFSOI file type identifiers
+integer(i_kind), public, parameter :: read_ensmean_forecast = 0
+integer(i_kind), public, parameter :: read_analysis_mean = 1
+integer(i_kind), public, parameter :: read_member_forecasts = 2
+integer(i_kind), public, parameter :: read_verification = 3
+! Analysis impact specific file type identifier
+integer(i_kind), public, parameter :: read_member_analyses = 2
 ! forecast times for first-guess forecasts to be updated (in hours)
 integer,dimension(7),public ::  nhr_anal  = (/6,-1,-1,-1,-1,-1,-1/)
 integer,dimension(7),public ::  nhr_state = (/6,-1,-1,-1,-1,-1,-1/)
@@ -71,10 +81,17 @@ character(len=2),dimension(7),public :: charfhr_state
 ! "analysis_fhr##." If only one time level
 ! in background, default is "firstguess." and "analysis.".
 character(len=120),dimension(7),public :: fgfileprefixes
+character(len=120),dimension(7),public :: fgsfcfileprefixes
 character(len=120),dimension(7),public :: statefileprefixes
+character(len=120),dimension(7),public :: statesfcfileprefixes
 character(len=120),dimension(7),public :: anlfileprefixes
+character(len=120),dimension(7),public :: incfileprefixes
 ! analysis date string (YYYYMMDDHH)
 character(len=10), public ::  datestring
+! Hour for datestring
+integer(i_kind), public :: datehr, gdatehr
+! analysis filename, needed for EFSOI calcs
+character(len=100), public ::  andataname
 ! filesystem path to input files (first-guess, GSI diagnostic files).
 character(len=500),public :: datapath
 ! if deterministic=.true., the deterministic square-root filter
@@ -83,11 +100,14 @@ character(len=500),public :: datapath
 logical, public :: deterministic, sortinc, pseudo_rh, &
                    varqc, huber, cliptracers, readin_localization
 logical, public :: lupp
+logical, public :: cnvw_option
 integer(i_kind),public ::  iassim_order,nlevs,nanals,numiter,&
                            nlons,nlats,nbackgrounds,nstatefields,&
                            nanals_per_iotask, ntasks_io
 integer(i_kind),public, allocatable, dimension(:) ::  nanal1,nanal2
 integer(i_kind),public :: nsats_rad,nsats_oz,imp_physics
+integer(i_kind),public :: eft
+integer(i_kind),public :: tar_minlev,tar_maxlev
 ! random seed for perturbed obs (deterministic=.false.)
 ! if zero, system clock is used.  Also used when
 ! iassim_order=1 (random shuffling of obs for serial assimilation).
@@ -99,10 +119,14 @@ real(r_single),public ::  zhuberleft,zhuberright
 real(r_single),public ::  lnsigcutoffnh,lnsigcutofftr,lnsigcutoffsh,&
                lnsigcutoffsatnh,lnsigcutoffsattr,lnsigcutoffsatsh,&
                lnsigcutoffpsnh,lnsigcutoffpstr,lnsigcutoffpssh
+real(r_single),public ::  corrlengthrdrnh,corrlengthrdrtr,corrlengthrdrsh, &
+               lnsigcutoffrdrnh,lnsigcutoffrdrtr,lnsigcutoffrdrsh
 real(r_single),public :: analpertwtnh,analpertwtsh,analpertwttr,sprd_tol,saterrfact
 real(r_single),public :: analpertwtnh_rtpp,analpertwtsh_rtpp,analpertwttr_rtpp
 real(r_single),public ::  paoverpb_thresh,latbound,delat,p5delat,delatinv
 real(r_single),public ::  latboundpp,latboundpm,latboundmp,latboundmm
+real(r_single),public :: wmoist,adrate
+real(r_single),public :: tar_minlat,tar_maxlat,tar_minlon,tar_maxlon
 real(r_single),public :: covl_minfact, covl_efold
 
 real(r_single),public :: covinflatenh,covinflatesh,covinflatetr,lnsigcovinfcutoff
@@ -125,6 +149,11 @@ integer,public :: nobsl_max = -1
 ! matrix are read from a file called 'vlocal_eig.dat'
 ! (created by an external python utility).
 logical,public :: modelspace_vloc=.false.
+! use correlated obs errors
+! (implies letkf_flag=T, modelspace_vloc=T and lobsdiag_forenkf=T)
+! if T, extra fields read from diag file and innovation stats
+! are in transformed space (R**{-1/2}).
+logical,public :: use_correlated_oberrs=.false.
 ! number of eigenvectors of vertical localization
 ! used.  Zero if modelspace_vloc=.false., read from
 ! file 'vlocal_eig.dat' if modelspace_vloc=.true.
@@ -156,25 +185,38 @@ logical,public :: reducedgrid = .false.
 logical,public :: univaroz = .true.
 logical,public :: regional = .false.
 logical,public :: use_gfs_nemsio = .false.
+logical,public :: use_gfs_ncio = .false.
 logical,public :: arw = .false.
 logical,public :: nmm = .true.
 logical,public :: nmm_restart = .true.
 logical,public :: nmmb = .false.
 logical,public :: letkf_flag = .false.
 
+! EFSOI ancillary flag to determine
+! type of impact estimate/calculation
+logical,public :: forecast_impact = .true.
+
+! use brute force search in LETKF instead of kdtree
+logical,public :: letkf_bruteforce_search=.false.
+! additional flag for EnKF when using diagnostics from direct reflectivity DA capability
+! this flag was set not to affect the other applications.
+! this flag mainly affects in reading obs diagnostics and writing anlysis file
+logical,public :: l_use_enkf_directZDA = .false.
+
 ! next two are no longer used, instead they are inferred from anavinfo
-logical,public :: massbal_adjust = .false. 
+logical,public :: massbal_adjust = .false.
 integer(i_kind),public :: nvars = -1
 
 ! sort obs in LETKF in order of decreasing DFS
 logical,public :: dfs_sort = .false.
 
 ! if true generate additional input files
-! required for EFSO calculations
-logical,public :: fso_cycling = .false.
+! required for EFSOI calculations
+logical,public :: efsoi_cycling = .false.
 
-! if true perform efso calculations
-logical,public :: fso_calculate = .false.
+! Ancillary flag, applied only for
+! EFSOI calculation applications
+logical,public :: efsoi_flag = .false.
 
 ! if true, use ensemble mean qsat in definition of
 ! normalized humidity analysis variable (instead of
@@ -194,7 +236,15 @@ logical,public :: fv3_native = .false.
 character(len=500),public :: fv3fixpath = ' '
 integer(i_kind),public :: ntiles=6
 integer(i_kind),public :: nx_res=0,ny_res=0
-logical,public ::l_pres_add_saved 
+logical,public ::l_pres_add_saved
+
+! for parallel netCDF
+logical, public :: paranc = .false.
+logical, public :: nccompress = .false.
+
+! for writing increments
+logical,public :: write_fv3_incr = .false.
+character(len=12),dimension(10),public :: incvars_to_zero='NONE' !just picking 10 arbitrarily
 
 namelist /nam_enkf/datestring,datapath,iassim_order,nvars,&
                    covinflatemax,covinflatemin,deterministic,sortinc,&
@@ -205,19 +255,28 @@ namelist /nam_enkf/datestring,datapath,iassim_order,nvars,&
                    lnsigcutoffnh,lnsigcutofftr,lnsigcutoffsh,&
                    lnsigcutoffsatnh,lnsigcutoffsattr,lnsigcutoffsatsh,&
                    lnsigcutoffpsnh,lnsigcutoffpstr,lnsigcutoffpssh,&
-                   fgfileprefixes,anlfileprefixes,statefileprefixes,&
+                   fgfileprefixes,fgsfcfileprefixes,anlfileprefixes, &
+                   incfileprefixes, &
+                   statefileprefixes,statesfcfileprefixes, &
                    covl_minfact,covl_efold,lupd_obspace_serial,letkf_novlocal,&
                    analpertwtnh,analpertwtsh,analpertwttr,sprd_tol,&
                    analpertwtnh_rtpp,analpertwtsh_rtpp,analpertwttr_rtpp,&
-                   nlevs,nanals,saterrfact,univaroz,regional,use_gfs_nemsio,&
+                   nlevs,nanals,saterrfact,univaroz,regional,use_gfs_nemsio,use_gfs_ncio,&
                    paoverpb_thresh,latbound,delat,pseudo_rh,numiter,biasvar,&
                    lupd_satbiasc,cliptracers,simple_partition,adp_anglebc,angord,&
                    newpc4pred,nmmb,nhr_anal,nhr_state, fhr_assim,nbackgrounds,nstatefields, &
-                   save_inflation,nobsl_max,lobsdiag_forenkf,netcdf_diag,&
+                   save_inflation,nobsl_max,lobsdiag_forenkf,netcdf_diag,forecast_impact,&
                    letkf_flag,massbal_adjust,use_edges,emiss_bc,iseed_perturbed_obs,npefiles,&
                    getkf,getkf_inflation,denkf,modelspace_vloc,dfs_sort,write_spread_diag,&
-                   covinflatenh,covinflatesh,covinflatetr,lnsigcovinfcutoff,&
-                   fso_cycling,fso_calculate,imp_physics,lupp,fv3_native
+                   covinflatenh,covinflatesh,covinflatetr,lnsigcovinfcutoff,letkf_bruteforce_search,&
+                   efsoi_cycling,efsoi_flag,imp_physics,lupp,cnvw_option,use_correlated_oberrs,&
+                   eft,wmoist,adrate,andataname,&
+                   gdatehr,datehr,&
+                   tar_minlat,tar_maxlat,tar_minlon,tar_maxlon,tar_minlev,tar_maxlev,&
+                   fv3_native, paranc, nccompress, write_fv3_incr,incvars_to_zero, &
+                   corrlengthrdrnh,corrlengthrdrsh,corrlengthrdrtr,&
+                   lnsigcutoffrdrnh,lnsigcutoffrdrsh,lnsigcutoffrdrtr,&
+                   l_use_enkf_directZDA
 namelist /nam_wrf/arw,nmm,nmm_restart
 namelist /nam_fv3/fv3fixpath,nx_res,ny_res,ntiles,l_pres_add_saved
 namelist /satobs_enkf/sattypes_rad,dsis
@@ -226,6 +285,8 @@ namelist /ozobs_enkf/sattypes_oz
 contains
 
 subroutine read_namelist()
+! Declare externals
+external :: stop2
 integer i,j,nb,np
 logical fexist
 real(r_single) modelspace_vloc_cutoff, modelspace_vloc_thresh
@@ -234,15 +295,23 @@ real(r_single) modelspace_vloc_cutoff, modelspace_vloc_thresh
 ! defaults
 ! time (analysis time YYYYMMDDHH)
 datestring = "0000000000" ! if 0000000000 will not be used.
+! default analysis hour
+datehr = 00
+! Initial hour for background forecasts
+gdatehr = 00
 ! corrlength (length for horizontal localization in km)
 ! this corresponding GSI parameter is s_ens_h.
 ! corrlength is the distance at which the Gaspari-Cohn
-! polynomial goes to zero.  s_ens_h is the scale of a 
+! polynomial goes to zero.  s_ens_h is the scale of a
 ! Gaussian exp(-0.5*(r/L)**2) so
 ! corrlength ~ sqrt(2/0.15)*s_ens_h
 corrlengthnh = 2800_r_single
 corrlengthtr = 2800_r_single
 corrlengthsh = 2800_r_single
+! corrlength for radar (length for horizontal localization in km)
+corrlengthrdrnh = 10
+corrlengthrdrtr = 10
+corrlengthrdrsh = 10
 ! read in localization length scales from an external file.
 readin_localization = .false.
 ! min and max inflation.
@@ -252,7 +321,7 @@ covinflatemax = 1.e30_r_single
 ! **these are ignored if modelspace_vloc=.true.**
 ! this corresponding GSI parameter is -s_ens_v (if s_ens_v<0)
 ! lnsigcutoff is the distance at which the Gaspari-Cohn
-! polynomial goes to zero.  s_ens_v is the scale of a 
+! polynomial goes to zero.  s_ens_v is the scale of a
 ! Gaussian exp(-(r/L)**2) so
 ! lnsigcutoff ~ s_ens_v/sqrt(0.15)
 lnsigcutoffnh = 2._r_single
@@ -264,6 +333,9 @@ lnsigcutoffsatsh = -999._r_single ! value for satellite radiances
 lnsigcutoffpsnh = -999._r_single  ! value for surface pressure
 lnsigcutoffpstr = -999._r_single  ! value for surface pressure
 lnsigcutoffpssh = -999._r_single  ! value for surface pressure
+lnsigcutoffrdrnh = 0.2_r_single  ! value for radar
+lnsigcutoffrdrtr = 0.2_r_single  ! value for radar
+lnsigcutoffrdrsh = 0.2_r_single  ! value for radar
 ! ob time localization
 obtimelnh = 1.e10_r_single
 obtimeltr = 1.e10_r_single
@@ -324,6 +396,9 @@ nlats = 0
 nlevs = 0
 ! number of ensemble members
 nanals = 0
+! nvars is numer of 3d variables to update.
+! for hydrostatic models, typically 5 (u,v,T,q,ozone).
+nvars = 5
 ! background error variance for rad bias coeffs  (used in radbias.f90)
 ! default is (old) GSI value.
 ! if negative, bias coeff error variace is set to -biasvar/N, where
@@ -332,6 +407,22 @@ nanals = 0
 ! analysis error variance from the previous cycle is used instead
 ! (same as in the GSI).
 biasvar = 0.1_r_single
+! Evaluation FT for EFSOI
+eft = 24
+! Weigt for moist total energy norm (0 when dry total energy)
+! applied in EFSOI calculation
+wmoist = 0.0_r_single
+! Advection coefficient for localization function
+adrate = 0.0_r_single
+! Name of analysis file at EFSOI evaluation time
+andataname=''
+! Target area for observation impact computation
+tar_minlat = -90.0_r_single
+tar_maxlat = 90.0_r_single
+tar_minlon = 0.0_r_single
+tar_maxlon = 360.0_r_single
+tar_minlev = 0
+tar_maxlev = 0
 
 ! factor to multiply sat radiance errors.
 saterrfact = 1._r_single
@@ -360,7 +451,14 @@ dsis=' '
 ! Initialize first-guess and analysis file name prefixes.
 ! (blank means use default names)
 fgfileprefixes = ''; anlfileprefixes=''; statefileprefixes=''
+fgsfcfileprefixes = ''; statesfcfileprefixes=''
+incfileprefixes = ''
+
+! option for including convective clouds in the all-sky
+cnvw_option=.false.
+
 l_pres_add_saved=.true.
+
 ! read from namelist file, doesn't seem to work from stdin with mpich
 open(912,file='enkf.nml',form="formatted")
 read(912,nam_enkf)
@@ -408,7 +506,7 @@ latboundmm=-latbound-p5delat
 delatinv=1.0_r_single/delat
 
 ! if modelspace_vloc, use modulated ensemble to compute Kalman gain (but use
-! this gain to update only original ensemble). 
+! this gain to update only original ensemble).
 if (modelspace_vloc) then
   ! read in eigenvalues/vectors of vertical localization matrix on all tasks
   ! (text file vlocal_eig.dat must exist)
@@ -481,6 +579,9 @@ if (nanals <= numproc) then
       nanal2(np) = np+1
    enddo
 else
+   ! set paranc to false
+   if (nproc .eq. 0) print *,"nanals > numproc; forcing paranc=F"
+   paranc = .false.
    nanals_per_iotask = 1
    do
       ntasks_io = nanals/nanals_per_iotask
@@ -489,7 +590,7 @@ else
       else
          nanals_per_iotask = nanals_per_iotask + 1
       end if
-   end do  
+   end do
    allocate(nanal1(0:ntasks_io-1),nanal2(0:ntasks_io-1))
    do np=0,ntasks_io-1
       nanal1(np) = 1 + np*nanals_per_iotask
@@ -541,6 +642,26 @@ if (nproc == 0) then
      print *,'univaroz is not supported in LETKF!'
      call stop2(19)
    end if
+   if (letkf_flag .and. .not. getkf .and. denkf) then
+     print *,'denkf only works when letkf_flag=T *and* getkf=T'
+     call stop2(19)
+   end if
+   if (lupd_satbiasc .and. letkf_flag) then
+     print *,'lupd_satbiasc not supported with LETKF'
+     call stop2(19)
+   endif
+   if (use_correlated_oberrs .and. .not. netcdf_diag) then
+     print *,'use_correlated_oberrs only works with netcdf_diag'
+     call stop2(19)
+   endif
+   if (use_correlated_oberrs .and. .not. letkf_novlocal) then
+     print *,'use_correlated_oberrs implies modelspace_vloc,lobsdiag_forenkf=T'
+     call stop2(19)
+   endif
+   if (use_correlated_oberrs .and. .not. lobsdiag_forenkf) then
+     print *,'use_correlated_oberrs implies letkf_flag,modelspace_vloc,lobsdiag_forenkf=T'
+     call stop2(19)
+   endif
    if ((obtimelnh < 1.e10 .or. obtimeltr < 1.e10 .or. obtimelsh < 1.e10) .and. &
        letkf_flag) then
      print *,'warning: no time localization in LETKF!'
@@ -562,7 +683,7 @@ if (nproc == 0) then
       print *,'WARNING: nvars and massbal_adjust are no longer used!'
       print *,'They are inferred from the anavinfo file instead.'
    endif
-   
+
 end if
 
 ! background forecast time for analysis
@@ -581,6 +702,9 @@ do while (nhr_anal(nbackgrounds+1) > 0)
       fgfileprefixes(nbackgrounds+1)="sfg_"//datestring//"_fhr"//charfhr_anal(nbackgrounds+1)//"_"
      endif
    endif
+   if (trim(fgsfcfileprefixes(nbackgrounds+1)) .eq. "") then
+      fgsfcfileprefixes(nbackgrounds+1)="sfgsfc_"//datestring//"_fhr"//charfhr_anal(nbackgrounds+1)//"_"
+   end if
    nbackgrounds = nbackgrounds+1
 end do
 
@@ -600,6 +724,9 @@ do while (nhr_state(nstatefields+1) > 0)
       statefileprefixes(nstatefields+1)="sfg_"//datestring//"_fhr"//charfhr_state(nstatefields+1)//"_"
      endif
    endif
+   if (trim(statesfcfileprefixes(nstatefields+1)) .eq. "") then
+      statesfcfileprefixes(nstatefields+1)="sfgsfc_"//datestring//"_fhr"//charfhr_state(nstatefields+1)//"_"
+   end if
    nstatefields = nstatefields+1
 end do
 
@@ -615,6 +742,7 @@ do nb=1,nbackgrounds
      else ! global
 !      if (nbackgrounds > 1) then
         anlfileprefixes(nb)="sanl_"//datestring//"_fhr"//charfhr_anal(nb)//"_"
+        incfileprefixes(nb)="incr_"//datestring//"_fhr"//charfhr_anal(nb)//"_"
 !      else
 !        anlfileprefixes(nb)="sanl_"//datestring//"_"
 !      endif
@@ -651,6 +779,27 @@ end if
 corrlengthnh = corrlengthnh * 1.e3_r_single/rearth
 corrlengthtr = corrlengthtr * 1.e3_r_single/rearth
 corrlengthsh = corrlengthsh * 1.e3_r_single/rearth
+! rescale covariance localization length for radar observations
+! note:(1) in namelist, the length is in unit of kilometer;
+!      (2) here it is converted to be in unit of meter,
+!      (3) then, it is re-scaled by radius of earth
+!          (actually it is non-dimensionalized).
+corrlengthrdrnh = corrlengthrdrnh * 1.e3_r_single/rearth
+corrlengthrdrtr = corrlengthrdrtr * 1.e3_r_single/rearth
+corrlengthrdrsh = corrlengthrdrsh * 1.e3_r_single/rearth
+
+! convert targe area boundary into radians
+tar_minlat = tar_minlat * deg2rad
+tar_maxlat = tar_maxlat * deg2rad
+tar_minlon = tar_minlon * deg2rad
+tar_maxlon = tar_maxlon * deg2rad
+
+! use default vertical levels
+tar_maxlev = min(nlevs,tar_maxlev)
+if(tar_minlev < 1 .or. tar_maxlev < 1 .or. tar_maxlev < tar_minlev) then
+   tar_minlev = 1
+   tar_maxlev = nlevs
+end if
 
 ! this var is .false. until this routine is called.
 params_initialized = .true.

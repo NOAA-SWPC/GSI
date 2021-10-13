@@ -52,6 +52,10 @@
       integer(i_kind),dimension(npe),intent(inout):: nobs
       real(r_kind),intent(in):: twindin
 
+!     Declare externals
+      external :: mesgbc,openbf,datelen,ufbint,closbf,grdcrd1,w3fs21,&
+        ufbin3,count_obs
+
 !     Declare local parameters
       integer(i_kind),parameter:: MXNM=25                 ! max Nems, max Replications
       integer(i_kind),parameter:: MXRP=255                ! max Nems, max Replications
@@ -99,7 +103,7 @@
       ntest=0
       nrtmax=0                       ! # rpts to print per msg type (0=all)
 
-      call closbf(lunin)
+!     call closbf(lunin)
       open(lunin,file=trim(infile),form='unformatted')
       call mesgbc(lunin,msgt,icomp)
       call openbf(lunin,'IN',lunin)
@@ -157,6 +161,7 @@
       ilon=2
       ilat=3
       call closbf(lunin)
+      close(lunin)
       open(lunin,file=trim(infile),form='unformatted')
       call mesgbc(lunin,msgt,icomp)
       call openbf(lunin,'IN',lunin)
@@ -477,6 +482,7 @@
       write(*,*) ! closing linefeed, debug?
 
       call closbf(lunin)
+      close(lunin)
 !   Normal exit
 
 !   Write observation to scratch file
@@ -486,9 +492,7 @@
      deallocate(cdata_all)
  
      if (ndata == 0) then
-        call closbf(lunin)
-        write(6,*)'READ_PREPFITS:  closbf(',lunin,')'
+        write(6,*)'READ_PREPFITS no data'
      endif
 
-     close(lunin)
      end subroutine read_pblh

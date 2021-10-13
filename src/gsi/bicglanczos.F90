@@ -66,7 +66,7 @@ use gsi_bundlemod, only: gsi_bundle
 use gsi_bundlemod, only: assignment(=)
 use mpimod  ,  only : mpi_comm_world
 use mpimod,    only: mype
-use jfunc   ,  only : iter, jiter, diag_precon,step_start
+use jfunc   ,  only : iter, jiter
 use gsi_4dvar, only : nwrvecs,l4dvar,lanczosave
 use gsi_4dvar, only : nsubwin, nobs_bins
 use hybrid_ensemble_parameters,only : l_hyb_ens,aniso_a_en
@@ -192,6 +192,9 @@ real(r_kind)    , intent(inout)         :: preduc
 integer(i_kind) , intent(inout)         :: kmaxit
 logical         , intent(in)            :: lsavevecs
 
+! Declare externals
+external :: stop2,precond,jgrad,bkerror,SSTEQR,DSTEQR
+
 type(control_vector)      :: grad0,xtry,ytry,gradw,dirx,diry,dirw
 real(r_kind), allocatable :: alpha(:),beta(:),delta(:),gam(:)
 real(r_kind), allocatable :: zdiag(:),ztoff(:),zwork(:)
@@ -246,7 +249,7 @@ call allocate_cv(gradw)
 call allocate_cv(dirx)
 call allocate_cv(diry)
 if(nprt>=1.and.ltcost_) call allocate_cv(gradf)
-if(diag_precon) call allocate_cv(dirw)
+call allocate_cv(dirw)
 
 !--- 'zeta' is an upper bound on the relative error of the gradient.
 
@@ -256,7 +259,7 @@ zreqrd = preduc
 ilen=xhat%lencv
 
 
-if(diag_precon) dirw=zero
+dirw=zero
 
 !$omp parallel do
 do jj=1,ilen
@@ -266,12 +269,10 @@ do jj=1,ilen
 end do
 !$omp end parallel do
 
-if(diag_precon) then
-  do jj=1,ilen
-     dirw%values(jj)=diry%values(jj)
-  end do 
-  call precond(diry)
-end if
+do jj=1,ilen
+   dirw%values(jj)=diry%values(jj)
+end do 
+call precond(diry)
 
 if(LMPCGL) then 
    dirx=zero
@@ -284,7 +285,7 @@ end if
 zg0=dot_product(gradx,grady,r_quad)
 if(zg0<tiny_r_kind) then ! this is unlikely to occur, expect when nobs=0
    ! clean up and ...
-   if(diag_precon) call deallocate_cv(dirw)
+   call deallocate_cv(dirw)
    if(nprt>=1.and.ltcost_) call deallocate_cv(gradf)
    call deallocate_cv(diry)
    call deallocate_cv(dirx)
@@ -370,24 +371,25 @@ inner_iteration: do iter=1,kmaxit
   if(LMPCGL) then 
      call pcgprecond(gradx,grady)
   else 
-     call bkerror(gradx,grady)
+     grady=gradx
+     call bkerror(grady)
      ! If hybrid ensemble run, then multiply ensemble control variable a_en 
      !                                 by its localization correlation
      if(l_hyb_ens) then
      
        if(aniso_a_en) then
-     !   call anbkerror_a_en(gradx,grady)    !  not available yet
+     !   call anbkerror_a_en(grady)    !  not available yet
          write(6,*)' ANBKERROR_A_EN not written yet, program stops'
          stop
        else
-         call bkerror_a_en(gradx,grady)
+         call bkerror_a_en(grady)
        end if
  
      end if
   endif
 
 ! Add potential additional preconditioner
-  if(diag_precon) call precond(grady)
+  call precond(grady)
 
 
 ! Second re-orthogonalization  
@@ -416,21 +418,17 @@ inner_iteration: do iter=1,kmaxit
   endif
  
 ! Update search direction
-  if(diag_precon) then
-    do jj=1,ilen
-       diry%values(jj)=dirw%values(jj)
-    enddo 
-  end if 
+  do jj=1,ilen
+     diry%values(jj)=dirw%values(jj)
+  enddo 
   do jj=1,ilen
     dirx%values(jj)=-grady%values(jj)+beta(iter)*dirx%values(jj)
     diry%values(jj)=-gradx%values(jj)+beta(iter)*diry%values(jj)
   end do
-  if(diag_precon) then
-    do jj=1,ilen
-       dirw%values(jj)=diry%values(jj)
-    end do 
-    call precond(diry)
-  end if
+  do jj=1,ilen
+     dirw%values(jj)=diry%values(jj)
+  end do 
+  call precond(diry)
 
 ! Diagnostics
   if(zgk < zero) then 
@@ -682,7 +680,7 @@ call deallocate_cv(gradw)
 call deallocate_cv(dirx)
 call deallocate_cv(diry)
 if(nprt>=1.and.ltcost_) call deallocate_cv(gradf)
-if(diag_precon) call deallocate_cv(dirw)
+call deallocate_cv(dirw)
 
 call inquire_cv
 
@@ -813,6 +811,9 @@ subroutine setup_pcgprecond()
 
 IMPLICIT NONE
 
+! Declare externals
+external :: stop2
+
 INTEGER(i_kind)                :: jj,jk,ii,iunit
 CHARACTER(LEN=13)              :: clfile
 
@@ -896,27 +897,31 @@ IMPLICIT NONE
 TYPE(CONTROL_VECTOR) , INTENT(INout)  :: xcvx
 TYPE(CONTROL_VECTOR) , INTENT(INOUT) :: ycvx
 
+! Declare externals
+external :: bkerror,stop2
+
 REAL(r_kind)        :: zdp(NVCGLPC)
 INTEGER(i_kind)     :: jk, ji
  
 ycvx=zero
 do jk=1,NVCGLPC
-   zdp(jk) = 0.
+   zdp(jk) = 0._r_kind
 enddo
 
 !Apply B
-call bkerror(xcvx,ycvx)
+ycvx=xcvx
+call bkerror(ycvx)
 
 ! If hybrid ensemble run, then multiply ensemble control variable a_en 
 !                                 by its localization correlation
 if(l_hyb_ens) then
 
   if(aniso_a_en) then
-!   call anbkerror_a_en(xcvx,ycvx)    !  not available yet
+!   call anbkerror_a_en(ycvx)    !  not available yet
     write(6,*)' ANBKERROR_A_EN not written yet, program stops'
     call stop2(999)
   else
-    call bkerror_a_en(xcvx,ycvx)
+    call bkerror_a_en(ycvx)
   end if
 
 end if

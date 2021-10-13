@@ -135,6 +135,9 @@ subroutine setuppm2_5(obsLL,odiagLL,lunin,mype,nreal,nobs,isis,is,conv_diagsave)
 
   character(len=*),parameter:: myname="setuppm2_5"
   
+! declare externals
+  external :: stop2,tintrp2a11
+
 ! declare local variables  
   
   real(r_kind) rat_err2,dlat,dtime,dlon

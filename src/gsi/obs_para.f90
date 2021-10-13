@@ -69,6 +69,10 @@ subroutine obs_para(ndata,mype)
   integer(i_kind)                  ,intent(in   ) :: mype
   integer(i_kind),dimension(ndat,3),intent(in   ) :: ndata
 
+! Declare externals
+  external :: dislag,disobs,mpi_comm_split,MPI_COMM_SIZE,&
+    MPI_COMM_RANK
+
 ! Declare local variables
   integer(i_kind) lunout,is,ii
   integer(i_kind) mm1
@@ -104,7 +108,7 @@ subroutine obs_para(ndata,mype)
         if (dtype(is)=='lag') then    ! lagrangian data
            call dislag(ndata(is,1),mm1,lunout,obsfile_all(is),dtype(is),&
                 nobs_s) 
-        nsat1(is)= nobs_sub(mm1,is)
+           nsat1(is)= nobs_sub(mm1,is)
         else 
            obproc:do ii=1,npe
              if(nobs_sub(ii,is) > 0)then

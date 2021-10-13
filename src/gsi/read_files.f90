@@ -37,6 +37,8 @@ subroutine read_files(mype)
 !   2015-02-23  Rancic/Thomas - add l4densvar to time window logical
 !   2017-09-08  li      - add sfcnst_comb to get nfldnst and control when sfc & nst combined 
 !   2019-03-21  Wei/Martin - add capability to read in aerosol guess from NEMS
+!   2019-09-24  martin  - add support for use_gfs_ncio
+!   2020-07-08  Wei     - fix the capability to count external aerosol files
 !
 !   input argument list:
 !     mype     - mpi task id
@@ -80,9 +82,9 @@ subroutine read_files(mype)
        ifilesig,ifilesfc,ifilenst,hrdifsig,hrdifsfc,hrdifnst,create_gesfinfo
   use guess_grids, only: hrdifsig_all,hrdifsfc_all,hrdifnst_all
   use guess_grids, only: nfldaer, ntguesaer, ifileaer, hrdifaer, hrdifaer_all !for aerosol
-  use gsi_4dvar, only: l4dvar,l4densvar,iwinbgn,winlen,nhr_assimilation
+  use gsi_4dvar, only: l4dvar,l4densvar,iwinbgn,winlen,nhr_assimilation,nhr_obsbin
   use hybrid_ensemble_parameters, only: ntlevs_ens
-  use gridmod, only: nlat_sfc,nlon_sfc,lpl_gfs,dx_gfs,use_gfs_nemsio,sfcnst_comb
+  use gridmod, only: nlat_sfc,nlon_sfc,lpl_gfs,dx_gfs,use_gfs_nemsio,sfcnst_comb,use_gfs_ncio
   use constants, only: zero,r60inv,r60,r3600,i_missing
   use obsmod, only: iadate
   use gsi_nstcouplermod, only: nst_gsi
@@ -96,12 +98,18 @@ subroutine read_files(mype)
   use nemsio_module, only:  nemsio_gfile,nemsio_getfilehead,nemsio_getheadvar
   use read_obsmod, only: gsi_inquire
   use gsi_io, only: verbose
+  use module_fv3gfs_ncio, only: Dataset, Dimension, open_dataset, get_dim, &
+                                read_vardata, get_idate_from_time_units, &
+                                close_dataset
   use chemmod, only: lread_ext_aerosol
   
   implicit none
 
 ! Declare passed variables
   integer(i_kind),intent(in   ) :: mype
+
+! Declare externals
+  external :: stop2,w3fs21,mpi_bcast,mpi_barrier
 
 ! Declare local parameters
   integer(i_kind),parameter:: lunsfc=11
@@ -113,21 +121,24 @@ subroutine read_files(mype)
 
 ! Declare local variables
   logical(4) fexist
+  logical:: present
   character(6) filename
   integer(i_kind) i,j,iwan,npem1,iret
-  integer(i_kind) nhr_half
+  integer(i_kind) nhr_half,ihr
   integer(i_kind) iamana(4) ! changed to 4 from 3 for aer files
   integer(i_kind) nminanl,nmings,nming2,ndiff
   integer(i_kind),dimension(4):: idateg
   integer(i_kind),dimension(2):: i_ges
   integer(i_kind),allocatable,dimension(:):: nst_ges
   integer(i_kind),dimension(5):: idate5
+  integer(i_kind),dimension(6):: idate6
   integer(i_kind),dimension(num_lpl):: lpl_dum
   integer(i_kind),dimension(7):: idate
   integer(i_kind) :: nfhour, nfminute, nfsecondn, nfsecondd
   integer(i_kind),dimension(:,:),allocatable:: irec
   integer(i_llong) :: lenbytes
   real(r_single) hourg4
+  real(r_kind), allocatable, dimension(:) :: fhour
   real(r_kind) hourg,t4dv
   real(r_kind),allocatable,dimension(:,:):: time_atm
   real(r_kind),allocatable,dimension(:,:):: time_sfc
@@ -139,6 +150,8 @@ subroutine read_files(mype)
   type(nstio_head):: nst_head
   type(nemsio_gfile) :: gfile_atm,gfile_sfc,gfile_nst,gfile_aer
   logical :: print_verbose
+  type(Dataset) :: atmges, sfcges, nstges
+  type(Dimension) :: ncdim
 
 
   print_verbose=.false.
@@ -153,6 +166,7 @@ subroutine read_files(mype)
   nfldsig=0
   nfldsfc=0
   nfldnst=0
+  nfldaer=0
   iamana=0
 
 ! Check for non-zero length atm, sfc, aer, and nst files on single task
@@ -212,6 +226,24 @@ subroutine read_files(mype)
         allocate(time_nst(nfldnst,2))
      end if
 
+     if(lread_ext_aerosol) then
+!    Check for aer files with non-zero length
+        do i=0,max_file-1
+           write(filename,'(''aerf'',i2.2)')i
+           call gsi_inquire(lenbytes,fexist,filename,mype)
+           if(fexist .and. lenbytes>0) then
+              nfldaer=nfldaer+1
+              irec(nfldaer,4) = i
+           end if
+        enddo
+        if(nfldaer==0) then
+           write(6,*)'READ_FILES: ***ERROR*** NO aer fields; aborting'
+           call stop2(170)
+        end if
+
+        allocate(time_aer(nfldaer,2))
+     end if
+
 ! Let a single task query the guess files.
 
 !    Convert analysis time to minutes relative to fixed date
@@ -223,12 +255,24 @@ subroutine read_files(mype)
      do i=1,nfldsig
         write(filename,'(''sigf'',i2.2)')irec(i,1)
         if(print_verbose)write(6,*)'READ_FILES:  process ',trim(filename)
-        if ( .not. use_gfs_nemsio ) then
+        if ( (.not. use_gfs_nemsio) .and. (.not. use_gfs_ncio) ) then
            call sigio_sropen(lunatm,filename,iret)
            call sigio_srhead(lunatm,sigatm_head,iret)
            hourg4=sigatm_head%fhour
            idateg=sigatm_head%idate
            call sigio_sclose(lunatm,iret)
+        else if (use_gfs_ncio) then
+           atmges = open_dataset(filename,errcode=iret)
+           if (iret /=0 .and. mype==0) &
+                write(6,*)'READ_FILES: ***WARNING*** problem reading atm file ',trim(filename),iret 
+           idate6 = get_idate_from_time_units(atmges) 
+           call read_vardata(atmges, 'time', fhour)
+           hourg4 = float(nint(fhour(1))) ! going to make this nearest integer for now
+           idateg(1) = idate6(4)
+           idateg(2) = idate6(2)
+           idateg(3) = idate6(3)
+           idateg(4) = idate6(1)
+           call close_dataset(atmges)
         else
            call nemsio_init(iret=iret)
            call nemsio_open(gfile_atm,filename,'READ',iret=iret)
@@ -278,7 +322,7 @@ subroutine read_files(mype)
      do i=1,nfldsfc
         write(filename,'(''sfcf'',i2.2)')irec(i,2)
         if(print_verbose)write(6,*)'READ_FILES:  process ',trim(filename)        
-        if ( .not. use_gfs_nemsio ) then
+        if ( (.not. use_gfs_nemsio) .and. (.not. use_gfs_ncio) ) then
            call sfcio_sropen(lunsfc,filename,iret)
            call sfcio_srhead(lunsfc,sfc_head,iret)
            hourg4=sfc_head%fhour
@@ -293,6 +337,36 @@ subroutine read_files(mype)
            lpl_dum(1:sfc_head%latb/2)=sfc_head%lpl
            call sfcio_sclose(lunsfc,iret)
            if(i == 1 .and. print_verbose)write(6,*)' READ_FILES: in sfcio sfc_head%lpl = ', sfc_head%lpl
+        else if (use_gfs_ncio) then
+           sfcges = open_dataset(filename,errcode=iret)
+           if (iret /=0 .and. mype==0) &
+                write(6,*)'READ_FILES: ***WARNING*** problem reading sfc file ',trim(filename),iret
+           ncdim = get_dim(sfcges, 'grid_xt'); sfc_head%lonb = ncdim%len
+           ncdim = get_dim(sfcges, 'grid_yt'); sfc_head%latb = ncdim%len
+           idate6 = get_idate_from_time_units(sfcges) 
+           call read_vardata(sfcges, 'time', fhour)
+           hourg4 = float(nint(fhour(1))) ! going to make this nearest integer for now
+           idateg(1) = idate6(4)
+           idateg(2) = idate6(2)
+           idateg(3) = idate6(3)
+           idateg(4) = idate6(1)
+           i_ges(1)=sfc_head%lonb
+           i_ges(2)=sfc_head%latb+2
+           if((sfc_head%latb+1)/2>num_lpl)then
+              write(6,*)'READ_FILES: increase dimension of variable lpl_dum'
+              call stop2(80)
+           endif
+           if ( (sfc_head%latb+1)/2 /= sfc_head%latb/2 ) then
+              write(6,*) 'READ_FILES: ****WARNING**** (sfc_head%latb+1)/2 = ', &
+                 (sfc_head%latb+1)/2, 'sfc_head%latb/2 = ', sfc_head%latb/2
+           end if
+           if (allocated(sfc_head%lpl)) deallocate(sfc_head%lpl)
+           allocate(sfc_head%lpl((sfc_head%latb+1)/2))
+           sfc_head%lpl=sfc_head%lonb
+           call close_dataset(sfcges)
+           lpl_dum=0
+           lpl_dum(1:sfc_head%latb/2)=sfc_head%lpl
+           deallocate(sfc_head%lpl)
         else
            call nemsio_init(iret=iret)
            call nemsio_open(gfile_sfc,filename,'READ',iret=iret)
@@ -371,13 +445,24 @@ subroutine read_files(mype)
            do i=1,nfldnst
               write(filename,'(''nstf'',i2.2)')irec(i,3)
               write(6,*)'READ_FILES:  process ',trim(filename)
-              if ( .not. use_gfs_nemsio ) then
+              if ( (.not. use_gfs_nemsio) .and. (.not. use_gfs_ncio) ) then
                  call nstio_sropen(lunnst,filename,iret)
                  call nstio_srhead(lunnst,nst_head,iret)
                  hourg4=nst_head%fhour
                  idateg=nst_head%idate
                  nst_ges(1)=nst_head%lonb
                  nst_ges(2)=nst_head%latb+2
+              else if (use_gfs_ncio) then
+                 nstges = open_dataset(filename)
+                 ncdim = get_dim(nstges, 'grid_xt'); nst_head%lonb = ncdim%len
+                 ncdim = get_dim(nstges, 'grid_yt'); nst_head%latb = ncdim%len
+                 idate6 = get_idate_from_time_units(nstges) 
+                 call read_vardata(nstges, 'time', fhour)
+                 hourg4 = fhour(1)
+                 idateg(1) = idate6(4)
+                 idateg(2) = idate6(2)
+                 idateg(3) = idate6(3)
+                 idateg(4) = idate6(1)
               else
                  call nemsio_init(iret=iret)
                  call nemsio_open(gfile_nst,filename,'READ',iret=iret)
@@ -434,6 +519,7 @@ subroutine read_files(mype)
 !    for external aerosol files only
 !    Check for consistency of times from aer guess files.
      if ( lread_ext_aerosol ) then
+        write(6,*) 'READ_FILES: nfldaer ', nfldaer
         iwan=0
         do i=1,nfldaer
            write(filename,'(''aerf'',i2.2)')irec(i,4)
@@ -468,7 +554,7 @@ subroutine read_files(mype)
            idate5(3)=idateg(3); idate5(4)=idateg(1); idate5(5)=0
            call w3fs21(idate5,nmings)
            nming2=nmings+60*hourg
-           write(6,*)'READ_FILES:  aer guess file, hourg, idateg, nming2 ',hourg,idateg,nming2
+           write(6,*)'READ_FILES:  aer guess file',filename,hourg,idateg,nming2
            t4dv=real((nming2-iwinbgn),r_kind)*r60inv
            if (l4dvar.or.l4densvar) then
               if (t4dv<zero .OR. t4dv>winlen) cycle
@@ -536,7 +622,21 @@ subroutine read_files(mype)
      call stop2(99)
   endif
   if (l4densvar .and. nfldsig/=ntlevs_ens) then
-     write(6,*)'READ_FILES: ***ERROR*** insufficient atm fcst for 4densvar:  PROGRAM STOPS'
+     if (mype==0) then
+        write(6,*)'READ_FILES: ***ERROR*** insufficient atm fcst for 4densvar:  PROGRAM STOPS'
+        do i=1,ntlevs_ens
+           ihr=nhr_obsbin*(i-1)+nhr_half
+           present=.false.
+           do j=1,nfldsig
+              if (ihr == ifilesig(j)) present=.true.
+           end do
+           if (.not.present) then
+              write(filename,'(''sigf'',i2.2)')ihr
+              write(6,*)'READ_FILES: ***ERROR*** file ',trim(filename),' missing:  PROGRAM STOPS'
+           endif
+        end do
+     endif
+     call mpi_barrier(mpi_comm_world,ierror)
      call stop2(99)
   endif
 
@@ -554,7 +654,21 @@ subroutine read_files(mype)
      call stop2(99)
   endif
   if (l4densvar .and. nfldsfc/=ntlevs_ens) then
-     write(6,*)'READ_FILES: ***ERROR*** insufficient sfc fcst for 4densvar:  PROGRAM STOPS'
+     if (mype==0) then
+        write(6,*)'READ_FILES: ***ERROR*** insufficient sfc fcst for 4densvar:  PROGRAM STOPS'
+        do i=1,ntlevs_ens
+           ihr=nhr_obsbin*(i-1)+nhr_half
+           present=.false.
+           do j=1,nfldsfc
+              if (ihr == ifilesfc(j)) present=.true.
+           end do
+           if (.not.present) then
+              write(filename,'(''sfcf'',i2.2)')ihr
+              write(6,*)'READ_FILES: ***ERROR*** file ',trim(filename),' missing:  PROGRAM STOPS'
+           endif
+        end do
+     endif
+     call mpi_barrier(mpi_comm_world,ierror)
      call stop2(99)
   endif
   

@@ -36,6 +36,9 @@ use control_vectors, only: control_vector,allocate_cv,deallocate_cv, &
 implicit none
 type(control_vector), intent(in   ) :: xincr,xsens
 
+! Declare externals
+external :: stop2,evaljgrad
+
 real(r_quad) :: zx,zy,zb,zz,zcost
 type(control_vector) :: gwork
 integer(i_kind) :: nprt

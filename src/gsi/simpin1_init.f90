@@ -42,6 +42,9 @@ subroutine simpin1_init(ixi,tlout,alocalout,blocalout,iord,lbig,x1grid,n1grid)
        alocalout(2*n1grid),blocalout(2*n1grid)
   real(r_kind)   ,intent(in   ) :: x1grid(n1grid)
 
+! Declare externals
+  external :: vinvmm
+
   real(r_kind) x1in(2*n1grid)
   real(r_kind) dx1gridi(-3:n1grid+3)
   real(r_kind) tl(max(64,2*n1grid/lbig),lbig,lbig)

@@ -77,6 +77,9 @@ subroutine get_derivatives2(st,vp,t,p3d,u,v, &
   real(r_kind),dimension(lat2,lon2,nsig)  ,intent(  out) :: t_x,u_x,v_x,u,v
   real(r_kind),dimension(lat2,lon2,nsig)  ,intent(  out) :: t_y,u_y,v_y
 
+! Declare externals
+  external :: psichi2uv_reg,delx_reg,dely_reg
+
 ! Local Variables
   integer(i_kind) k,i,j,kk,k2
   real(r_kind),allocatable,dimension(:,:,:,:) :: hwork_sub,hwork,hwork_x,hwork_y
@@ -278,6 +281,9 @@ subroutine tget_derivatives2(st,vp,t,p3d,u,v,&
   real(r_kind),dimension(lat2,lon2,nsig)  ,intent(inout) :: t_x,u_x,v_x,u,v
   real(r_kind),dimension(lat2,lon2,nsig+1),intent(inout) :: p3d_y
   real(r_kind),dimension(lat2,lon2,nsig)  ,intent(inout) :: t_y,u_y,v_y
+
+! Declare externals
+  external :: tdelx_reg,tdely_reg,psichi2uvt_reg
 
 ! Local Variables
   integer(i_kind) k,i,j,kk,k2
@@ -485,6 +491,9 @@ subroutine get_derivatives2uv(st,vp,t,p3d,u,v, &
   real(r_kind),dimension(lat2,lon2,nsig)  ,intent(  out) :: t_x,u_x,v_x,u,v
   real(r_kind),dimension(lat2,lon2,nsig)  ,intent(  out) :: t_y,u_y,v_y
 
+! Declare externals
+  external :: delx_reg,dely_reg
+
 ! Local Variables
   integer(i_kind) k,i,j,kk
   real(r_kind),allocatable,dimension(:,:,:,:) :: hwork_sub,hwork,hwork_x,hwork_y
@@ -645,6 +654,9 @@ subroutine tget_derivatives2uv(st,vp,t,p3d,u,v,&
   real(r_kind),dimension(lat2,lon2,nsig)  ,intent(inout) :: t_x,u_x,v_x,u,v
   real(r_kind),dimension(lat2,lon2,nsig+1),intent(inout) :: p3d_y
   real(r_kind),dimension(lat2,lon2,nsig)  ,intent(inout) :: t_y,u_y,v_y
+
+! Declare externals
+  external :: tdelx_reg,tdely_reg
 
 ! Local Variables
   integer(i_kind) k,i,j,kk

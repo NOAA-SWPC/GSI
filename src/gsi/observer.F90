@@ -143,8 +143,10 @@ subroutine guess_init_
 
 ! Declare passed variables
 
-! Declare local variables
+! Declare externals
+  external :: read_guess,fmg_initialize_e
 
+! Declare local variables
   integer(i_kind):: ierr
 
 !*******************************************************************************************
@@ -314,6 +316,9 @@ subroutine set_
 
 ! Declare passed variables
 
+! Declare externals
+  external :: stop2,obs_para
+
 ! Declare local variables
   logical:: lhere
   integer(i_kind):: lunsave,istat1,istat2,istat3,ndat_old,npe_old
@@ -417,10 +422,13 @@ subroutine run_(init_pass,last_pass)
   use m_obsdiags, only: obsdiags_write
   use gsi_io, only: verbose
   implicit none
+
+! Declare passed variables
   logical,optional,intent(in) :: init_pass
   logical,optional,intent(in) :: last_pass
 
-! Declare passed variables
+! Declare externals
+  external :: stop2,setuprhsall
 
 ! Declare local variables
   character(len=*), parameter :: Iam="observer_run"

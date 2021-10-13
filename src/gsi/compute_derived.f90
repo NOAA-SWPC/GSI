@@ -140,6 +140,10 @@ subroutine compute_derived(mype,init_pass)
   integer(i_kind),intent(in   ) :: mype
   logical        ,intent(in   ) :: init_pass
 
+! Declare externals
+  external :: genqsat,q_diag,get_derivatives,getprs,calctends,strong_bal_correction,&
+    tpause,stop2
+
 ! Declare local variables
   character(len=*),parameter::myname='compute_derived'
   logical ice,fullfield

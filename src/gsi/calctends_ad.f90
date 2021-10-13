@@ -76,6 +76,9 @@ subroutine calctends_ad(fields,fields_dt,mype)
   type(gsi_bundle) :: derivativey
   integer(i_kind),intent(in) :: mype
 
+! Declare externals
+  external :: stop2,turbl_ad,getvvel_ad,getprs_horiz_ad,tget_derivatives
+
 ! Declare local variables
   character(len=*),parameter::myname='calctends_ad'
   real(r_kind),dimension(:,:,:),pointer :: u_t,v_t,u,v,t,q,oz,cw

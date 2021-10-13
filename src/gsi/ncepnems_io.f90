@@ -242,6 +242,7 @@ contains
 !                         ticket #239, comment 18)
 !   2018-05-19  eliu    - add components to read in hydrometeor related
 !                         variables 
+!   2019-07-10  Zhu     - Add convective clouds
 !
 !   input argument list:
 !
@@ -271,6 +272,9 @@ contains
     use cloud_efr_mod, only: cloud_calc_gfs,set_cloud_lower_bound
     use gridmod, only: fv3_full_hydro
     implicit none
+
+!   Declare externals
+    external :: stop2,general_read_fv3atm_nems,general_read_gfsatm_nems,prt_guess
 
     character(len=*),parameter::myname_=myname//'*read_'
     character(24) filename
@@ -348,7 +352,7 @@ contains
                atm_bundle,.true.,istatus)
        else
           call general_read_gfsatm_nems(grd_t,sp_a,filename,.true.,.true.,.true.,&
-               atm_bundle,.true.,istatus)
+               atm_bundle,.true.,istatus,it)
        endif
 
        inithead=.false.
@@ -531,7 +535,6 @@ contains
     use gsi_chemguess_mod, only: gsi_chemguess_get
     use gsi_bundlemod, only: gsi_bundle,gsi_bundlecreate,gsi_bundledestroy
     use gsi_bundlemod, only: gsi_grid,gsi_gridcreate
-    use gridmod, only: regional,use_fv3_aero
     use radiance_mod, only: n_aerosols_fwd,aerosol_names_fwd 
     use gridmod, only: grd_a,sp_a,regional
     use guess_grids, only: ifilesig,ifileaer,nfldaer
@@ -545,6 +548,9 @@ contains
     integer(i_kind), intent(in):: iyear
     integer(i_kind), intent(in):: month
     integer(i_kind), intent(in):: idd
+
+!   Declare externals
+    external :: general_read_nemsaero
 
 !   Declare local variables
     integer(i_kind) :: igfsco2, i, j, n, iret
@@ -765,6 +771,10 @@ contains
     real(r_kind),dimension(grd%lat2,grd%lon2,grd%nsig),intent(  out) :: g_u,g_v,&
          g_vor,g_div,g_cwmr,g_q,g_oz,g_tv
     type(spec_vars)                       ,intent(in   ) :: sp_a
+
+!   Declare externals
+    external :: stop2,mpi_scatterv,general_sptez_v,general_sptez_s_b,&
+      mpi_alltoallv
 
 !   Declare local variables
     character(len=120) :: my_name = 'READ_NEMSATM'
@@ -1253,6 +1263,9 @@ contains
     integer(i_kind), dimension(nlat_sfc,nlon_sfc),         intent(out) :: isli
     real(r_single),  optional, dimension(nlat_sfc,nlon_sfc,nfldsfc), intent(out) :: tref,dt_cool,z_c,dt_warm,z_w,c_0,c_d,w_0,w_d
                                 
+!   Declare externals
+    external :: stop2
+
 !   Declare local parameters
     integer(i_kind), parameter :: nsfc_all=11
     integer(i_kind),dimension(7):: idate
@@ -1566,6 +1579,9 @@ contains
     integer(i_kind), dimension(nlat_sfc,nlon_sfc),         intent(out) :: isli
     real(r_single), optional, dimension(nlat_sfc,nlon_sfc,nfldsfc), intent(out) :: tref,dt_cool,z_c,dt_warm,z_w,c_0,c_d,w_0,w_d
 
+!   Declare externals
+    external :: mpi_bcast
+
 !   Declare local variables
     integer(i_kind):: iret,npts,nptsall
 
@@ -1651,6 +1667,9 @@ contains
 
 !   Declare passed variables
     integer(i_kind), dimension(nlat,nlon),   intent(  out) :: isli_anl
+
+!   Declare externals
+    external :: stop2
 
 !   Declare local parameters
     integer(i_kind),dimension(7):: idate
@@ -1771,6 +1790,8 @@ contains
     integer(i_kind),                               intent(in   ) :: iope
     integer(i_kind), dimension(nlat,nlon),         intent(  out) :: isli_anl
 
+!   Declare externals
+    external :: mpi_bcast
 
 !   Declare local variables
     integer(i_kind):: iret,npts
@@ -1836,6 +1857,9 @@ contains
     integer(i_kind),parameter    :: n_nst=9
     integer(i_kind),dimension(7) :: idate
     integer(i_kind),dimension(4) :: odate
+
+!   Declare externals
+    external :: stop2
 
 !   Declare local variables
     character(len=6)   :: filename
@@ -2015,6 +2039,9 @@ contains
     real(r_single), dimension(nlat_sfc,nlon_sfc,nfldnst), intent(  out) :: &
                     tref,dt_cool,z_c,dt_warm,z_w,c_0,c_d,w_0,w_d
 
+!   Declare externals
+    external :: mpi_bcast
+
 !   Declare local variables
     integer(i_kind):: iret,npts,nptsall
 
@@ -2084,7 +2111,6 @@ contains
     use mpimod, only: mype
 
     use guess_grids, only: ifilesig
-    use guess_grids, only: ges_prsl,ges_prsi
     use guess_grids, only: load_geop_hgt,geop_hgti,ges_geopi
 
     use gridmod, only: ntracer
@@ -2118,6 +2144,9 @@ contains
     type(gsi_bundle),    intent(in) :: gfs_bundle
     integer(i_kind),     intent(in) :: ibin      ! time bin
 
+!   Declare externals
+    external :: stop2,w3movdat,mpi_gatherv
+
 !-------------------------------------------------------------------------
 
     real(r_kind),parameter:: r0_001 = 0.001_r_kind
@@ -2141,10 +2170,10 @@ contains
     real(r_kind),pointer,dimension(:,:,:) :: sub_ql,sub_qi,sub_qr,sub_qs,sub_qg
 
     real(r_kind),dimension(grd%lat2,grd%lon2,grd%nsig) :: sub_dzb,sub_dza
-
     real(r_kind),dimension(grd%lat1*grd%lon1)     :: psm
+    real(r_kind),dimension(grd%lat2,grd%lon2,grd%nsig):: sub_dp
     real(r_kind),dimension(grd%lat1*grd%lon1,grd%nsig):: tvsm, usm, vsm
-    real(r_kind),dimension(grd%lat1*grd%lon1,grd%nsig):: qsm, ozsm
+    real(r_kind),dimension(grd%lat1*grd%lon1,grd%nsig):: dpsm, qsm, ozsm
     real(r_kind),dimension(grd%lat1*grd%lon1,grd%nsig):: dzsm
     real(r_kind),dimension(grd%lat1*grd%lon1,grd%nsig):: qlsm,qism,qrsm,qssm,qgsm
 
@@ -2311,12 +2340,13 @@ contains
     ! Calculate delz increment for UPP
     if (lupp) then
        do k=1,grd%nsig
-          sub_dzb(:,:,k) = ges_geopi(:,:,k+1,ibin) - ges_geopi(:,:,k,ibin)
+          ! k goes from bottom to top, so k - k+1 is negative delz
+          sub_dzb(:,:,k) = ges_geopi(:,:,k,ibin) - ges_geopi(:,:,k+1,ibin)
        enddo
 
        if ((.not. lwrite4danl) .or. ibin == 1) call load_geop_hgt
        do k=1,grd%nsig
-          sub_dza(:,:,k) = geop_hgti(:,:,k+1,ibin) - geop_hgti(:,:,k,ibin)
+          sub_dza(:,:,k) = geop_hgti(:,:,k,ibin) - geop_hgti(:,:,k+1,ibin)
        enddo
 
        sub_dza = sub_dza - sub_dzb !sub_dza is increment
@@ -2327,6 +2357,7 @@ contains
     call strip(sub_tv  ,tvsm  ,grd%nsig)
     call strip(sub_q   ,qsm   ,grd%nsig)
     call strip(sub_oz  ,ozsm  ,grd%nsig)
+    call strip(sub_dp  ,dpsm  ,grd%nsig)
     call strip(sub_u   ,usm   ,grd%nsig)
     call strip(sub_v   ,vsm   ,grd%nsig)
     if (lql ) call strip(sub_ql  ,qlsm  ,grd%nsig)
@@ -2802,7 +2833,8 @@ contains
           if (mype == mype_out) then
              call nemsio_readrecv(gfile,'delz','mid layer',k,rwork1d,iret=iret)
              if (iret /= 0) call error_msg(trim(my_name),trim(filename),'delz','read',istop,iret)
-             if (sum(rwork1d) < zero) work1 = work1 * -1.0_r_kind  !Flip sign, FV3 is top to bottom 
+             ! if delz in background is positive, flip sign of increment
+             if (sum(rwork1d) > zero) work1 = -one * work1  
              if(diff_res)then
                 grid_b=reshape(rwork1d,(/size(grid_b,1),size(grid_b,2)/))
                 do kk=1,grd%iglobal
@@ -2895,7 +2927,7 @@ contains
     use mpimod, only: mype
 
     use guess_grids, only: ifilesig
-    use guess_grids, only: ges_prsl,ges_prsi
+    use guess_grids, only: ges_prsi
     use guess_grids, only: load_geop_hgt,geop_hgti,ges_geopi
 
     use gridmod, only: ntracer
@@ -2931,6 +2963,9 @@ contains
     type(gsi_bundle),optional,intent(in) :: gfschem_bundle ! for aerosols
     integer(i_kind),     intent(in) :: ibin      ! time bin
 
+!   Declare externals
+    external :: stop2,w3movdat,mpi_gatherv
+
 !-------------------------------------------------------------------------
 
     real(r_kind),parameter:: r0_001 = 0.001_r_kind
@@ -2957,10 +2992,12 @@ contains
     real(r_kind),pointer,dimension(:,:,:) :: sub_oc1,sub_oc2,sub_bc1,sub_bc2
 
     real(r_kind),dimension(grd%lat2,grd%lon2,grd%nsig) :: sub_dzb,sub_dza
+    real(r_kind),dimension(grd%lat2,grd%lon2,grd%nsig+1) :: sub_prsi
 
     real(r_kind),dimension(grd%lat1*grd%lon1)     :: psm
+    real(r_kind),dimension(grd%lat2,grd%lon2,grd%nsig):: sub_dp
     real(r_kind),dimension(grd%lat1*grd%lon1,grd%nsig):: tvsm, usm, vsm
-    real(r_kind),dimension(grd%lat1*grd%lon1,grd%nsig):: qsm, ozsm
+    real(r_kind),dimension(grd%lat1*grd%lon1,grd%nsig):: dpsm, qsm, ozsm
     real(r_kind),dimension(grd%lat1*grd%lon1,grd%nsig):: cwsm, dzsm
 !   Aerosol array
     real(r_kind),dimension(grd%lat1*grd%lon1,grd%nsig):: &
@@ -3137,15 +3174,22 @@ contains
        if (iret /= 0) call error_msg(trim(my_name),trim(filename),'hgt','write',istop,iret)
     endif ! if ( mype == mype_out )
 
+    sub_prsi = ges_prsi(:,:,:,ibin)
+
+    do k=1,grd%nsig
+       sub_dp(:,:,k) = sub_prsi(:,:,k) - sub_prsi(:,:,k+1)
+    end do
+
     ! Calculate delz increment for UPP
     if (lupp) then
        do k=1,grd%nsig
-          sub_dzb(:,:,k) = ges_geopi(:,:,k+1,ibin) - ges_geopi(:,:,k,ibin)
+          ! k goes from bottom to top, so k - k+1 is negative delz
+          sub_dzb(:,:,k) = ges_geopi(:,:,k,ibin) - ges_geopi(:,:,k+1,ibin)
        enddo
 
        if ((.not. lwrite4danl) .or. ibin == 1) call load_geop_hgt
        do k=1,grd%nsig
-          sub_dza(:,:,k) = geop_hgti(:,:,k+1,ibin) - geop_hgti(:,:,k,ibin)
+          sub_dza(:,:,k) = geop_hgti(:,:,k,ibin) - geop_hgti(:,:,k+1,ibin)
        enddo
 
        sub_dza = sub_dza - sub_dzb !sub_dza is increment
@@ -3157,6 +3201,7 @@ contains
     call strip(sub_q   ,qsm   ,grd%nsig)
     call strip(sub_oz  ,ozsm  ,grd%nsig)
     call strip(sub_cwmr,cwsm  ,grd%nsig)
+    call strip(sub_dp  ,dpsm  ,grd%nsig)
     call strip(sub_u   ,usm   ,grd%nsig)
     call strip(sub_v   ,vsm   ,grd%nsig)
     if (lupp) call strip(sub_dza ,dzsm  ,grd%nsig)
@@ -3523,7 +3568,8 @@ contains
           if (mype == mype_out) then
              call nemsio_readrecv(gfile,'delz','mid layer',k,rwork1d,iret=iret)
              if (iret /= 0) call error_msg(trim(my_name),trim(filename),'delz','read',istop,iret)
-             if (sum(rwork1d) < zero) work1 = work1 * -1.0_r_kind  ! Flip sign, FV3 is top to bottom
+             ! if delz in background is positive, flip sign of increment
+             if (sum(rwork1d) > zero) work1 = -one * work1  ! Flip sign, FV3 is top to bottom
              if(diff_res)then
                 grid_b=reshape(rwork1d,(/size(grid_b,1),size(grid_b,2)/))
                 do kk=1,grd%iglobal
@@ -4331,6 +4377,8 @@ contains
 
 !   Declare local parameters
     character( 6),parameter:: fname_ges='sfcf06'
+!   Declare externals
+    external :: mpi_gatherv
 !   Declare local variables
     character(len=120) :: my_name = 'WRITE_NEMSSFC'
     character(len=1)   :: null = ' '
@@ -4574,6 +4622,10 @@ contains
     character(6), parameter:: fname_nstges = 'nstf06'
     character(6), parameter:: fname_nstanl = 'nstanl'
     character(6), parameter:: fname_dtfanl = 'dtfanl'
+
+!   Declare externals
+    external :: mpi_gatherv,stop2,int2_msk_glb_prep,int22_msk_glb,&
+      dtzm_2d
 
 !   Declare local variables
     integer(i_kind), parameter:: io_dtfanl = 54
@@ -5151,6 +5203,9 @@ contains
     integer(i_kind),  intent(in) :: stop_code, error_code
     logical, optional,intent(in) :: lprint
     
+!   Declare externals
+    external :: stop2
+
     if ( mype == 0 .or. present(lprint) ) then
        select case (trim(action))
        case('init')
@@ -5219,6 +5274,9 @@ contains
 
 ! !OUTPUT PARAMETERS:
     real(r_single), dimension(nlon_b,nlat_b),intent(  out) :: b
+
+!   Declare externals
+    external :: grdcrd1
 
 !   Declare local variables
     integer(i_kind) i,j,ix,iy,ixp,iyp

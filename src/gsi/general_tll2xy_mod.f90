@@ -1224,6 +1224,10 @@ subroutine test3_egrid2points
   use egrid2agrid_mod, only: egrid2agrid_parm,create_egrid2points_slow,egrid2points
   implicit none
 
+! Declare externals
+  external :: ll2rpolar,rpolar2ll,outgrads1,merge_grid_e_to_grid_a_initialize,merge_grid_e_to_grid_a,&
+     merge_vgrid_e_to_vgrid_a
+
   type(llxy_cons) gt_e,gt_a
   type(egrid2agrid_parm) p_e2a
   integer(i_kind) i,j,nye,nxe,nord_e2a

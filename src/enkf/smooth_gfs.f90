@@ -4,7 +4,9 @@ module smooth_mod
 ! This version is for GFS, expects data to be on global gaussian grids (full or
 ! reduced). Isotropic spectral smoothing (gaussian) is used.
 
-use mpisetup
+use mpimod, only: mpi_comm_world
+use mpisetup, only: mpi_real4,mpi_sum,mpi_comm_io,mpi_in_place,numproc,nproc,&
+                mpi_integer,mpi_wtime,mpi_status,mpi_real8,mpi_max
 use params, only:  nlons, nlats, reducedgrid, smoothparm
 use kinds, only:  r_kind, i_kind, r_single
 use gridinfo, only: npts, ntrunc
@@ -28,8 +30,10 @@ subroutine smooth(grids)
 ! smoothing controlled by parameter smoothparm.
 use specmod, only: sptez_s, init_spec_vars, isinitialized
 implicit none
-integer(i_kind) np,ierr,m,nmdim,nm,nn,n,delta,npmax
 real(r_single), intent(inout) :: grids(npts,ncdim) ! there are ncdim 2d grids.
+! Declare externals
+external :: mpi_allreduce
+integer(i_kind) np,ierr,m,nmdim,nm,nn,n,delta,npmax
 real(r_single) smoothfact ! smoothing parameter.
 real(r_kind) reggrd(nlons*nlats)
 real(r_kind), allocatable, dimension(:) :: specdat

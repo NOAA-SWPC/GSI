@@ -123,6 +123,9 @@ contains
     use general_specmod, only: general_init_spec_vars,general_destroy_spec_vars,spec_vars
     implicit none
 
+!   Declare externals
+    external :: stop2,general_read_gfsatm
+
     character(24) filename
     logical:: l_cld_derived,zflag,inithead
     integer(i_kind):: it,nlon_b,num_fields,inner_vars
@@ -539,6 +542,9 @@ subroutine write_ghg_grid(a,char_ghg)
   real(r_kind),dimension(lat2,lon2,nsig),intent(in   ) :: a
   character(len=3),intent(in) :: char_ghg
 
+! Declare externals
+  external :: gather_stuff2,baopenwt,wryte,baclose
+
   character(255):: grdfile
 
   real(r_kind),dimension(nlat,nlon,nsig):: ag
@@ -619,6 +625,8 @@ end subroutine write_ghg_grid
     real(r_single),  dimension(nlat_sfc,nlon_sfc,nfldsfc), intent(  out) :: sfct,soil_moi,sno,soil_temp,veg_frac,fact10,sfc_rough 
     real(r_single),  dimension(nlat_sfc,nlon_sfc),         intent(  out) :: veg_type,soil_type,terrain
     integer(i_kind), dimension(nlat_sfc,nlon_sfc),         intent(  out) :: isli
+!   Declare external
+    external :: stop2
     integer(i_kind) :: latb,lonb
     integer(i_kind) :: iret,n,i,j
     type(sfcio_head) :: sfc_head
@@ -783,6 +791,8 @@ end subroutine write_ghg_grid
     real(r_single),  dimension(nlat_sfc,nlon_sfc),         intent(  out) :: veg_type,soil_type,terrain
     integer(i_kind), dimension(nlat_sfc,nlon_sfc),         intent(  out) :: isli
 
+!   Declare externals
+    external :: mpi_bcast
 
 !   Declare local variables
     integer(i_kind):: iret,npts,nptsall
@@ -849,6 +859,8 @@ end subroutine write_ghg_grid
     use gridmod, only: nlat,nlon
 
     integer(i_kind), dimension(nlat,nlon), intent(  out) :: isli_anl
+!   Declare externals
+    external :: stop2
     integer(i_kind) :: latb,lonb
     integer(i_kind) :: iret,i,j
     type(sfcio_head) :: sfc_head
@@ -929,6 +941,9 @@ end subroutine write_ghg_grid
     integer(i_kind)                      ,intent(in   ) :: iope
     integer(i_kind), dimension(nlat,nlon), intent(  out) :: isli_anl
 
+!   Declare externals
+    external :: mpi_bcast
+
 !   Declare local variables
     integer(i_kind):: iret,npts
 !-----------------------------------------------------------------------------
@@ -976,6 +991,8 @@ end subroutine write_ghg_grid
     use constants, only: two
     real(r_single), dimension(nlat_sfc,nlon_sfc,nfldnst),intent(  out) :: &
                     tref,dt_cool,z_c,dt_warm,z_w,c_0,c_d,w_0,w_d
+!   Declare externals
+    external :: stop2
     integer(i_kind) :: latb,lonb
     integer(i_kind) :: iret,n
     type(nstio_head) :: nst_head
@@ -1114,6 +1131,9 @@ end subroutine write_ghg_grid
     real(r_single), dimension(nlat_sfc,nlon_sfc,nfldnst),intent(  out) :: &
                     tref,dt_cool,z_c,dt_warm,z_w,c_0,c_d,w_0,w_d
 
+!   Declare externals
+    external :: mpi_bcast
+
 !   Declare local variables
     integer(i_kind):: iret,npts,nptsall
 
@@ -1166,6 +1186,9 @@ end subroutine write_ghg_grid
 !   2013-10-29  todling - revisit write to allow skipping vars not in MetGuess
 !   2018-05-19  eliu    - add I/O for fv3 hydrometeors
 !   2019-03-21  Wei/Martin - write out global aerosol arrays if needed
+!   2019-09-04  martin  - added option to write fv3 netcdf increment file
+!   2019-09-24  martin  - added logic for when use_gfs_ncio is true, note
+!                         writing netCDF analysis for GFS not currently supported
 !
 !   input argument list:
 !     increment          - when >0 will write increment from increment-index slot
@@ -1183,7 +1206,7 @@ end subroutine write_ghg_grid
     use mpimod, only: mype
     use guess_grids, only: dsfct
     use guess_grids, only: ntguessig,ntguessfc,ifilesig,nfldsig
-    use gridmod, only: hires_b,sp_a,grd_a,jcap_b,nlon,nlat,use_gfs_nemsio,lsidea
+    use gridmod, only: hires_b,sp_a,grd_a,jcap_b,nlon,nlat,use_gfs_nemsio,write_fv3_incr,use_gfs_ncio,lsidea
     use gsi_metguess_mod, only: gsi_metguess_bundle
     use gsi_bundlemod, only: gsi_bundlegetpointer
     use gsi_bundlemod, only: gsi_grid
@@ -1198,6 +1221,8 @@ end subroutine write_ghg_grid
     use general_specmod, only: general_init_spec_vars,general_destroy_spec_vars,spec_vars
     use gsi_4dvar, only: lwrite4danl,nhr_anal
     use ncepnems_io, only: write_nemsatm,write_nemssfc,write_nems_sfc_nst
+    use netcdfgfs_io, only: write_gfsncsfc, write_gfsnc_sfc_nst, write_gfsncatm
+    use write_incr, only: write_fv3_increment
     use ncepnems_io, only: write_fv3atm_nems     
     use gridmod, only: fv3_full_hydro   
     use gsi_chemguess_mod, only: gsi_chemguess_get,gsi_chemguess_bundle
@@ -1208,6 +1233,10 @@ end subroutine write_ghg_grid
 
     integer(i_kind),intent(in   ) :: increment
     integer(i_kind),intent(in   ) :: mype_atm,mype_sfc
+
+!   Declare externals
+    external :: stop2,general_write_gfsatm
+
     character(24):: filename
     integer(i_kind) :: itoutsig,istatus,iret_write,nlon_b,ntlevs,it
 
@@ -1397,13 +1426,13 @@ end subroutine write_ghg_grid
             endif
             itoutsig = it
             if ( it == ntguessig ) then
-               if ( increment > 0 ) then
+               if ( increment > 0 .or. write_fv3_incr ) then
                    filename = 'siginc'
                else
                    filename = 'siganl'
                endif
             else
-               if ( increment > 0 ) then
+               if ( increment > 0 .or. write_fv3_incr ) then
                    write(filename,"('sigi',i2.2)") ifilesig(it)
                else
                    write(filename,"('siga',i2.2)") ifilesig(it)
@@ -1411,7 +1440,7 @@ end subroutine write_ghg_grid
             endif
         else
             itoutsig = ntguessig
-            if ( increment > 0 ) then
+            if ( increment > 0 .or. write_fv3_incr ) then
                 filename = 'siginc'
             else
                 filename = 'siganl'
@@ -1419,7 +1448,7 @@ end subroutine write_ghg_grid
         endif
 
         if ( mype == 0 ) then
-            if ( increment > 0 ) then
+            if ( increment > 0 .or. write_fv3_incr ) then
                 write(6,'(A,I2.2)') 'WRITE_GFS: writing analysis increment for FHR ', ifilesig(itoutsig)
             else
                 write(6,'(A,I2.2)') 'WRITE_GFS: writing full analysis state for FHR ', ifilesig(itoutsig)
@@ -1499,21 +1528,34 @@ end subroutine write_ghg_grid
 
         if ( use_gfs_nemsio ) then
 
-           if (fv3_full_hydro) then
-              call write_fv3atm_nems(grd_a,sp_a,filename,mype_atm, &
-                   atm_bundle,itoutsig)
-           else
-              ! if using aerosols, optional chem_bundle argument
-              if ( laeroana_gocart ) then
-                  call write_nemsatm(grd_a,sp_a,filename,mype_atm, &
-                       atm_bundle,itoutsig,chem_bundle)
-              else
-              ! otherwise, just atm_bundle
-                  call write_nemsatm(grd_a,sp_a,filename,mype_atm, &
-                       atm_bundle,itoutsig)
-              end if ! laeroana_gocart
-           endif  
+            if ( write_fv3_incr ) then
+                call write_fv3_increment(grd_a,sp_a,filename,mype_atm, &
+                     atm_bundle,itoutsig)
+            else
+                if (fv3_full_hydro) then
+                   call write_fv3atm_nems(grd_a,sp_a,filename,mype_atm, &
+                        atm_bundle,itoutsig)
+                else
+                   ! if using aerosols, optional chem_bundle argument
+                   if ( laeroana_gocart ) then
+                       call write_nemsatm(grd_a,sp_a,filename,mype_atm, &
+                            atm_bundle,itoutsig,chem_bundle)
+                   else
+                   ! otherwise, just atm_bundle
+                       call write_nemsatm(grd_a,sp_a,filename,mype_atm, &
+                            atm_bundle,itoutsig)
+                   end if ! laeroana_gocart
+                endif  
+            end if
 
+        else if ( use_gfs_ncio ) then
+            if  ( write_fv3_incr ) then
+                call write_fv3_increment(grd_a,sp_a,filename,mype_atm, &
+                     atm_bundle,itoutsig)
+            else
+                call write_gfsncatm(grd_a,sp_a,filename,mype_atm, &
+                     atm_bundle,itoutsig)
+            end if
         else
 
             ! If hires_b, spectral to grid transform for background
@@ -1547,6 +1589,8 @@ end subroutine write_ghg_grid
         filename='sfcinc.gsi'
         if ( use_gfs_nemsio ) then
             call write_nemssfc(filename,mype_sfc,dsfct(:,:,ntguessfc))
+        else if ( use_gfs_ncio ) then
+            call write_gfsncsfc(filename,mype_sfc,dsfct(:,:,ntguessfc))
         else
             call write_gfssfc(filename,mype_sfc,dsfct(1,1,ntguessfc))
         endif
@@ -1557,6 +1601,8 @@ end subroutine write_ghg_grid
           else
              if ( use_gfs_nemsio ) then
                  call write_nems_sfc_nst(mype_sfc,dsfct(:,:,ntguessfc))
+             else if ( use_gfs_ncio ) then
+                 call write_gfsnc_sfc_nst(mype_sfc,dsfct(:,:,ntguessfc))
              else
                  call write_gfs_sfc_nst (mype_sfc,dsfct(1,1,ntguessfc))
              endif
@@ -1565,6 +1611,8 @@ end subroutine write_ghg_grid
            filename='sfcanl.gsi'
            if ( use_gfs_nemsio ) then
                call write_nemssfc(filename,mype_sfc,dsfct(:,:,ntguessfc))
+           else if ( use_gfs_ncio ) then
+               call write_gfsncsfc(filename,mype_sfc,dsfct(:,:,ntguessfc))
            else
                call write_gfssfc (filename,mype_sfc,dsfct(1,1,ntguessfc))
            endif
@@ -1689,6 +1737,9 @@ end subroutine write_ghg_grid
     integer(sfcio_intkind),parameter:: ioanl = 52
 
     real(r_kind),parameter :: houra = zero_single
+
+!   Declare externals
+    external :: mpi_gatherv,stop2
 
 !   Declare local variables
     integer(sfcio_intkind):: iret
@@ -1917,6 +1968,9 @@ end subroutine write_ghg_grid
     integer(i_kind),parameter:: nprep=15
 
     real(r_kind),parameter :: houra = zero_single
+
+!   Declare externals
+    external :: mpi_gatherv,stop2,int2_msk_glb_prep,int22_msk_glb,dtzm_2d
 
 !   Declare local variables
     character(len=6) :: fname_sfcges,fname_sfcgcy,fname_sfctsk,fname_sfcanl,fname_nstges,fname_nstanl,fname_dtfanl
@@ -2303,6 +2357,9 @@ end subroutine write_ghg_grid
 !
 !-------------------------------------------------------------------------
 
+!   Declare externals
+    external :: mpi_gatherv
+
 !   Declare local variables
     integer(i_kind):: i,j,ip1,jp1,ilat,ilon,mm1
     real(r_kind),    dimension(lat1,lon1):: dtf_sub
@@ -2517,8 +2574,10 @@ end subroutine write_ghg_grid
 !
 !-------------------------------------------------------------------------
 
-!   Declare local parameters
+!   Declare externals
+    external :: mpi_gatherv,stop2,splat,int2_msk_glb_prep,int22_msk_glb
 
+!   Declare local parameters
     integer(sfcio_intkind),parameter:: io_nstges = 12
     integer(sfcio_intkind),parameter:: io_sfcges = 13
     integer(sfcio_intkind),parameter:: io_sfcgcy = 14
@@ -2968,7 +3027,6 @@ end subroutine write_ghg_grid
 !-------------------------------------------------------------------------
 
 !   Declare local parameters
-
     integer(sfcio_intkind),parameter:: io_nstges = 12
     integer(sfcio_intkind),parameter:: io_sfcges = 13
     integer(sfcio_intkind),parameter:: io_sfcgcy = 14
@@ -2977,6 +3035,9 @@ end subroutine write_ghg_grid
     integer(i_kind),parameter:: nprep=15
 
     real(r_kind),parameter :: houra = zero_single
+
+!   Declare externals
+    external :: mpi_gatherv,stop2,splat,int2_msk_glb_prep,int22_msk_glb
 
 !   Declare local variables
     character(len=14):: fname_sfcges,fname_sfcgcy,fname_nstges

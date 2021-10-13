@@ -151,6 +151,9 @@ contains
     use obsmod, only: iout_pcp,use_limit
     implicit none
 
+! Declare externals
+    external :: stop2
+
 ! Declare local varianbes
     logical lexist
     character(len=1):: cflg
@@ -329,6 +332,9 @@ contains
 ! Declare passed variables
     integer(i_kind)             ,intent(in   ) :: mype
     integer(i_kind),dimension(5),intent(in   ) :: iadate    
+
+! Declare externals
+    external :: mpi_scatterv
 
 ! Declare local variables
     integer(i_kind) i,j,k,mm1,myper,iseed

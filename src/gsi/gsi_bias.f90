@@ -102,6 +102,9 @@ contains
     type(gsi_bundle)                          ,intent(inout) :: bundle(nbc)
     real(r_kind),dimension(lat2,lon2,nbc)     ,intent(  out) :: sub_z
 
+!   Declare externals
+    external :: baopenr,baread,mpi_scatterv,baclose
+
 !   Declare local variables
     integer(i_kind) i,j,k,mm1,nv
     integer(i_kind) mype_in,iret
@@ -276,6 +279,9 @@ contains
 !
 !EOP
 !-------------------------------------------------------------------------
+
+!   Declare externals
+    external :: baopenwt,mpi_gatherv,wryte,baclose
 
     character(len=*), parameter :: myname_=myname//'*write_bias_'
     integer(i_kind),parameter::  lunout = 51

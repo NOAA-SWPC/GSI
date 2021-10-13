@@ -40,6 +40,9 @@
   real(r_kind),dimension(2,ny)       ,intent(in   ) :: p
   real(r_kind),dimension(2,ny)       ,intent(  out) :: q
 
+! Declare externals
+  external :: mp_ymulbv,mp_ybacbv
+
 ! Declare local variables
   integer(i_kind) iy
   real(r_kind),dimension(ny,2):: v1,v2
@@ -103,6 +106,9 @@
   real(r_kind),dimension(ny,-noq:noq),intent(in   ) :: aco1,bco1,aco2,bco2
   real(r_kind),dimension(2,ny)       ,intent(in   ) :: q
   real(r_kind),dimension(2,ny)       ,intent(  out) :: p
+
+! Declare externals
+  external :: mp_ybacvb,mp_ymulvb
 
 ! Declare local variables
   integer(i_kind) iy
@@ -403,6 +409,9 @@
   real(r_kind),dimension(nx)          ,intent(in   ) :: p
   real(r_kind),dimension(nxh,-noq:noq),intent(in   ) :: aco1,bco1,aco2,bco2
   real(r_kind),dimension(nx)          ,intent(  out) :: q
+
+! Declare externals
+  external :: mp_xmulbv,mp_xbacbv
 
 ! Declare local variables
   integer(i_kind) nxhp,ix,nxp,ix1,ix2

@@ -96,6 +96,9 @@ contains
       integer(i_kind),intent(in   ) :: mype
       real(r_kind)   ,intent(  out) :: ctph0,stph0,tlm0
   
+  !   Declare externals
+      external :: mpi_barrier,mpi_bcast,make_sigf,convert_binary_2d
+
       type(convert_netcdf_class) :: netcdf_converter
       type(get_wrf_nmm_ensperts_class) :: binary_nmm
       type(get_wrf_binary_interface_class) :: wrf_interface
@@ -217,6 +220,9 @@ contains
   !   Declare passed variables
       class(regional_io_class), intent(inout) :: this
       integer(i_kind),intent(in):: mype
+
+  !   Declare externals
+      external :: mpi_barrier,write_cmaq,wr2d_binary
 
   !   Declare local variables
       type(wrwrfmassa_class) :: wrwrfmassa

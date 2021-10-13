@@ -55,6 +55,7 @@ module radinfo
 !   2016-11-29  shlyaeva - make nvarjac public
 !   2018-07-24  W. Gu   - the routines to handle correlated R-covariance moved out
 !   2019-06-19  Hu      - add option reset_bad_radbc for reset radiance bias correction coefficient if it is bad.
+!   2019-08-20  zhu     - add flexibility to allow radiances being assimilated without bias correction
 !
 ! subroutines included:
 !   sub init_rad            - set satellite related variables to defaults
@@ -612,6 +613,9 @@ contains
     use mpeu_util, only: perr,die
     implicit none
 
+! !Declare externals
+    external :: stop2
+
 ! !INPUT PARAMETERS:
     integer(i_kind) i,j,k,ich,lunin,nlines
     integer(i_kind) ip,istat,n,ichan,nstep,edge1,edge2,ntlapupdate,icw,iaeros
@@ -697,7 +701,7 @@ contains
     allocate(nuchan(jpch_rad),nusis(jpch_rad),iuse_rad(0:jpch_rad), &
          ifactq(jpch_rad),varch(jpch_rad),varch_cld(jpch_rad), &
          ermax_rad(jpch_rad),b_rad(jpch_rad),pg_rad(jpch_rad), &
-         ang_rad(jpch_rad),air_rad(jpch_rad),inew_rad(jpch_rad),&
+         ang_rad(jpch_rad),air_rad(jpch_rad),inew_rad(jpch_rad), &
          icld_det(jpch_rad),icloud4crtm(jpch_rad),iaerosol4crtm(jpch_rad), &
          iextra_det(jpch_rad), &
          isnow_det(jpch_rad), &
@@ -847,7 +851,8 @@ contains
                          varA(i,j)=varx(i)
                       end do
                       ostats(j)=ostatsx
-                      if (any(varx/=zero) .and. iuse_rad(j)>-2) inew_rad(j)=.false.
+                      if ((any(varx/=zero) .and. iuse_rad(j)>-2) .or. iuse_rad(j)==4) & 
+                         inew_rad(j)=.false.
                       cycle read3
                    end if
                 end do
@@ -1078,7 +1083,11 @@ contains
                    cfound = .true.
                    nfound(j) = .true.
                    do i=1,npred
-                      predx(i,j)=predr(i)
+                      if (iuse_rad(j)==4) then
+                         predx(i,j)=zero
+                      else
+                         predx(i,j)=predr(i)
+                      end if
                    end do
                    if (adp_anglebc) then 
                       tlapmean(j)=tlapm
@@ -1086,7 +1095,7 @@ contains
                       count_tlapmean(j)=ntlapupdate
                       if (ntlapupdate > ntlapthresh) update_tlapmean(j)=.false.
                    end if
-                   if (any(predr/=zero)) inew_rad(j)=.false.
+                   if (any(predr/=zero) .or. iuse_rad(j)==4) inew_rad(j)=.false.
                    cycle read4
                 end if
              end do
@@ -1129,13 +1138,15 @@ contains
 !      Initialize predx if inew_rad and compute angle bias correction and tlapmean
        if (adp_anglebc) then
           call init_predx
+          cbias=zero
           do j=1,jpch_rad
+             if (iuse_rad(j)==4) cycle
              call angle_cbias(nusis(j),j,cbias(1,j))
           end do
 
 !         check inew_rad again
           do j =1,jpch_rad
-             if (inew_rad(j) .and. iuse_rad(j)>=0 .and. all(predx(:,j)==zero)) then
+             if (inew_rad(j) .and. iuse_rad(j)>=0 .and. iuse_rad(j)/=4 .and. all(predx(:,j)==zero)) then
                 iuse_rad(j)=-1
              end if
           end do
@@ -1674,6 +1685,9 @@ contains
    integer(i_kind),parameter:: maxchn = 3000
    integer(i_kind),parameter:: maxdat = 100
    real(r_kind),   parameter:: atiny  = 1.0e-10_r_kind
+
+!  Declare externals
+   external :: linmm,mpi_barrier
 
 !  Declare local variables
    logical lexist

@@ -1,5 +1,7 @@
 subroutine write_logfile()
  use params, only : datapath
+! Declare externals
+ external :: timestamp
  character(len=500) filename
  character(len=72) timestring
  filename = trim(datapath)//'enkf.log'

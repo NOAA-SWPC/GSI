@@ -505,6 +505,9 @@ subroutine mread_(cdfile,mPEs,force,jiter_expected,alwaysLocal)
   integer(i_kind),optional,intent(in):: jiter_expected  ! expected input jiter
   logical        ,optional,intent(in):: alwaysLocal ! read all files
 
+! Declare externals
+  external :: MPI_Barrier
+
 ! ----------------------------------------------------------
   character(len=*),parameter:: myname_=myname//"::mread_"
   logical:: redistr,exist_
@@ -884,6 +887,9 @@ _TIMER_USE_
   character(len=*), intent(in) :: cdfile        ! := "obsdiags.<miter>"
   logical,optional, intent(in) :: luseonly      ! output only if(%luse)
   logical,optional, intent(in) :: force         ! write all out regardlessly
+
+! Declare externals
+  external :: MPI_Barrier
 
   character(len=*), parameter :: myname_=myname//"::write_"
 
@@ -1278,6 +1284,9 @@ subroutine iMPI_barrier_(comm)
   implicit none
   integer(kind=MPI_ikind),intent(in):: comm
 
+! Declare externals
+  external :: MPI_barrier
+
   character(len=*),parameter:: myname_=myname//"::iMPI_barrier_"
   integer(kind=MPI_ikind):: ier
 
@@ -1294,6 +1303,9 @@ subroutine iMPI_gather_(isend,irecv,root,comm)
   integer(kind=i_kind),dimension(:,:,:),intent(out):: irecv
   integer(kind=MPI_ikind),intent(in):: root
   integer(kind=MPI_ikind),intent(in):: comm
+
+! Declare externals
+  external :: MPI_gather
 
   character(len=*),parameter:: myname_=myname//"::iMPI_gather_"
   integer(kind=MPI_ikind):: itype,isize,ierr
@@ -1313,6 +1325,9 @@ subroutine iMPI_reduceSUM_(iredu,root,comm)
   integer(kind=i_kind),dimension(:),intent(inout):: iredu
   integer(kind=MPI_ikind),intent(in):: root
   integer(kind=MPI_ikind),intent(in):: comm
+
+! Declare externals
+  external :: MPI_reduce
 
   character(len=*),parameter:: myname_=myname//"::iMPI_reduceSUM_"
   integer(kind=MPI_ikind):: itype,isize,ierr
@@ -1395,6 +1410,9 @@ use mpeu_mpif, only: mpi_type, MPI_IKIND
 implicit none
 
 integer(i_kind), intent(in   ) :: kiter
+
+! Declare externals
+external :: mpi_reduce
 
 real(r_kind) :: sizei, sizer, sizel, sizep, ziter, zsize, ztot
 integer(i_kind) :: ii,jj,iobsa(2),iobsb(2)

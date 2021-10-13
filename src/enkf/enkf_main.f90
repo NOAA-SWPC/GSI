@@ -72,13 +72,14 @@ program enkf_main
 !$$$
 
  use kinds, only: r_kind,r_double,i_kind
+ use mpimod, only : mpi_comm_world
  ! reads namelist parameters.
  use params, only : read_namelist,cleanup_namelist,letkf_flag,readin_localization,lupd_satbiasc,&
                     numiter, nanals, lupd_obspace_serial, write_spread_diag,   &
-                    lobsdiag_forenkf, netcdf_diag, fso_cycling, ntasks_io
+                    lobsdiag_forenkf, netcdf_diag, efsoi_cycling, ntasks_io
  ! mpi functions and variables.
  use mpisetup, only:  mpi_initialize, mpi_initialize_io, mpi_cleanup, nproc, &
-                       mpi_wtime, mpi_comm_world
+                       mpi_wtime
  ! obs and ob priors, associated metadata.
  use enkf_obsmod, only : readobs, write_obsstats, obfit_prior, obsprd_prior, &
                     nobs_sat, obfit_post, obsprd_post, obsmod_cleanup
@@ -109,6 +110,9 @@ program enkf_main
  use enkf_obs_sensitivity, only: init_ob_sens, print_ob_sens, destroy_ob_sens
 
  implicit none
+ ! Declare externals
+ external :: w3tagb,mpi_barrier,read_locinfo,write_logfile,w3tage
+
  integer(i_kind) nth,ierr
  real(r_double) t1,t2
  logical no_inflate_flag
@@ -182,7 +186,7 @@ program enkf_main
 
  ! Initialization for writing
  ! observation sensitivity files
- if(fso_cycling) call init_ob_sens()
+ if(efsoi_cycling) call init_ob_sens()
 
  ! read in vertical profile of horizontal and vertical localization length
  ! scales, set values for each ob.
@@ -215,7 +219,7 @@ program enkf_main
 
  ! Output non-inflated
  ! analyses for FSO
- if(fso_cycling) then
+ if(efsoi_cycling) then
     no_inflate_flag=.true.
     t1 = mpi_wtime()
     call gather_chunks()
@@ -239,7 +243,7 @@ program enkf_main
   endif
 
  ! print EFSO sensitivity i/o on root task.
- if(fso_cycling) call print_ob_sens()
+ if(efsoi_cycling) call print_ob_sens()
 
  ! print innovation statistics for posterior on root task.
  if (nproc == 0 .and. numiter > 0) then
@@ -267,7 +271,7 @@ program enkf_main
 
  call controlvec_cleanup()
  call loadbal_cleanup()
- if(fso_cycling) call destroy_ob_sens()
+ if(efsoi_cycling) call destroy_ob_sens()
  call cleanup_namelist()
 
  ! write log file (which script can check to verify completion).

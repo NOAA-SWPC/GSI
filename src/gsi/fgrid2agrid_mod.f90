@@ -397,6 +397,9 @@ module fgrid2agrid_mod
     integer(i_kind)       ,intent(in   ) :: iord,ngrida
     integer(i_kind)       ,intent(  out) :: ngridf
 
+!   Declare externals
+    external :: simpin1_init,simpin1,stop2
+
     integer(i_kind) i,ii,ipmaxmax,ipminmin,j,jord,k,lbig,n,nc,nf,ntwinmax
     real(r_kind) rnc,rnf,dgrid
     integer(i_kind) ixi(0:iord)

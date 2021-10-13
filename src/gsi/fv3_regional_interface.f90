@@ -31,6 +31,10 @@ subroutine convert_fv3_regional
   use gsi_rfv3io_mod, only: bg_fv3regfilenameg 
 
   implicit none
+
+! Declare externals
+  external :: stop2
+
   integer(i_kind) ierr
   character(128) grid_spec,ak_bk
 

@@ -56,6 +56,9 @@ contains
   
   ! Declare local parameters
     real(r_kind),parameter:: r0_001=0.001_r_kind
+
+  ! Declare externals
+    external :: w3fs21,mpi_bcast
   
   ! Declare local variables
     logical(4) fexist
@@ -299,6 +302,9 @@ contains
   ! Declare local parameters
     real(r_kind),parameter:: r0_001=0.001_r_kind
   
+  ! Declare externals
+    external :: w3fs21,mpi_bcast
+
   ! Declare local variables
     logical(4) fexist
     character(6) filename

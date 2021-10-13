@@ -32,6 +32,9 @@ subroutine precond(grady)
 ! Declare passed variables
   type(control_vector),intent(inout):: grady
 
+! Declare externals
+  external :: stop2
+
 ! Declare local variables
   integer(i_kind) i
 

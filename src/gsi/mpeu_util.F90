@@ -609,6 +609,9 @@ subroutine mype_get_(mype,npes,who,comm)
   character(len=*),intent(in) :: who
   integer,optional,intent(in) :: comm
 
+! Declare externals
+  external :: MPI_initialized,MPI_comm_rank,MPI_comm_size
+
   integer(MPI_ikind) :: ier
   integer(MPI_ikind) :: mycomm
   logical:: initialized_
@@ -980,8 +983,12 @@ subroutine dropdead_()
   use mpeu_mpif, only: mpi_comm_world
 #endif
   implicit none
-  integer:: ier
   integer,parameter:: myer=2
+
+! Declare eternals
+  external :: mpi_abort
+
+  integer:: ier
 
   character(len=08):: cdate
   character(len=10):: ctime
@@ -1503,6 +1510,9 @@ subroutine genv_(tmpl,lnt,i,istp,str,lns,k,ier)
   integer         ,intent(in)    :: lns
   integer         ,intent(inout) :: k
   integer,intent(out) :: ier
+
+! Declare externals
+  external :: getenv
 
   integer :: j,jb,je
   integer :: l,m

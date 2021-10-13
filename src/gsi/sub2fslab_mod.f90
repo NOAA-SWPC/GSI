@@ -101,6 +101,10 @@ subroutine setup_sub2fslab
 !
 !$$$ end documentation block
   implicit none
+
+! Declare externals
+  external :: stop2
+
   character(len=*),parameter::myname_=trim(myname)//'*setup_sub2fslab'
   integer(i_kind) :: istatus,istatall
   type(gsi_grid):: grid
@@ -180,6 +184,10 @@ subroutine destroy_sub2fslab
 !
 !$$$ end documentation block
   implicit none
+
+! Declare externals
+  external :: stop2
+
   character(len=*),parameter::myname_=trim(myname)//'*destroy_sub2fslab'
   integer(i_kind) :: istatus
 

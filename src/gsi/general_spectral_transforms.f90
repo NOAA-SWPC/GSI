@@ -36,6 +36,9 @@ subroutine general_g2s0(grd,sp,spectral_out,grid_in)
   real(r_kind)   ,intent(  out) :: spectral_out(sp%nc)
   real(r_kind)   ,intent(in   ) :: grid_in(grd%nlat,grd%nlon)
 
+! Declare externals
+  external :: general_sptez_s
+
   real(r_kind) work(grd%nlon,grd%nlat-2)
   integer(i_kind) i,j,jj
 
@@ -94,6 +97,9 @@ subroutine general_g2s0_ad(grd,sp,spectral_in,grid_out)
   type(sub2grid_info),intent(in   ) :: grd
   real(r_kind),intent(in   ) :: spectral_in(sp%nc)
   real(r_kind),intent(  out) :: grid_out(grd%nlat,grd%nlon)
+
+! Declare externals
+  external :: general_sptez_s
 
   real(r_kind) work(grd%nlon,grd%nlat-2),spec_work(sp%nc)
   integer(i_kind) i,j,jj
@@ -183,6 +189,9 @@ subroutine general_s2g0(grd,sp,spectral_in,grid_out)
   real(r_kind),intent(in   ) :: spectral_in(sp%nc)
   real(r_kind),intent(  out) :: grid_out(grd%nlat,grd%nlon)
 
+! Declare externals
+  external :: general_spectra_pole_scalar,general_sptez_s
+
   real(r_kind) work(grd%nlon,grd%nlat-2),spec_work(sp%nc)
   integer(i_kind) i,j,jj
 
@@ -247,6 +256,9 @@ subroutine general_s2g0_ad(grd,sp,spectral_out,grid_in)
   type(sub2grid_info),intent(in   ) :: grd
   real(r_kind),intent(  out) :: spectral_out(sp%nc)
   real(r_kind),intent(in   ) :: grid_in(grd%nlat,grd%nlon)
+
+! Declare externals
+  external :: general_sptez_s,general_spectra_pole_scalar_ad
 
   real(r_kind) work(grd%nlon,grd%nlat-2),spec_work(sp%nc)
   integer(i_kind) i,j,jj
@@ -332,6 +344,10 @@ subroutine sfilter(grd,sp,filter,grid)
   real(r_kind),intent(in   ) :: filter(sp%nc)
   real(r_kind),intent(inout) :: grid(grd%nlat,grd%nlon)
 
+! Declare externals
+  external :: general_sptez_s,general_spectra_pole_scalar_ad,&
+    general_spectra_pole_scalar
+
   real(r_kind) work(grd%nlon,grd%nlat-2),spec_work(sp%nc)
   real(r_kind) gnlon
   integer(i_kind) i,j,jj,imod
@@ -399,7 +415,6 @@ subroutine sfilter(grd,sp,filter,grid)
   end do
 
   return
-  return
 end subroutine sfilter
 
 
@@ -443,6 +458,9 @@ subroutine general_uvg2zds(grd,sp,zsp,dsp,ugrd,vgrd)
   type(sub2grid_info),intent(in   ) :: grd
   real(r_kind),dimension(grd%nlat,grd%nlon),intent(in   ) :: ugrd,vgrd
   real(r_kind),dimension(sp%nc)       ,intent(  out) :: zsp,dsp
+
+! Declare externals
+  external :: general_sptez_v
 
 ! Local variables
   real(r_kind),dimension(grd%nlon,grd%nlat-2):: grdwrk1,grdwrk2 
@@ -516,6 +534,9 @@ subroutine general_uvg2zds_ad(grd,sp,zsp,dsp,ugrd,vgrd)
   type(sub2grid_info),intent(in   ) :: grd
   real(r_kind),dimension(grd%nlat,grd%nlon),intent(inout) :: ugrd,vgrd
   real(r_kind),dimension(sp%nc)       ,intent(in   ) :: zsp,dsp
+
+! Declare externals
+  external :: general_sptez_v
 
 ! Local variables
   real(r_kind),dimension(grd%nlon,grd%nlat-2):: grdwrk1,grdwrk2
@@ -622,6 +643,9 @@ subroutine general_zds2pcg(grd,sp,zsp,dsp,pgrd,cgrd)
   real(r_kind),dimension(sp%nc)       ,intent(in   ) :: zsp,dsp
   real(r_kind),dimension(grd%nlat,grd%nlon),intent(  out) :: pgrd,cgrd
 
+! Declare externals
+  external :: general_s2g0
+
 ! Local variables
   real(r_kind),dimension(sp%nc):: spc1,spc2
   integer(i_kind) i
@@ -682,6 +706,9 @@ subroutine general_zds2pcg_ad(grd,sp,zsp,dsp,pgrd,cgrd)
   type(sub2grid_info),intent(in   ) :: grd
   real(r_kind),dimension(sp%nc)       ,intent(  out) :: zsp,dsp
   real(r_kind),dimension(grd%nlat,grd%nlon),intent(inout) :: pgrd,cgrd
+
+! Declare externals
+  external :: general_s2g0_ad
 
 ! Local variables
   real(r_kind),dimension(sp%nc):: spc1,spc2
@@ -746,6 +773,9 @@ subroutine general_zds2uvg(grd,sp,zsp,dsp,ugrd,vgrd)
   type(sub2grid_info),intent(in   ) :: grd
   real(r_kind),dimension(sp%nc)       ,intent(in   ) :: zsp,dsp
   real(r_kind),dimension(grd%nlat,grd%nlon),intent(  out) :: ugrd,vgrd
+
+! Declare externals
+  external :: general_sptez_v,general_spectra_pole_wind
 
 ! Local variables
   real(r_kind),dimension(grd%nlon,grd%nlat-2):: grdwrk1,grdwrk2
@@ -825,6 +855,9 @@ subroutine general_zds2uvg_ad(grd,sp,zsp,dsp,ugrd,vgrd)
   type(sub2grid_info),intent(in   ) :: grd
   real(r_kind),dimension(grd%nlat,grd%nlon),intent(in   ) :: ugrd,vgrd
   real(r_kind),dimension(sp%nc)       ,intent(inout) :: zsp,dsp
+
+! Declare externals
+  external :: general_sptez_v,general_spectra_pole_wind_ad
 
 ! Local variables
   real(r_kind),dimension(grd%nlon,grd%nlat-2):: grdwrk1,grdwrk2
@@ -1464,6 +1497,11 @@ subroutine general_test_inverses(grd,sp,mype)
   type(spec_vars),intent(in   ) :: sp
   type(sub2grid_info),intent(in   ) :: grd
   integer(i_kind),intent(in   ) :: mype
+
+! Declare externals
+  external :: gather_stuff2,general_g2s0,general_s2g0,general_zds2uvg,&
+    general_uvg2zds,general_s2g0_ad,general_g2s0_ad,&
+    general_uvg2zds_ad,general_zds2uvg_ad
 
   character(len=*),parameter::myname='general_test_inverses'
   integer(i_kind) :: index (5)

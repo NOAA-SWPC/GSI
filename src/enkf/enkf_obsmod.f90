@@ -92,13 +92,16 @@ module enkf_obsmod
 !        for oz and it crashes EnKF compiled by GNU Fortran
 !     NOTE: this requires anavinfo file to be present at running directory
 !   2016-11-29  shlyaeva: Added the option of writing out ensemble spread in diag files
+!   2019-03-21  CAPS(C. Tong) - added the code for direct reflecitivity DA capability
 !
 ! attributes:
 !   language: f95
 !
 !$$$
 
-use mpisetup
+use mpimod, only: mpi_comm_world
+use mpisetup, only: mpi_real4,mpi_sum,mpi_comm_io,mpi_in_place,numproc,nproc,&
+                mpi_integer,mpi_wtime,mpi_status,mpi_real8,mpi_max
 use kinds, only : r_kind, r_double, i_kind, r_single
 use constants, only: zero, one, deg2rad, rad2deg, rd, cp, pi
 use params, only: & 
@@ -106,11 +109,15 @@ use params, only: &
       lnsigcutoffnh, lnsigcutoffsh, lnsigcutofftr, corrlengthnh,&
       corrlengthtr, corrlengthsh, obtimelnh, obtimeltr, obtimelsh,&
       lnsigcutoffsatnh, lnsigcutoffsatsh, lnsigcutoffsattr,&
-      varqc, huber, zhuberleft, zhuberright,&
-      lnsigcutoffpsnh, lnsigcutoffpssh, lnsigcutoffpstr, neigv
+      varqc, huber, zhuberleft, zhuberright, modelspace_vloc, &
+      lnsigcutoffpsnh, lnsigcutoffpssh, lnsigcutoffpstr, neigv, &
+      lnsigcutoffrdrnh, lnsigcutoffrdrsh, lnsigcutoffrdrtr,&
+      corrlengthrdrnh, corrlengthrdrtr, corrlengthrdrsh,   &
+      l_use_enkf_directZDA
 
 use state_vectors, only: init_anasv
 use mpi_readobs, only:  mpi_getobs
+use, intrinsic :: iso_c_binding
 
 implicit none
 private
@@ -134,11 +141,17 @@ character(len=20), public, allocatable, dimension(:) :: obtype
 integer(i_kind), public ::  nobs_sat, nobs_oz, nobs_conv, nobstot
 integer(i_kind) :: nobs_convdiag, nobs_ozdiag, nobs_satdiag, nobstotdiag
 
-! for serial enkf, anal_ob is only used here and in loadbal. It is deallocated in loadbal.
-! for letkf, anal_ob used on all tasks in letkf_update (bcast from root in loadbal), deallocated
-! in letkf_update.
-! same goes for anal_ob_modens when modelspace_vloc=T.
-real(r_single), public, allocatable, dimension(:,:) :: anal_ob, anal_ob_modens
+! ob-space prior ensemble
+! pointers used for MPI-3 shared memory manipulations.
+! allocated and filled in mpi_readobs
+real(r_single),public,pointer, dimension(:,:) :: anal_ob        ! Fortran pointer
+type(c_ptr)                             :: anal_ob_cp           ! C pointer
+real(r_single),public,pointer, dimension(:,:) :: anal_ob_modens ! Fortran pointer
+type(c_ptr)                             :: anal_ob_modens_cp    ! C pointer
+integer :: shm_win, shm_win2
+
+! ob-space posterior ensemble, needed for EFSOI
+real(r_single),public,allocatable, dimension(:,:) :: anal_ob_post   ! Fortran pointer
 
 contains
 
@@ -153,6 +166,8 @@ use convinfo, only: convinfo_read, init_convinfo, cvar_pg, nconvtype, ictype,&
                     ioctype
 use ozinfo, only: init_oz, ozinfo_read, pg_oz, jpch_oz, nusis_oz, nulev
 use covlocal, only: latval
+! Declare externals
+external :: mpi_reduce
 integer nob,j,ierr
 real(r_double) t1
 real(r_single) tdiff,tdiffmax,deglat,radlat,radlon
@@ -183,7 +198,8 @@ call mpi_getobs(datapath, datestring, nobs_conv, nobs_oz, nobs_sat, nobstot,  &
                 obsprd_prior, ensmean_obnobc, ensmean_ob, ob,                 &
                 oberrvar, obloclon, obloclat, obpress,                        &
                 obtime, oberrvar_orig, stattype, obtype, biaspreds, diagused, &
-                anal_ob,anal_ob_modens,indxsat,nanals,neigv)
+                anal_ob,anal_ob_modens,anal_ob_cp,anal_ob_modens_cp,          &
+                shm_win,shm_win2, indxsat, nanals, neigv)
 
 tdiff = mpi_wtime()-t1
 call mpi_reduce(tdiff,tdiffmax,1,mpi_real4,mpi_max,0,mpi_comm_world,ierr)
@@ -248,14 +264,21 @@ do nob=1,nobstot
    obloc(3,nob) = sin(radlat)
    deglat = obloclat(nob)
 !  get limits on corrlength,lnsig,and obtime
+   if (.not. modelspace_vloc) then
    if (nob > nobs_conv+nobs_oz) then
       lnsigl(nob) = latval(deglat,lnsigcutoffsatnh,lnsigcutoffsattr,lnsigcutoffsatsh)
    else if (obtype(nob)(1:3) == ' ps') then
       lnsigl(nob) = latval(deglat,lnsigcutoffpsnh,lnsigcutoffpstr,lnsigcutoffpssh)
+   else if ( (obtype(nob)(1:3) == 'dbz' .or. obtype(nob)(1:3) == ' rw') .and. l_use_enkf_directZDA ) then
+      lnsigl(nob) = latval(deglat,lnsigcutoffrdrnh,lnsigcutoffrdrtr,lnsigcutoffrdrsh)
    else
       lnsigl(nob)=latval(deglat,lnsigcutoffnh,lnsigcutofftr,lnsigcutoffsh)
    end if
+   endif
    corrlengthsq(nob)=latval(deglat,corrlengthnh,corrlengthtr,corrlengthsh)**2
+   if ( (obtype(nob)(1:3) == 'dbz' .or. obtype(nob)(1:3) == ' rw') .and. l_use_enkf_directZDA ) then
+       corrlengthsq(nob)=latval(deglat,corrlengthrdrnh,corrlengthrdrtr,corrlengthrdrsh)**2
+   end if
    obtimel(nob)=latval(deglat,obtimelnh,obtimeltr,obtimelsh)
 end do
 
@@ -418,6 +441,9 @@ enddo
 end subroutine channelstats
 
 subroutine obsmod_cleanup()
+! Declare externals
+external :: MPI_Barrier,MPI_Win_free
+integer ierr
 ! deallocate module-level allocatable arrays
 if (allocated(obsprd_prior)) deallocate(obsprd_prior)
 if (allocated(obfit_prior)) deallocate(obfit_prior)
@@ -442,9 +468,16 @@ if (allocated(indxsat)) deallocate(indxsat)
 if (allocated(obtype)) deallocate(obtype)
 if (allocated(probgrosserr)) deallocate(probgrosserr)
 if (allocated(prpgerr)) deallocate(prpgerr)
-if (allocated(anal_ob)) deallocate(anal_ob)
-if (allocated(anal_ob_modens)) deallocate(anal_ob_modens)
 if (allocated(diagused)) deallocate(diagused)
+if (allocated(anal_ob_post)) deallocate(anal_ob_post)
+! free shared memory segement, fortran pointer to that memory.
+nullify(anal_ob)
+call MPI_Barrier(mpi_comm_world,ierr)
+call MPI_Win_free(shm_win, ierr)
+if (neigv > 0) then
+   nullify(anal_ob_modens)
+   call MPI_Win_free(shm_win2, ierr)
+endif
 end subroutine obsmod_cleanup
 
 

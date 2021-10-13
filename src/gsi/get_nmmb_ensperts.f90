@@ -36,6 +36,9 @@ subroutine get_nmmb_ensperts
    use mpeu_util, only: getindex
    implicit none
 
+!  Declare externals
+   external :: stop2,general_read_nmmb_radar,general_read_nmmb,genqsat,mpi_barrier
+
    real(r_kind),dimension(grd_ens%lat2,grd_ens%lon2,grd_ens%nsig):: u,v,tv,q,oz,qs,rh,tsen,prsl
    real(r_kind),dimension(grd_ens%lat2,grd_ens%lon2,grd_ens%nsig):: w, qr, qli, ql, dbz, dw, qi
    real(r_kind),dimension(grd_ens%lat2,grd_ens%lon2):: z,ps,sst2

@@ -63,10 +63,8 @@ contains
 !
 !$$$
     use kinds, only: r_kind,i_kind,r_quad
-    use aeroinfo, only: aerojacnames,nsigaerojac,pg_aero,&
-         b_aero
-    use qcmod, only: nlnqc_iter,varqc_iter
-    use constants, only: half,one,two,tiny_r_kind,cg_term,zero_quad,zero
+    use aeroinfo, only: aerojacnames,nsigaerojac
+    use constants, only: half,one,two,zero_quad,zero
     use gsi_bundlemod, only: gsi_bundle
     use gsi_bundlemod, only: gsi_bundlegetpointer
     use gridmod, only: cmaq_regional,latlon11,nsig
@@ -80,6 +78,9 @@ contains
     type(gsi_bundle)                    ,intent(in   ) :: rval,sval
     real(r_kind),dimension(max(1,nstep)),intent(in   ) :: sges
     
+! declare externals
+    external :: stop2
+
 ! declare local variables
     integer(i_kind) istatus,naero
     integer(i_kind) j1,j2,j3,j4,kk,k,ic,nn

@@ -137,6 +137,10 @@ subroutine read_amsre(mype,val_amsre,ithin,isfcalc,rmesh,jsatid,gstime,&
   integer(i_kind),dimension(npe)  ,intent(inout) :: nobs
   integer(i_kind)  ,intent(inout) :: ndata,nodata
 
+! Declare externals
+  external :: openbf,datelen,ufbint,ufbrep,w3fs21,&
+    stop2,closbf,grdcrd1,zensun,combine_radobs,count_obs
+
 ! Number of channels for sensors in BUFR
   integer(i_kind),parameter :: N_AMSRCH  =  12
 ! integer(i_kind),parameter :: N_MAXCH   =  20
@@ -645,6 +649,7 @@ subroutine read_amsre(mype,val_amsre,ithin,isfcalc,rmesh,jsatid,gstime,&
      enddo read_loop
   enddo read_msg
   call closbf(lnbufr)
+  close(lnbufr)
 
 ! If multiple tasks read input bufr file, allow each tasks to write out
 ! information it retained and then let single task merge files together

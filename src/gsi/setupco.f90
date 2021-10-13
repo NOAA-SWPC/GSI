@@ -136,8 +136,10 @@ subroutine setupco(obsLL,odiagLL,lunin,mype,stats_co,nlevs,nreal,nobs,&
   real(r_kind),parameter:: r10=10.0_r_kind
   character(len=*),parameter:: myname="setupco"
 
+! Declare externals
+  external :: stop2,intrp2a1,tintrp2a1,grdcrd1,tintrp3,co_mop_ak
+
 ! Declare local variables  
-  
   real(r_kind) wk1,wk2 
   real(r_kind) coobs,omg,rat_err2,dlat,dtime,dlon
   real(r_kind) cg_co,wgross,wnotgross,wgt,arg,exp_arg,term
@@ -712,7 +714,7 @@ endif   ! (in_curbin)
   end subroutine check_vars_ 
 
   subroutine init_vars_
-
+  implicit none
   real(r_kind),dimension(:,:,:),pointer:: rank3=>NULL()
   integer(i_kind) ifld
 

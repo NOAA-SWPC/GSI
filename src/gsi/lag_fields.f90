@@ -200,6 +200,9 @@ module lag_fields
     use mpimod, only: mype,npe
     implicit none   
 
+!   Declare externals
+    external :: grdcrd1
+
     real(r_kind)::lon,lat,p
     integer(i_kind)::num
     real(r_kind),dimension(nsig+1)::pcalc
@@ -248,8 +251,8 @@ module lag_fields
        lat=deg2rad*lat
 
        lok=(lon>=-pi     .and. lon<=two*pi .and. &
-           &lat>=-pi/two .and. lat<=pi/two .and. &
-           &p>=zero)
+            lat>=-pi/two .and. lat<=pi/two .and. &
+            p>=zero)
 
        if (lok) then
 
@@ -284,7 +287,7 @@ module lag_fields
 
     if (mype==0) &
        write(6,'(A,I4,A)') 'LAG_GUESSINI: first guess read. ',&
-         &ntotal_orig_lag,' balloons availlable.'
+          ntotal_orig_lag,' balloons availlable.'
 
     ! Is there observations ?
     if (ntotal_orig_lag>0) then
@@ -335,7 +338,7 @@ module lag_fields
 
           ! If there is several obsbin in 3Dvar it will really blow up, so...
           if (nobs_bins/=1) &
-            &call die('LAG_GUESSINI: only 1 obsbin can be handle in 3Dvar')
+             call die('LAG_GUESSINI: only 1 obsbin can be handle in 3Dvar')
 
           do i=2,nfldsig
 
@@ -362,8 +365,8 @@ module lag_fields
                 lat=deg2rad*lat
 
                 lok=(lon>=-pi     .and. lon<=two*pi .and. &
-                    &lat>=-pi/two .and. lat<=pi/two .and. &
-                    &p>=zero)
+                     lat>=-pi/two .and. lat<=pi/two .and. &
+                     p>=zero)
 
                 ! If good, store in the appropriate array
                 if (lok) then
@@ -407,7 +410,7 @@ module lag_fields
        do i=1,size(lag_nl_vec,2)
           do j=1,size(lag_nl_vec,1)
              print '(A,I2.2,A,I2.2,A,I2.2,A,F12.6,F12.6,F12.6)',&
-               &'GUESS ',i,' MYPE ',mype,' LOC# ',j,' POS ',lag_nl_vec(j,i,:)
+                'GUESS ',i,' MYPE ',mype,' LOC# ',j,' POS ',lag_nl_vec(j,i,:)
           end do
        end do
     end if
@@ -558,6 +561,9 @@ module lag_fields
 
     integer(i_kind),intent(in   ) :: itt
 
+!   Declare externals
+    external :: mpi_allgatherv
+
     integer(i_kind):: k,i
     integer(i_kind):: ierror,istatus
     real(r_kind),dimension(lat1*lon1,nsig):: ustrip,vstrip
@@ -640,6 +646,9 @@ module lag_fields
     real(r_kind),dimension(latlon1n),intent(in   ) :: svalu,svalv
     integer(i_kind)                 ,intent(in   ) :: itt
 
+!   Declare externals
+    external :: mpi_allgatherv
+
     integer(i_kind):: k,i
     integer(i_kind):: ierror
     real(r_kind),dimension(lat1*lon1,nsig):: ustrip,vstrip
@@ -715,6 +724,9 @@ module lag_fields
 
     real(r_kind),dimension(latlon1n),intent(inout) :: svalu, svalv
     integer(i_kind)                 ,intent(in   ) :: itt
+
+!   Declare externals
+    external :: mpi_allreduce
 
     integer(i_kind):: k,i
     integer(i_kind):: ierror

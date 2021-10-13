@@ -73,6 +73,9 @@ subroutine calctends(mype,teta,pri,guess,xderivative,yderivative,tendency)
   type(gsi_bundle) :: yderivative
   type(gsi_bundle) :: tendency
 
+! Declare externals
+  external :: get_zderivs,getprs_horiz,getvvel,turbl
+
 ! Declare local variables
   character(len=*),parameter::myname='calctends'
   real(r_kind),dimension(lat2,lon2):: z_x,z_y

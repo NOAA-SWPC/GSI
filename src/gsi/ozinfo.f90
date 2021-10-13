@@ -129,6 +129,9 @@ contains
     use obsmod, only: iout_oz
     implicit none
 
+!   Declare externals
+    external :: stop2
+
     character(len=1):: cflg
     character(len=120) crecord
     integer(i_kind) lunin,j,k,istat,nlines

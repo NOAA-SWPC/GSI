@@ -75,6 +75,9 @@ implicit none
 ! Declare passed variables
 type(control_vector), optional, intent(in   ) :: xhat
 
+! Declare externals
+external :: control2model,control2state,control2model_ad,control2state_ad
+
 ! Declare local variables  
 type(gsi_bundle) :: stest1(nsubwin),stest2(nsubwin)
 type(predictors) :: sbias1,sbias2

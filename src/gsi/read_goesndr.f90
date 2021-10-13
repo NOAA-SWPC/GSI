@@ -123,6 +123,10 @@ subroutine read_goesndr(mype,val_goes,ithin,rmesh,jsatid,infile,&
   integer(i_kind) ,intent(in   ) :: mpi_comm_sub
   logical         ,intent(in   ) :: dval_use
 
+! Declare externals
+  external :: openbf,datelen,ufbint,w3fs21,grdcrd1,closbf,&
+    combine_radobs,count_obs
+
 ! Declare local parameters
   integer(i_kind),parameter:: mfov=25   ! maximum number of fovs (currently 5x5)
 
@@ -513,6 +517,7 @@ subroutine read_goesndr(mype,val_goes,ithin,rmesh,jsatid,infile,&
      end do read_loop
   end do read_subset
   call closbf(lnbufr)
+  close(lnbufr)
 
 
 ! If multiple tasks read input bufr file, allow each tasks to write out

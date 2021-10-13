@@ -64,6 +64,10 @@ subroutine general_read_fv3atm_nems(grd,sp_a,filename,uvflag,vordivflag,zflag, &
    ! Declare local parameters
    real(r_kind),parameter:: r0_001 = 0.001_r_kind
 
+   ! Declare externals
+   external :: stop2,general_fill_ns,general_reload2,general_filluv_ns,general_sptez_v,&
+     general_sptez_s_b
+
    ! Declare passed variables
    type(sub2grid_info)                   ,intent(in   ) :: grd
    type(spec_vars)                       ,intent(in   ) :: sp_a
@@ -918,6 +922,9 @@ subroutine general_reload2(grd,g_z,g_ps,g_tv,g_vor,g_div,g_u,g_v,g_q,g_oz, &
 !
 !EOP
 !-------------------------------------------------------------------------
+
+!  Declare externals
+   external :: mpi_alltoallv
 
    integer(i_kind) i,j,k,ij,klev
    real(r_kind),dimension(grd%lat2*grd%lon2,npe):: sub

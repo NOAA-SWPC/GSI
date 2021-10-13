@@ -78,6 +78,10 @@ contains
     class(wrwrfnmma_class), intent(inout) :: this 
     integer(i_kind),intent(in   ) :: mype
   
+  ! Declare externals
+    external :: mpi_file_open,mpi_file_read_at,mpi_file_write_at,to_native_endianness_i4,&
+      fill_nmm_grid2,half_nmm_grid2,unfill_nmm_grid2,unhalf_nmm_grid2,mpi_reduce,mpi_file_close
+
   ! Declare local constants
     type(read_wrf_mass_guess_class) :: read_wrf
     type(wrwrfmassa_class) :: wrwrfmassa
@@ -1138,6 +1142,9 @@ contains
     class(wrwrfnmma_class), intent(inout) :: this 
     integer(i_kind),intent(in   ) :: mype
   
+  ! Declare externals
+    external :: mpi_allreduce
+
   ! Declare local variables
   
     character(255) wrfanl
@@ -1821,6 +1828,10 @@ contains
     class(wrwrfnmma_class), intent(inout) :: this 
     integer(i_kind),intent(in   ) :: mype
   
+  ! Declare externals
+    external :: mpi_gatherv,fill_nmm_grid2,half_nmm_grid2,unfill_nmm_grid2,&
+      unhalf_nmm_grid2
+
   ! Declare local constants
     real(r_kind),parameter:: r225=225.0_r_kind
   

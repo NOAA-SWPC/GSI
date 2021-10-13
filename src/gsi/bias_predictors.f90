@@ -159,6 +159,8 @@ subroutine allocate_preds(yst)
 !$$$ end documentation block
   implicit none
   type(predictors), intent(inout) :: yst
+! Declare externals
+  external :: stop2
   integer(i_kind) :: ii
 
   if (yst%lallocated) then
@@ -321,6 +323,9 @@ subroutine read_preds (yst,filename)
   implicit none
   type(predictors), intent(inout) :: yst
   character(len=*), intent(in)    :: filename
+
+! Declare externals
+  external :: stop2
 
   integer(i_kind) :: ii,iunit,nsclen_in,npclen_in,ntclen_in
   real(r_kind),allocatable,dimension(:)::preds,predp,predt

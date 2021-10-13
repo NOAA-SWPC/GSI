@@ -75,6 +75,9 @@ subroutine read_modsbufr(nread,ndata,nodata,gstime,infile,obstype,lunout, &
   integer(i_kind),dimension(npe),intent(inout):: nobs
   real(r_kind),intent(in):: gstime,twindin
 
+! Declare externals
+  external :: openbf,datelen,ufbint,grdcrd1,w3fs21,count_obs,closbf
+
 ! Declare local parameters
   integer(i_kind),parameter:: maxinfo = 18
   real(r_double),parameter:: d250 = 250.0_r_double
@@ -573,6 +576,7 @@ subroutine read_modsbufr(nread,ndata,nodata,gstime,infile,obstype,lunout, &
 1020 continue
   if (oberrflg) deallocate(etabl)
   call closbf(lunin)
+  close(lunin)
 
   if(regional)then
     if(diagnostic_reg.and.ntest > 0) write(6,*)'READ_MODSBUFR:  ',&

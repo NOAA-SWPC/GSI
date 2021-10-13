@@ -75,6 +75,9 @@ type(gsi_bundle), target, intent(inout) :: xobs(nobs_bins) ! State variable at o
 ! Declare local variables
 character(len=*), parameter :: myname = 'model_tl'
 
+! Declare externals
+external :: stop2
+
 #ifdef _LAG_MODEL_
 integer(i_kind)    :: ii,jj
 real(r_kind),pointer,dimension(:,:,:)  :: xx_u,xx_v

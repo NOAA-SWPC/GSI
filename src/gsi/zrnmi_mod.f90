@@ -366,6 +366,10 @@ contains
 
     integer(i_kind),intent(in   ) :: mype
 
+!   Declare externals
+    external :: mpi_finalize,mpi_alltoall,mpi_type_contiguous,mpi_type_commit,&
+      mpi_alltoallv,mpi_type_free
+
     integer(i_kind) list2(ny,nvert)
     integer(i_kind) i,ii,ii0,iy,ivert,j,mm1,nn,nxloc,ipe,iym,ix,mpi_string1
     integer(i_kind) ny_tot
@@ -469,8 +473,11 @@ contains
     use mpimod, only: npe,mpi_comm_world,ierror,mpi_integer4
     implicit none
 
-
     integer(i_kind),intent(in   ) :: mype
+
+!   Declare externals
+    external :: mpi_alltoall,mpi_type_contiguous,mpi_type_commit,&
+      mpi_alltoallv,mpi_type_free
 
     integer(i_kind) i,iy,ivert,j,k,mm1,ipe,ix,mpi_string1,nn
 
@@ -573,6 +580,10 @@ contains
     real(r_kind),dimension(lat2,lon2,nvert),intent(in   ) :: u1_sd,u2_sd
     real(r_kind),dimension(nx,ny_0:ny_1)   ,intent(  out) :: u1_x,u2_x
 
+!   Declare externals
+    external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,&
+      mpi_type_free
+
     integer(i_kind) iy,iym,ix,ivert,j,mm1,mpi_string1
     real(r_kind),allocatable::sendbuf(:,:),recvbuf(:,:)
 
@@ -641,6 +652,9 @@ contains
 
     real(r_kind),dimension(lat2,lon2,nvert),intent(in   ) :: u1_sd,u2_sd,u3_sd
     real(r_kind),dimension(nx,ny_0:ny_1)   ,intent(  out) :: u1_x,u2_x,u3_x
+
+!   Declare externals
+    external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,mpi_type_free
 
     integer(i_kind) iy,iym,ix,ivert,j,mm1,mpi_string1
     real(r_kind),allocatable::sendbuf(:,:),recvbuf(:,:)
@@ -714,6 +728,9 @@ contains
     real(r_kind),dimension(lat2,lon2,nvert),intent(  out) :: u_sd
     real(r_kind),dimension(nx,ny_0:ny_1)   ,intent(in   ) :: u_x
 
+!   Declare externals
+    external :: mpi_alltoallv
+
     real(r_kind),allocatable::sendbuf(:),recvbuf(:)
     integer(i_kind) iy,ivert,j,mm1,iym,ix,ixloc
 
@@ -776,10 +793,13 @@ contains
     use constants, only: zero
     implicit none
 
-
     integer(i_kind)                        ,intent(in   ) :: mype
     real(r_kind),dimension(lat2,lon2,nvert),intent(  out) :: u1_sd,u2_sd
     real(r_kind),dimension(nx,ny_0:ny_1)   ,intent(in   ) :: u1_x,u2_x
+
+!   Declare externals
+    external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,&
+      mpi_type_free
 
     real(r_kind),allocatable::sendbuf(:,:),recvbuf(:,:)
     integer(i_kind) iy,ivert,j,mm1,iym,ix,ixloc,mpi_string1
@@ -851,10 +871,13 @@ contains
     use constants, only: zero
     implicit none
 
-
     integer(i_kind)                        ,intent(in   ) :: mype
     real(r_kind),dimension(lat2,lon2,nvert),intent(  out) :: u1_sd,u2_sd,u3_sd
     real(r_kind),dimension(nx,ny_0:ny_1)   ,intent(in   ) :: u1_x,u2_x,u3_x
+
+!   Declare externals
+    external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,&
+      mpi_type_free
 
     real(r_kind),allocatable::sendbuf(:,:),recvbuf(:,:)
     integer(i_kind) iy,ivert,j,mm1,iym,ix,ixloc, mpi_string1
@@ -1014,6 +1037,10 @@ contains
 
     integer(i_kind),intent(in   ) :: mype
 
+!   Declare externals
+    external :: mpi_finalize,mpi_alltoall,mpi_type_contiguous,mpi_type_commit,&
+      mpi_alltoallv,mpi_type_free
+
     integer(i_kind) list2(nx,nvert)
     integer(i_kind) i,ii,ii0,ix,ivert,j,mm1,nn,nyloc,ipe,ixm,iy,mpi_string1
     integer(i_kind) nx_tot
@@ -1126,8 +1153,11 @@ contains
     use mpimod, only: npe,mpi_comm_world,ierror,mpi_integer4
     implicit none
 
-
     integer(i_kind),intent(in   ) :: mype
+
+!   Declare externals
+    external :: mpi_alltoall,mpi_type_contiguous,mpi_type_commit,&
+      mpi_alltoallv,mpi_type_free
 
     integer(i_kind) i,ix,ivert,j,k,mm1,mpi_string1,ipe,iy,nn
 
@@ -1232,6 +1262,10 @@ contains
     real(r_kind),dimension(lat2,lon2,nvert),intent(in   ) :: u1_sd,u2_sd
     real(r_kind),dimension(ny,nx_0:nx_1)   ,intent(  out) :: u1_y,u2_y
 
+!   Declare externals
+    external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,&
+      mpi_type_free
+
     integer(i_kind) ix,ixm,iy,ivert,j,mm1,mpi_string1
     real(r_kind),allocatable::sendbuf(:,:),recvbuf(:,:)
 
@@ -1299,10 +1333,13 @@ contains
     use constants, only: zero
     implicit none
 
-
     integer(i_kind)                        ,intent(in   ) :: mype
     real(r_kind),dimension(lat2,lon2,nvert),intent(  out) :: u1_sd,u2_sd
     real(r_kind),dimension(ny,nx_0:nx_1)   ,intent(in   ) :: u1_y,u2_y
+
+!   Declare externals
+    external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,&
+      mpi_type_free
 
     real(r_kind),allocatable::sendbuf(:,:),recvbuf(:,:)
     integer(i_kind) ix,ivert,j,mm1,ixm,iy,iyloc,mpi_string1
@@ -1882,6 +1919,10 @@ contains
 
     integer(i_kind),intent(in   ) :: mype
 
+!   Declare externals
+    external :: mpi_finalize,mpi_alltoall,mpi_type_contiguous,mpi_type_commit,&
+      mpi_alltoallv,mpi_type_free
+
     integer(i_kind) list2(nx,nvert)
     integer(i_kind) i,ii0,ix,ivert,j,k,ipe,ixm,iy,mpi_string1
     integer(i_kind) mx_tot
@@ -1995,6 +2036,9 @@ contains
     real(r_kind),dimension(nx,ny_0:ny_1),intent(in   ) :: u1_x,u2_x,u3_x
     real(r_kind),dimension(ny,mx_0:mx_1),intent(  out) :: u1_y,u2_y,u3_y
 
+!   Declare externals
+    external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,mpi_type_free
+
     integer(i_kind) ixm,ix,iy,iym,j,mm1,mpi_string1
     real(r_kind),allocatable::sendbuf(:,:),recvbuf(:,:)
 
@@ -2062,6 +2106,9 @@ contains
     integer(i_kind)                     ,intent(in   ) :: mype
     real(r_kind),dimension(nx,ny_0:ny_1),intent(  out) :: u1_x,u2_x,u3_x
     real(r_kind),dimension(ny,mx_0:mx_1),intent(in   ) :: u1_y,u2_y,u3_y
+
+!   Declare externals
+    external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,mpi_type_free
 
     integer(i_kind) ixm,ix,iy,iym,j,mm1,mpi_string1
     real(r_kind),allocatable::sendbuf(:,:),recvbuf(:,:)
@@ -2801,6 +2848,9 @@ contains
 
     integer(i_kind),intent(in   ) :: mype
 
+!   Declare externals
+    external :: mpi_allreduce
+
     integer(i_kind) i,j,k,mode
     real(r_kind) bigk,bigl,dxbar,dybar,a2,ak2,s2
     real(r_kind) thisperiod,thislength
@@ -2961,6 +3011,9 @@ contains
     real(r_kind),dimension(lat2,lon2)     ,intent(inout) :: ps
     logical                               ,intent(in   ) :: baldiag,update,fullfield
     integer(i_kind)                       ,intent(in   ) :: mype
+
+!   Declare externals
+    external :: mpi_allreduce
 
     real(r_kind),dimension(ny,mx_0:mx_1,2)::rbalg
     real(r_kind),dimension(lat2,lon2,nvert)::utilde,vtilde,mtilde

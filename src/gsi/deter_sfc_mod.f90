@@ -109,6 +109,9 @@ subroutine deter_sfc(alat,alon,dlat_earth,dlon_earth,obstime,isflg, &
      real(r_kind)               ,intent(  out) :: tsavg,sfcr
      real(r_kind)               ,intent(  out) :: vty,vfr,sty,stp,sm,sn,zz,ff10
 
+!    Declare externals
+     external :: grdcrd1
+
      real(r_kind),parameter:: minsnow=one_tenth
 
      integer(i_kind) istyp00,istyp01,istyp10,istyp11
@@ -433,6 +436,9 @@ subroutine deter_sfc_type(dlat_earth,dlon_earth,obstime,isflg,tsavg)
      integer(i_kind),intent(  out) :: isflg
      real(r_kind)   ,intent(  out) :: tsavg
 
+!    Declare externals
+     external :: grdcrd1
+
      logical outside
      integer(i_kind) istyp00,istyp01,istyp10,istyp11
      integer(i_kind):: ix,iy,ixp,iyp,j,itsfc,itsfcp
@@ -574,6 +580,9 @@ subroutine deter_sfc2(dlat_earth,dlon_earth,obstime,idomsfc,tsavg,ff10,sfcr,zz)
      real(r_kind)   ,intent(  out) :: tsavg,sfcr
      real(r_kind)   ,intent(  out) :: ff10
      real(r_kind),optional,intent(  out) :: zz
+
+!    Declare externals
+     external :: grdcrd1
 
      integer(i_kind):: itsfc,itsfcp
      integer(i_kind):: ix,iy,ixp,iyp,j
@@ -772,6 +781,9 @@ subroutine deter_sfc_fov(fov_flag,ifov,instr,ichan,sat_aziang,dlat_earth_deg,&
   integer(i_kind) , intent(  out) :: isflg, idomsfc(1)
   real(r_kind)    , intent(  out) :: sfcpct(0:3), sty, vty, vfr, stp, sm
   real(r_kind)    , intent(  out) :: ff10, sfcr, zz, sn, ts(0:3), tsavg
+
+! Declare externals
+  external :: grdcrd1
 
 ! Declare local variables.
   integer(i_kind)              :: i, ii, iii, j, jj, jjj
@@ -1209,6 +1221,9 @@ subroutine deter_sfc_amsre_low(dlat_earth,dlon_earth,isflg,sfcpct)
    integer(i_kind)            ,intent(  out) :: isflg
    real(r_kind),dimension(0:3),intent(  out) :: sfcpct
 
+!  Declare externals
+   external :: grdcrd1
+
    integer(i_kind) jsli,it
    integer(i_kind):: klat1,klon1,klatp1,klonp1
    real(r_kind):: dx,dy,dx1,dy1,w00,w10,w01,w11
@@ -1374,6 +1389,9 @@ subroutine deter_sfc_gmi(dlat_earth,dlon_earth,isflg,sfcpct)
    real(r_kind)               ,intent(in   ) :: dlat_earth,dlon_earth
    integer(i_kind)            ,intent(  out) :: isflg
    real(r_kind),dimension(0:3),intent(  out) :: sfcpct
+
+!  Declare externals
+   external :: grdcrd1
 
    integer(i_kind) jsli,it
    integer(i_kind):: klat1,klon1,klatp1,klonp1

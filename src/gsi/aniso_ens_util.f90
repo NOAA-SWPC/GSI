@@ -65,6 +65,7 @@ subroutine ens_uv_to_psichi(u,v,truewind)
 !
 ! program history log:
 !   2008-08-21  pondeca
+!   2020-05-04  wu   - no rotate_wind for fv3_regional
 !
 !   input argument list:
 !    u(nlat,nlon)              - earth relative u-field on analysis grid
@@ -82,7 +83,7 @@ subroutine ens_uv_to_psichi(u,v,truewind)
   use kinds, only: i_kind,r_kind,r_single
   use constants, only: one,two
   use gridmod, only: nlon,nlat,region_lon,region_lat,region_dx,region_dy, &
-                     rotate_wind_ll2xy
+                     rotate_wind_ll2xy,fv3_regional
   use wind_fft, only: divvort_to_psichi
 
   implicit none
@@ -116,19 +117,21 @@ subroutine ens_uv_to_psichi(u,v,truewind)
 !                              minval(region_lon),maxval(region_lon)
 ! print*,'in ens_uv_to_psichi: region_lat,min,max=', &
 !                              minval(region_lat),maxval(region_lat)
-  do i=1,nlat
-     do j=1,nlon
-        rlon=region_lon(i,j)
-        rlat=region_lat(i,j)
-        dlon=float(j)*one
-        dlat=float(i)*one
-        ue=u(i,j)
-        ve=v(i,j)
-        call rotate_wind_ll2xy(ue,ve,ug,vg,rlon,dlon,dlat)
-        u(i,j)=ug
-        v(i,j)=vg
+  if(.not.fv3_regional)then
+     do i=1,nlat
+        do j=1,nlon
+           rlon=region_lon(i,j)
+           rlat=region_lat(i,j)
+           dlon=float(j)*one
+           dlat=float(i)*one
+           ue=u(i,j)
+           ve=v(i,j)
+           call rotate_wind_ll2xy(ue,ve,ug,vg,rlon,dlon,dlat)
+           u(i,j)=ug
+           v(i,j)=vg
+        enddo
      enddo
-  enddo
+  endif
   if (truewind) return
 !==========================================================================
 !==>divergence and vorticity computation
@@ -376,6 +379,9 @@ subroutine ens_intpcoeffs_reg(ngrds,igbox,iref,jref,igbox0f,ensmask,enscoeff,gbl
   real(r_kind),   intent(  out) :: ensmask(nlat,nlon,ngrds)
   real(r_kind)   ,intent(  out) :: enscoeff(4,nlat,nlon,ngrds)
   real(r_kind),   intent(  out) :: gblend(pf2aP1%nlatf,pf2aP1%nlonf,2)
+
+! Declare externals
+  external :: w3fb11,w3fb12,mpi_allreduce
 
 ! Declare local variables
   integer(i_kind),parameter::ijadjust=4
@@ -907,6 +913,9 @@ subroutine pges_minmax(mype,nt,pmin,pmax)
   integer(i_kind),intent(in   ) :: mype
   integer(i_kind),intent(in   ) :: nt
   real(r_kind)   ,intent(  out) :: pmin(nsig),pmax(nsig)
+
+! Declare externals
+  external :: mpi_allreduce
 
 ! Declare local variables
   integer(i_kind):: k,ierror

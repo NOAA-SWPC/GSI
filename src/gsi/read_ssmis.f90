@@ -132,6 +132,10 @@ subroutine read_ssmis(mype,val_ssmis,ithin,isfcalc,rmesh,jsatid,gstime,&
   integer(i_kind) ,intent(in   ) :: mpi_comm_sub
   logical         ,intent(in   ) :: dval_use
 
+! Declare externals
+  external :: stop2,openbf,datelen,ufbint,ufbrep,w3fs21,&
+    zensun,closbf,grdcrd1,combine_radobs,count_obs
+
 ! Declare local variables
   character(7),parameter    :: fov_flag="conical"
   integer(i_kind),parameter :: maxchanl  =  24
@@ -390,7 +394,6 @@ subroutine read_ssmis(mype,val_ssmis,ithin,isfcalc,rmesh,jsatid,gstime,&
 ! Read in data from bufr into arrays first      
 ! Open unit to satellite bufr file
   iobs=1
-  call closbf(lnbufr)
   open(lnbufr,file=trim(infile),form='unformatted',status='old',err=500)  
   call openbf(lnbufr,'IN',lnbufr)
   call datelen(10)
@@ -469,7 +472,7 @@ subroutine read_ssmis(mype,val_ssmis,ithin,isfcalc,rmesh,jsatid,gstime,&
            if(abs(tdiff) > twind+one_minute) cycle read_loop
         endif
 
-        crit0 = 0.00_r_kind        ! forced to >= 0.01_r_kind in tdiff2crit()
+        crit0 = 0.01_r_kind
         timeinflat=6.0_r_kind
         call tdiff2crit(tdiff,ptime,ithin_time,timeinflat,crit0,crit1,it_mesh)
 
@@ -516,6 +519,7 @@ subroutine read_ssmis(mype,val_ssmis,ithin,isfcalc,rmesh,jsatid,gstime,&
      end do read_loop
   end do read_subset
   call closbf(lnbufr)
+  close(lnbufr)
 
   num_obs = iobs-1
 

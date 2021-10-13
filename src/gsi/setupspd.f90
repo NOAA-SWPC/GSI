@@ -125,7 +125,7 @@ subroutine setupspd(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,conv_diags
   use constants, only: one,grav,rd,zero,four,tiny_r_kind, &
        half,two,cg_term,huge_single,r1000,wgtlim
   use jfunc, only: jiter,last,miter,jiterstart
-  use state_vectors, only: svars3d, levels, nsdim
+  use state_vectors, only: svars3d, levels
   use qcmod, only: dfact,dfact1
   use convinfo, only: nconvtype,cermin,cermax,cgross,cvar_b,cvar_pg,ictype
   use convinfo, only: icsubtype
@@ -141,7 +141,7 @@ subroutine setupspd(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,conv_diags
   ! apply only to the regional forecast models (e.g., HWRF); Henry
   ! R. Winterbottom (henry.winterbottom@noaa.gov).
   
-  use obsmod, only: uv_doe_a_292,uv_doe_b_292
+  use obsmod, only: uv_doe_a_213,uv_doe_b_213
   
   implicit none
 
@@ -191,7 +191,6 @@ subroutine setupspd(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,conv_diags
   integer(i_kind) idomsfc,iskint,iff10,isfcr,isli
 
   type(sparr2) :: dhx_dx
-  real(r_single), dimension(nsdim) :: dhx_dx_array
   integer(i_kind) :: iz, u_ind, v_ind, nnz, nind
   real(r_kind) :: delz
   
@@ -382,9 +381,9 @@ subroutine setupspd(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,conv_diags
 
      z_height = .false.
 !    if ( nty == 260 .or. nty == 261) z_height = .true.
-!    nty == 292 is temporarily assigned to SFMR retrieved wind speed from recon
+!    nty == 213 is temporarily assigned to SFMR retrieved wind speed from recon
 !    and is subjet to change in the future
-     if ( nty == 260 .or. nty == 261 .or. nty == 292) z_height = .true.
+     if ( nty == 260 .or. nty == 261 .or. nty == 213) z_height = .true.
 
 !    Process observations reported with height differently than those
 !    reported with pressure.  Type 260=nacelle 261=tower wind spd are
@@ -529,8 +528,8 @@ subroutine setupspd(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,conv_diags
      ddiff = spdob-spdges
      
      if (aircraft_recon) then
-       if ( nty == 292 ) then 
-         ratio_errors=error/(uv_doe_a_292*abs(ddiff)+uv_doe_b_292)
+       if ( nty == 213 ) then 
+         ratio_errors=error/(uv_doe_a_213*abs(ddiff)+uv_doe_b_213)
          if (spdob < 10._r_kind) ratio_errors=zero
        endif 
      endif
@@ -850,7 +849,10 @@ subroutine setupspd(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,conv_diags
 
      if (.not. append_diag) then ! don't write headers on append - the module will break?
         call nc_diag_header("date_time",ianldate )
-        call nc_diag_header("Number_of_state_vars", nsdim          )
+        if (save_jacobian) then
+          call nc_diag_header("jac_nnz", nnz)
+          call nc_diag_header("jac_nind", nind)
+        endif
      endif
   end subroutine init_netcdf_diag_
   subroutine contents_binary_diag_(odiag)
@@ -987,8 +989,9 @@ subroutine setupspd(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,conv_diags
               call nc_diag_metadata("Subprovider_Name",  c_sprvstg                    )
            endif
            if (save_jacobian) then
-              call fullarray(dhx_dx, dhx_dx_array)
-              call nc_diag_data2d("Observation_Operator_Jacobian", dhx_dx_array)
+             call nc_diag_data2d("Observation_Operator_Jacobian_stind", dhx_dx%st_ind)
+             call nc_diag_data2d("Observation_Operator_Jacobian_endind", dhx_dx%end_ind)
+             call nc_diag_data2d("Observation_Operator_Jacobian_val", real(dhx_dx%val,r_single))
            endif
 
 

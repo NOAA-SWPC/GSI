@@ -263,6 +263,9 @@ use jcmod, only: ljc4tlevs
 implicit none
 integer(i_kind),intent(in   ) :: mype
 
+! declare externals
+external :: stop2
+
 ! local variables
 integer(i_kind) :: ibin,k
 
@@ -434,6 +437,9 @@ implicit none
 
 integer(i_kind),intent(in   ) :: idate   ! Date (yyyymmddhh)
 real(r_kind)   ,intent(  out) :: step4d  ! Time since start of 4D-Var window (hours)
+
+! declare externals
+external :: w3fs21,stop2
 
 integer(i_kind) iyr,imo,idy,ihr,nmin_obs,nhrobs,nhrbgn,nhroff
 integer(i_kind),dimension(5) :: idate5

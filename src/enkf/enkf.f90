@@ -103,7 +103,10 @@ module enkf
 !
 !$$$
 
-use mpisetup
+use mpimod, only: mpi_comm_world
+use mpisetup, only: mpi_real4,mpi_sum,mpi_comm_io,mpi_in_place,numproc,nproc,&
+                mpi_integer,mpi_wtime,mpi_status,mpi_real8,mpi_max,mpi_realkind,&
+                mpi_2real,mpi_minloc,mpi_real
 use covlocal, only:  taper
 use kinds, only: r_double,i_kind,r_single,r_single
 use kdtree2_module, only: kdtree2_r_nearest, kdtree2_result
@@ -120,14 +123,15 @@ use enkf_obsmod, only: oberrvar, ob, ensmean_ob, obloc, oblnp, &
                   obtype, oberrvarmean, numobspersat, deltapredx, biaspreds,&
                   oberrvar_orig, probgrosserr, prpgerr,&
                   corrlengthsq,lnsigl,obtimel,obloclat,obloclon,obpress,stattype,&
-                  anal_ob
+                  anal_ob,anal_ob_post
 use constants, only: pi, one, zero
 use params, only: sprd_tol, paoverpb_thresh, datapath, nanals,&
                   iassim_order,sortinc,deterministic,numiter,nlevs,&
                   zhuberleft,zhuberright,varqc,lupd_satbiasc,huber,univaroz,&
                   covl_minfact,covl_efold,nbackgrounds,nhr_anal,fhr_assim,&
-                  iseed_perturbed_obs,lupd_obspace_serial,fso_cycling,&
+                  iseed_perturbed_obs,lupd_obspace_serial,efsoi_cycling,&
                   neigv,vlocal_evecs,denkf
+
 use radinfo, only: npred,nusis,nuchan,jpch_rad,predx
 use radbias, only: apply_biascorr, update_biascorr
 use gridinfo, only: nlevs_pres
@@ -146,6 +150,9 @@ contains
 subroutine enkf_update()
 use random_normal, only : rnorm, set_random_seed
 ! serial EnKF update.
+
+! Declare externals
+external :: mpi_bcast,mpi_allreduce,stop2,expand_ens,mpi_send,mpi_recv
 
 ! local variables.
 integer(i_kind) nob,nob1,nob2,nob3,npob,nf,nf2,ii,nobx,nskip,&
@@ -822,24 +829,24 @@ deltapredx = 0.0
 
 ! Gathering analysis perturbations 
 ! in observation space for EFSO
-if(fso_cycling) then  
+if(efsoi_cycling) then  
    if(nproc /= 0) then   
       call mpi_send(anal_obchunk,numobsperproc(nproc+1)*nanals,mpi_real,0, &   
                     1,mpi_comm_world,ierr)   
    else   
-      allocate(anal_ob(1:nanals,nobstot))   
+      allocate(anal_ob_post(1:nanals,nobstot))   
       allocate(buffertmp3(nanals,nobs_max))   
       do np=1,numproc-1   
          call mpi_recv(buffertmp3,numobsperproc(np+1)*nanals,mpi_real,np, &   
                        1,mpi_comm_world,mpi_status,ierr)   
          do nob1=1,numobsperproc(np+1)   
             nob2 = indxproc_obs(np+1,nob1)   
-            anal_ob(:,nob2) = buffertmp3(:,nob1)   
+            anal_ob_post(:,nob2) = buffertmp3(:,nob1)   
          end do   
       end do   
       do nob1=1,numobsperproc(1)   
          nob2 = indxproc_obs(1,nob1)   
-         anal_ob(:,nob2) = anal_obchunk(:,nob1)   
+         anal_ob_post(:,nob2) = anal_obchunk(:,nob1)   
       end do   
       deallocate(buffertmp3)   
    end if   

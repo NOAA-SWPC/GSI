@@ -505,6 +505,9 @@ subroutine adjoint_check4(filter,ngauss,ips,ipe,jps,jpe,kps,kpe,mype,npes)
 
   TYPE(filter_cons),intent(inout) :: filter(7)            ! structure defining recursive filter
 
+! Declare externals
+  external :: mpi_gather
+
   real(r_single) xvec( ngauss,ips:ipe, jps:jpe, kps:kpe )
   real(r_single) yvec( ngauss,ips:ipe, jps:jpe, kps:kpe )
   real(r_single) zvec( ngauss,ips:ipe, jps:jpe, kps:kpe )
@@ -595,6 +598,9 @@ SUBROUTINE raf4_ad(g,filter,ngauss,ids,ide,jds,jde,ips,ipe,jps,jpe,kps,kpe,npes)
             g                      !  input--field to be filtered, output--filtered field
 
   TYPE(filter_cons)                                            ,intent(in   ) :: filter(7)       ! structure defining recursive filter
+
+! Declare externals
+  external :: smther
 
   integer(i_long) i,icolor,igauss,ipass,j,k,iadvance,iback
 
@@ -754,6 +760,9 @@ SUBROUTINE rad_sm24_ad(g,filter,ngauss,ids,ide,jds,jde,ips,ipe,jps,jpe,kps,kpe,n
             g                      !  input--field to be filtered, output--filtered field
 
   TYPE(filter_cons)                                             ,intent(in   ) :: filter(7)            ! structure defining recursive filter
+
+! Declare externals
+  external :: smther
 
   integer(i_long) icolor,ipass,i,ii,j,k,kk,n,iadvance,iback
   real(r_single) gwork(ngauss,ips:ipe,jps:jpe,kps:kpe)
@@ -966,6 +975,9 @@ subroutine alpha_betaa4(aspect,rgauss,ng,binomial,lnf,bnf,m)
   real(r_double)                 ,intent(in   ) :: rgauss
   real(r_single)                 ,intent(  out) :: lnf(m,ng),bnf(ng)
 
+! Declate externals
+  external :: coefrf
+
   real(r_double) sig(ng),snu(ng)
   real(r_double) lnf8(m,ng),bnf8(ng)
   integer(i_long) i,j
@@ -1167,6 +1179,9 @@ SUBROUTINE GETHEX(UTARGET,LGUESS,LHEXAD,LUI,WHEXAD,KT)
   real(r_double) ,intent(  out) :: whexad(6)
   integer(i_long),intent(inout) :: lhexad(3,6),lui(6,6)
   integer(i_long),intent(  out) :: kt
+
+! Declare externals
+  external :: stop2
 
   integer(i_long) ihexad(3,6),ilui(6,6)        ! defaults
   integer(i_long) newlhex(3,2:6),newlui(6,2:6),lui1(6)
@@ -1542,6 +1557,10 @@ SUBROUTINE init_raf4(aspect,triad4,ngauss,rgauss,npass,normal,binom,ifilt_ord,fi
   integer(i_long)                                             ,intent(in   ) :: kvar_start(nvars)           ! starting global vertical index for each variable
   integer(i_long)                                             ,intent(in   ) :: kvar_end(nvars)             ! ending global vertical index for each variable
   character(80)                                               ,intent(in   ) :: var_names(nvars)            ! descriptive name of each variable
+
+! Declare externals
+  external :: smther_two_gnorm,mpi_reduce,gettri4,what_color_is_triad,&
+     mpi_allreduce
 
   INTEGER(i_short), DIMENSION( 3, (ipe-ips+1)*(jpe-jps+1)*(kpe-kps+1) ) :: &
             i1filter              !  i1filter(1-3,.)=jumpx,jumpy,jumpz
@@ -2116,6 +2135,9 @@ subroutine normalize2_raf4(filter,ngauss,normal, &
 
   TYPE(filter_cons),INTENT(INOUT) :: filter(7)
 
+! Declare externals
+  external :: mpi_bcast
+
   real(r_single) ranvec(2, ngauss,ips:ipe, jps:jpe, kps:kpe )
   real(r_single) bigg( ngauss,ips:ipe, jps:jpe, kps:kpe )
 
@@ -2272,6 +2294,9 @@ subroutine one_color4(g,filter,ngauss,ipass,ifilt_ord, &
   integer(i_long)                                              ,intent(in   ) :: istart(nstrings+1)
   type(filter_cons)                                            ,intent(in   ) :: filter
 
+! Declare external
+  external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,mpi_type_free
+
   real(r_single) work(ngauss,max(1,filter%npointsmax),2)
   real(r_single) work2(max(1,filter%npointsmax))
 
@@ -2408,6 +2433,9 @@ subroutine one_color24(g,filter,ngauss,ipass,ifilt_ord, &
   integer(i_long)                                                ,intent(in   ) :: istart(nstrings+1)
   type(filter_cons)                                              ,intent(in   ) :: filter
 
+! Declare externals
+  external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,mpi_type_free
+
   real(r_single) work(2,ngauss,max(1,filter%npointsmax),2)
   real(r_single) work2(max(1,filter%npointsmax))
 
@@ -2539,6 +2567,9 @@ SUBROUTINE raf4(g,filter,ngauss,ids,ide,jds,jde,ips,ipe,jps,jpe,kps,kpe,npes)
             g                      !  input--field to be filtered, output--filtered field
 
   TYPE(filter_cons)                                            ,intent(in   ) :: filter(7)             !  structure defining recursive filter
+
+! Declare externals
+  external :: smther
 
   integer(i_long) i,icolor,ipass,igauss,j,k,iadvance,iback
 
@@ -2699,6 +2730,9 @@ subroutine sort_strings4(info_string,aspect_full,npoints_recv,ib,nvars)
             aspect_full
 
   integer(i_long)                               ,intent(  out) :: ib(npoints_recv)
+
+! Declare externals
+  external :: stop2
 
   integer(i_long) ib0(npoints_recv),ib1(npoints_recv)
   integer(i_llong) ij_origin(npoints_recv)
@@ -2879,6 +2913,9 @@ SUBROUTINE string_assemble4(i1filter,i2filter,nstrings,label_string, &
             nsend(0:npes-1),ndsend(0:npes),nrecv(0:npes-1),ndrecv(0:npes)
   integer(i_short)                                           ,intent(  out) :: ia(npoints_send),ja(npoints_send),ka(npoints_send)
 
+! Declare externals
+  external :: stop2,mpi_alltoall,mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,mpi_type_free
+
   integer(i_short) string_info(8,npoints_send)
   real(r_single) full_aspect(npoints_send)
 
@@ -3024,6 +3061,9 @@ SUBROUTINE string_label(i1filter,i2filter,nstrings,label_string,npoints_recv, &
   integer(i_long)                    ,intent(  out) :: npoints_recv(0:npes-1)
   integer(i_long)                    ,intent(in   ) :: nvars
   integer(i_long)                    ,intent(in   ) :: kvar_start(nvars),kvar_end(nvars)
+
+! Declare externals
+  external :: mpi_allgather,mpi_allreduce
 
   integer(i_long) i,idist,idisttest,ierr,istring_pe,itest,ivar,ivar_end,ivar_start
   integer(i_long) j,jtest,jumpx,jumpy,jumpz,k,ktest,mpe,n,nstrings0
@@ -3207,6 +3247,9 @@ integer(i_llong),intent(in   ) :: local(max(1,nlocal))
 integer(i_llong),intent(inout) :: global(max(1,nglobal))
 integer(i_long) ,intent(in   ) :: nrecv(0:npes-1),ndrecv(0:npes)
 
+! Declare externals
+external :: mpi_gatherv
+
 integer(i_long) nrecv1(0:npes-1),ndrecv1(0:npes)
 integer(i_long) i,n,nlocal1,ierr
 integer(i_llong) local1(max(1,nlocal))
@@ -3272,6 +3315,9 @@ integer(i_long) ,intent(in   ) :: nlocal,npes,nglobal
 integer(i_llong),intent(inout) :: local(max(1,nlocal))
 integer(i_llong),intent(in   ) :: global(max(1,nglobal))
 integer(i_long) ,intent(in   ) :: nrecv(0:npes-1),ndrecv(0:npes)
+
+! Declare externals
+external :: mpi_scatterv
 
 integer(i_long) nrecv1(0:npes-1),ndrecv1(0:npes)
 integer(i_long) i,n,nlocal1,ierr
@@ -3384,6 +3430,10 @@ subroutine add_halox0(filter,nrows,ids,ide,jds,jde,ips,ipe,jps,jpe,mype,npes)
   TYPE(filter_cons),INTENT(inOUT) :: filter
   integer(i_long)  ,intent(in   ) :: nrows
   integer(i_long)  ,intent(in   ) :: ids,ide,jds,jde,ips,ipe,jps,jpe,mype,npes
+
+! Declare externals
+  external :: mpi_allreduce,mpi_alltoall,mpi_type_contiguous,mpi_type_commit,&
+    mpi_alltoallv,mpi_type_free
 
   integer(i_long) ijglob_pe(ids:ide,jds:jde),ijglob_pe0(ids:ide,jds:jde)
   integer(i_long) nrecv_halo(0:npes-1),ndrecv_halo(0:npes)
@@ -3529,6 +3579,10 @@ subroutine add_haloy0(filter,nrows,ids,ide,jds,jde,ips,ipe,jps,jpe,mype,npes)
   TYPE(filter_cons),INTENT(inout) :: filter
   integer(i_long)  ,intent(in   ) :: nrows
   integer(i_long)  ,intent(in   ) :: ids,ide,jds,jde,ips,ipe,jps,jpe,mype,npes
+
+! Declare externals
+  external :: mpi_allreduce,mpi_alltoall,mpi_type_contiguous,mpi_type_commit,&
+    mpi_alltoallv,mpi_type_free
 
   integer(i_long) ijglob_pe(ids:ide,jds:jde),ijglob_pe0(ids:ide,jds:jde)
   integer(i_long) nrecv_halo(0:npes-1),ndrecv_halo(0:npes)
@@ -3677,6 +3731,9 @@ subroutine add_halo_x(f,g,filter,ngauss,nrows,ids,ide,ips,ipe,jps,jpe,kps,kpe,np
   real(r_single)   ,intent(in   ) :: f(ngauss,ips:ipe,jps:jpe,kps:kpe)
   real(r_single)   ,intent(  out) :: g(ngauss,max(ids,ips-nrows):min(ide,ipe+nrows),jps:jpe,kps:kpe)
 
+! Declare externals
+  external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,mpi_type_free
+
   integer(i_long) i,j,k,mpi_string2,n,ierror
   real(r_single),allocatable:: bufsend(:,:,:),bufrecv(:,:,:)
 
@@ -3754,6 +3811,9 @@ subroutine add_halo_y(f,g,filter,ngauss,nrows,jds,jde,ips,ipe,jps,jpe,kps,kpe,np
   integer(i_long)  ,intent(in   ) :: jds,jde,ips,ipe,jps,jpe,kps,kpe,npes
   real(r_single)   ,intent(in   ) :: f(ngauss,ips:ipe,jps:jpe,kps:kpe)
   real(r_single)   ,intent(  out) :: g(ngauss,ips:ipe,max(jds,jps-nrows):min(jde,jpe+nrows),kps:kpe)
+
+! Declare externals
+  external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,mpi_type_free
 
   integer(i_long) i,j,k,mpi_string2,n,ierror
   real(r_single),allocatable:: bufsend(:,:,:),bufrecv(:,:,:)
@@ -3857,6 +3917,9 @@ subroutine one_color4_new_factorization(g,filter,ngauss,ipass,ifilt_ord, &
   integer(i_long)                                              ,intent(in   ) :: nstrings
   integer(i_long)                                              ,intent(in   ) :: istart(nstrings+1)
   type(filter_cons)                                            ,intent(in   ) :: filter
+
+! Declare externals
+  external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,mpi_type_free
 
   real(r_single) work(ngauss,max(1,filter%npointsmax),2)
   real(r_single) work2(max(1,filter%npointsmax))
@@ -3991,6 +4054,9 @@ subroutine one_color24_new_factorization(g,filter,ngauss,ipass,ifilt_ord, &
   integer(i_long)                                                ,intent(in   ) :: nstrings
   integer(i_long)                                                ,intent(in   ) :: istart(nstrings+1)
   type(filter_cons)                                              ,intent(in   ) :: filter
+
+! Declare externals
+  external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,mpi_type_free
 
   real(r_single) work(2,ngauss,max(1,filter%npointsmax),2)
   real(r_single) work2(max(1,filter%npointsmax))
@@ -4657,6 +4723,8 @@ INTEGER(i_kind)               ,INTENT(IN   ) :: lguess
 INTEGER(i_kind),DIMENSION(2,4),INTENT(INOUT) :: lv
 INTEGER(i_kind),DIMENSION(3,3),INTENT(INOUT) :: lui
 REAL(r_kind),DIMENSION(4)     ,INTENT(  OUT) :: w4
+! Declare externals
+external :: gettri3
 !-----------------------------------------------------------------------------
 REAL(r_kind)                                :: c,aoc,boc,d,dlim
 REAL(r_kind),DIMENSION(3)                   :: v
@@ -4729,6 +4797,8 @@ INTEGER(i_kind),DIMENSION(2,3),INTENT(INOUT) :: ltriad
 INTEGER(i_kind),DIMENSION(3,3),INTENT(INOUT) :: lui
 REAL(r_kind),DIMENSION(3)     ,INTENT(OUT  ) :: wtriad
 INTEGER(i_kind)               ,INTENT(OUT  ) :: kt
+! Declare externals
+external :: stop2
 !-----------------------------------------------------------------------------
 INTEGER(i_kind),DIMENSION(2,3):: itriad
 INTEGER(i_kind),DIMENSION(3,3):: ilui,nj
@@ -4843,6 +4913,8 @@ IMPLICIT NONE
 
 INTEGER(i_kind),INTENT(IN   ) :: i1,i2,p
 INTEGER(i_kind),INTENT(  OUT) :: color
+! Declare externals
+external :: stop2
 !----------------------------------------------------------------
 INTEGER(i_kind),DIMENSION(2)  :: v,vf,vfp,bxy2,bxy3,bxy5
 INTEGER(i_kind),DIMENSION(8)  :: color3
@@ -4952,6 +5024,9 @@ subroutine smther(filter,g,nrows,ngauss,nsmooth,nsmooth_shapiro, &
   integer(i_long)  ,intent(in   ) :: ids,ide,jds,jde,ips,ipe,jps,jpe,kps,kpe,npes
   real(r_single)   ,intent(inout) :: g(ngauss,ips:ipe,jps:jpe,kps:kpe)
   real(r_single)   ,intent(in   ) :: gnormx(ips:ipe),gnormy(jps:jpe)
+
+! Declare externals
+  external :: smther_one_x,smther_two_x,smther_one_y,smther_two_y
 
   integer(i_long) i,j,k,n
   real(r_single),allocatable:: gt(:,:,:,:)

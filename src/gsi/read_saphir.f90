@@ -89,8 +89,11 @@ subroutine read_saphir(mype,val_tovs,ithin,isfcalc,&
   integer(i_kind),dimension(npe)  ,intent(inout) :: nobs
   logical         ,intent(in   ) :: dval_use
 
-! Declare local parameters
+! Declare externals
+  external :: stop2,openbf,ufbint,w3fs21,ufbrep,closbf,grdcrd1,&
+    combine_radobs,count_obs
 
+! Declare local parameters
   character(8),parameter:: fov_flag="crosstrk"
   integer(i_kind),parameter:: n1bhdr=12
   integer(i_kind),parameter:: n2bhdr=4
@@ -283,7 +286,6 @@ subroutine read_saphir(mype,val_tovs,ithin,isfcalc,&
 
 ! Reopen unit to satellite bufr file
   iob=1
-  call closbf(lnbufr)
   open(lnbufr,file=trim(infile),form='unformatted',status = 'old',err = 500)
 
   call openbf(lnbufr,'IN',lnbufr)
@@ -344,7 +346,7 @@ subroutine read_saphir(mype,val_tovs,ithin,isfcalc,&
            if(abs(tdiff) > twind+one_minute) cycle read_loop
         endif
  
-        crit0 = 0.00_r_kind        ! forced to >= 0.01_r_kind in tdiff2crit()
+        crit0 = 0.01_r_kind
         timeinflat=two
         call tdiff2crit(tdiff,ptime,ithin_time,timeinflat,crit0,crit1,it_mesh)
 
@@ -388,6 +390,7 @@ subroutine read_saphir(mype,val_tovs,ithin,isfcalc,&
      end do read_loop
   end do read_subset
   call closbf(lnbufr)
+  close(lnbufr)
   deallocate(data1b8)
   
   num_obs = iob-1

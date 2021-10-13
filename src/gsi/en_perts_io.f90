@@ -37,6 +37,9 @@ subroutine en_perts_get_from_save_fulldomain
 
   implicit none
 
+! Declare externals
+  external :: mpi_file_open,mpi_file_read_at,mpi_file_close,stop2
+
   type(sub2grid_info) grd_arw
   real(r_single),pointer,dimension(:,:,:):: w3
   real(r_single),pointer,dimension(:,:):: w2
@@ -196,6 +199,9 @@ subroutine en_perts_get_from_save
   use mpeu_util, only: die
   implicit none
 
+! Declare externals
+  external :: stop2
+
   real(r_single),pointer,dimension(:,:,:):: w3
   real(r_single),pointer,dimension(:,:):: w2
 
@@ -290,6 +296,9 @@ subroutine en_perts_save
   use gsi_bundlemod, only: GSI_BundleGetPointer
   use mpeu_util, only: die
   implicit none
+
+! Declare externals
+  external :: stop2
 
   real(r_single),pointer,dimension(:,:,:):: w3
   real(r_single),pointer,dimension(:,:):: w2

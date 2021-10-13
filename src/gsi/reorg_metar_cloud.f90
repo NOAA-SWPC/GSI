@@ -55,6 +55,9 @@ subroutine reorg_metar_cloud(cdata,nreal,ndata,cdata_all,maxobs,ngrid)
   real(r_kind),dimension(nreal,maxobs)  ,intent(out):: cdata_all
   integer(i_kind)                       ,intent(out):: ngrid
 
+! declare externals
+  external :: stop2
+
 ! local variable
 !
   integer(i_kind) :: ista_prev,ista_prev2,ista_save

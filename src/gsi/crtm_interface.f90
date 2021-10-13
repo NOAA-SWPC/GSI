@@ -116,7 +116,7 @@ public isfcr                ! = 28 index of surface roughness
 public iff10                ! = 29 index of ten meter wind factor
 public ilone                ! = 30 index of earth relative longitude (degrees)
 public ilate                ! = 31 index of earth relative latitude (degrees)
-public iclr_sky             ! = 7  index of clear sky amount (goes_img, seviri, abi)
+public iclr_sky             ! = 7  index of clear sky amount (goes_img, seviri,abi,ahi)
 public isst_navy            ! = 7  index of navy sst retrieval (K) (avhrr_navy)
 public idata_type           ! = 32 index of data type (151=day, 152=night, avhrr_navy)
 public iclavr               ! = 32 index of clavr cloud flag (avhrr)
@@ -346,6 +346,9 @@ subroutine init_crtm(init_pass,mype_diaghdr,mype,nchanl,nreal,isis,obstype,radmo
   character(len=*), parameter :: myname_=myname//'*init_crtm'
   integer(i_kind), parameter :: length = 2621  ! lenth of GFL qsat table
 
+! declare externals
+  external :: stop2,genqsat
+
 ! local variables
   integer(i_kind) :: ier,ii,error_status,iderivative
   integer(i_kind) :: k, subset_start, subset_end
@@ -528,7 +531,8 @@ subroutine init_crtm(init_pass,mype_diaghdr,mype,nchanl,nreal,isis,obstype,radmo
  itz_tr    = nreal    ! index of d(Tz)/d(Tr)
 
 
- if (obstype == 'goes_img' .or. obstype == 'abi') then
+ if (obstype == 'goes_img' .or. obstype == 'abi' &
+     .or. obstype == 'ahi' .or. obstype == 'seviri' ) then
     iclr_sky      =  7 ! index of clear sky amount
  elseif (obstype == 'avhrr_navy') then
     isst_navy     =  7 ! index of navy sst (K) retrieval
@@ -537,8 +541,6 @@ subroutine init_crtm(init_pass,mype_diaghdr,mype,nchanl,nreal,isis,obstype,radmo
  elseif (obstype == 'avhrr') then
     iclavr        = 32 ! index CLAVR cloud flag with AVHRR data
     isst_hires    = 33 ! index of interpolated hires sst (K)
- elseif (obstype == 'seviri') then
-    iclr_sky      =  7 ! index of clear sky amount
  endif
 
 
@@ -855,7 +857,7 @@ endif
   if (n_actual_aerosols_wk>0 .or. n_clouds_fwd_wk>0 .and. imp_physics==11) then
 
      if (mype==0) write(6,*)myname_,':initial and load GFDL saturation water vapor pressure tables'
-
+  
      allocate(table (length))
      allocate(table2(length))
      allocate(tablew(length))
@@ -1107,6 +1109,9 @@ subroutine call_crtm(obstype,obstime,data_s,nchanl,nreal,ich, &
       reshape((/0.0_r_kind, 1.0_r_kind, 1.0_r_kind, 2.0_r_kind, 1.0_r_kind, &
                -1.0_r_kind, 1.0_r_kind, -1.0_r_kind/), (/4, 2/))
   real(r_kind),parameter:: jac_pert = 1.0_r_kind
+
+! Declare externals
+  external :: stop2,w3movdat
 
 ! Declare local variables  
   integer(i_kind):: iquadrant  
@@ -1578,8 +1583,8 @@ subroutine call_crtm(obstype,obstime,data_s,nchanl,nreal,ich, &
 !       also, geometryinfo is not needed in crtm aod calculation
         if ( trim(obstype) /= 'modis_aod' .and. trim(obstype) /= 'viirs_aod' ) then
            panglr = data_s(iscan_ang)
-           if(obstype == 'goes_img' .or. obstype == 'seviri' .or. obstype == 'abi')panglr = zero
-
+           if(obstype == 'goes_img' .or. obstype == 'seviri' .or. obstype == 'abi' &
+              .or. obstype == 'ahi' )panglr = zero
            geometryinfo(1)%sensor_zenith_angle = abs(data_s(ilzen_ang)*rad2deg) ! local zenith angle
            geometryinfo(1)%source_zenith_angle = abs(data_s(iszen_ang))         ! solar zenith angle
 !          geometryinfo(1)%sensor_zenith_angle = data_s(ilzen_ang)*rad2deg      ! local zenith angle
@@ -2083,7 +2088,7 @@ subroutine call_crtm(obstype,obstime,data_s,nchanl,nreal,ich, &
      hwp_total = sum(hwp_guess(:))
      theta_700 = atmosphere(1)%temperature(idx700)*(r1000/atmosphere(1)%pressure(idx700))**rd_over_cp
      theta_sfc = data_s(itsavg)*(r100/ps)**rd_over_cp
-     stability = theta_700 - theta_sfc
+     if (present(stability)) stability = theta_700 - theta_sfc
   endif
 
 ! Set clouds for CRTM
@@ -3096,6 +3101,9 @@ subroutine get_lai(data_s,nchanl,nreal,itime,ilate,lai_type,lai)
   real(r_kind),dimension(nchanl+nreal)  ,intent(in   ) :: data_s
   integer(i_kind)                       ,intent(in   ) :: itime, ilate,lai_type
   real(r_kind)                          ,intent(  out) :: lai
+
+! Declare externals
+  external :: w3movdat,w3doxdat
 
 ! Declare local variables
   integer(i_kind),dimension(8)::obs_time,anal_time

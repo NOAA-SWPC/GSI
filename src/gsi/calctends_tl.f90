@@ -72,9 +72,12 @@ subroutine calctends_tl(fields,fields_dt,mype)
   implicit none
 
 ! Declare passed variables
-  type(gsi_bundle) :: fields
-  type(gsi_bundle) :: fields_dt
+  type(gsi_bundle),intent(in) :: fields
+  type(gsi_bundle),intent(in) :: fields_dt
   integer(i_kind),intent(in) :: mype
+
+! Declare externals
+  external :: stop2,get_derivatives,getprs_horiz_tl,getvvel_tl,turbl_tl
 
 ! Declare local variables
   character(len=*),parameter::myname='calctends_tl'

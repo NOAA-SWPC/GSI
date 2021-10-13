@@ -55,6 +55,8 @@ subroutine statsco(stats_co,bwork,awork,ndata)
   real(r_kind),dimension(npres_print,nconvtype,5,3),intent(inout) :: bwork
   real(r_kind),dimension(7*nsig+100)        ,intent(inout) :: awork
 
+! Declare externals
+  external :: dtast
 
 ! Declare local variables
   logical,dimension(ndat):: idisplay

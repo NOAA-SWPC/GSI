@@ -278,6 +278,9 @@ module general_sub2grid_mod
       integer(i_kind),optional,intent(in   ) :: nskip
       type(sub2grid_info),optional,intent(inout) :: s_ref
 
+!     Declare externals
+      external :: mpi_comm_size,mpi_comm_rank
+
       integer(i_kind) i,ierror,j,k,num_loc_groups,nextra,mm1,n,ns,npe_used,iadd
       integer(i_kind),allocatable:: idoit(:)
 
@@ -508,6 +511,9 @@ subroutine get_iuse_pe(npe,nz,iuse_pe)
 
   integer(i_kind),intent(in) ::npe,nz
   integer(i_kind),intent(out)::iuse_pe(0:npe-1)
+
+! Declare externals
+  external :: stop2
 
   integer(i_kind) i,icount,nskip,ipoint
   real(r_kind) :: point,skip2
@@ -1062,6 +1068,9 @@ end subroutine get_iuse_pe
       real(r_single),     intent(in   ) :: sub_vars(s%inner_vars,s%lat2,s%lon2,s%num_fields)
       real(r_single),     intent(  out) :: grid_vars(s%inner_vars,s%nlat,s%nlon,s%kbegin_loc:s%kend_alloc)
 
+!     Declare externals
+      external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,mpi_type_free
+
       real(r_single) :: sub_vars0(s%inner_vars,s%lat1,s%lon1,s%num_fields)
       real(r_single) :: work(s%inner_vars,s%itotsub*(s%kend_alloc-s%kbegin_loc+1)) 
       integer(i_kind) iloc,iskip,i,i0,ii,j,j0,k,n,k_in,ilat,jlon,ierror,ioffset
@@ -1246,6 +1255,9 @@ end subroutine get_iuse_pe
       real(r_single), intent(in   )     :: grid_vars(s%inner_vars,s%nlat,s%nlon,s%kbegin_loc:s%kend_alloc)
       real(r_single),     intent(  out) :: sub_vars(s%inner_vars,s%lat2,s%lon2,s%num_fields)
 
+!     Declare externals
+      external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,mpi_type_free
+
       real(r_single) :: temp(s%inner_vars,s%itotsub*(s%kend_loc-s%kbegin_loc+1))
       integer(i_kind) iloc,i,ii,k,n,ilat,jlon,ierror,icount
       integer(i_kind),dimension(s%npe) ::iskip
@@ -1411,6 +1423,9 @@ end subroutine get_iuse_pe
       type(sub2grid_info),intent(in   ) :: s
       real(r_double),     intent(in   ) :: sub_vars(s%inner_vars,s%lat2,s%lon2,s%num_fields)
       real(r_double),    intent(  out)  :: grid_vars(s%inner_vars,s%nlat,s%nlon,s%kbegin_loc:s%kend_alloc)
+
+!     Declare externals
+      external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,mpi_type_free
 
       real(r_double) :: sub_vars0(s%inner_vars,s%lat1,s%lon1,s%num_fields)
       real(r_double) :: work(s%inner_vars,s%itotsub*(s%kend_alloc-s%kbegin_loc+1)) 
@@ -1594,6 +1609,9 @@ end subroutine get_iuse_pe
       real(r_double), intent(in   )     :: grid_vars(s%inner_vars,s%nlat,s%nlon,s%kbegin_loc:s%kend_alloc)
       real(r_double),     intent(  out) :: sub_vars(s%inner_vars,s%lat2,s%lon2,s%num_fields)
 
+!     Declare externals
+      external :: mpi_type_contiguous,mpi_type_commit,mpi_alltoallv,mpi_type_free
+
       real(r_double) :: temp(s%inner_vars,s%itotsub*(s%kend_loc-s%kbegin_loc+1))
       integer(i_kind) iloc,icount,i,ii,k,n,ilat,jlon,ierror
       integer(i_long) mpi_string
@@ -1763,6 +1781,9 @@ end subroutine get_iuse_pe
       real(r_single),     intent(in   ) :: sub_vars(s%inner_vars,s%lat2,s%lon2)
       real(r_single),     intent(  out) :: grid_vars(s%inner_vars,s%nlat,s%nlon)
       integer(i_kind),    intent(in   ) :: gridpe
+
+!     Declare externals
+      external :: mpi_type_contiguous,mpi_type_commit,mpi_gatherv,mpi_type_free
 
       real(r_single) :: sub_vars0(s%inner_vars,s%lat1,s%lon1)
       real(r_single) :: work(s%inner_vars,s%itotsub) 
@@ -1940,6 +1961,9 @@ end subroutine get_iuse_pe
       real(r_double),     intent(in   ) :: sub_vars(s%inner_vars,s%lat2,s%lon2)
       real(r_double),    intent(  out)  :: grid_vars(s%inner_vars,s%nlat,s%nlon)
       integer(i_kind),    intent(in   ) :: gridpe
+
+!     Declare externals
+      external :: mpi_type_contiguous,mpi_type_commit,mpi_gatherv,mpi_type_free
 
       real(r_double) :: sub_vars0(s%inner_vars,s%lat1,s%lon1)
       real(r_double) :: work(s%inner_vars,max(s%iglobal,s%itotsub)) 
@@ -2125,6 +2149,9 @@ end subroutine get_iuse_pe
       real(r_single),     intent(  out) :: sub_vars(s%inner_vars,s%lat2,s%lon2)
       integer(i_kind),intent(in   )     :: gridpe
 
+!     Declare externals
+      external :: mpi_type_contiguous,mpi_type_commit,mpi_scatterv,mpi_type_free
+
       real(r_single) :: temp(s%inner_vars,s%itotsub)
       integer(i_kind) ii,n,ilat,jlon,ierror
       integer(i_long) mpi_string
@@ -2280,6 +2307,9 @@ end subroutine get_iuse_pe
       real(r_double),     intent(  out) :: sub_vars(s%inner_vars,s%lat2,s%lon2)
       integer(i_kind),intent(in   )     :: gridpe
 
+!     Declare externals
+      external :: mpi_type_contiguous,mpi_type_commit,mpi_scatterv,mpi_type_free
+
       real(r_double) :: temp(s%inner_vars,s%itotsub)
       integer(i_kind) ii,n,ilat,jlon,ierror
       integer(i_long) mpi_string
@@ -2393,6 +2423,9 @@ end subroutine get_iuse_pe
       real(r_single),        intent(in   ) :: sube_vars(se%inner_vars,se%lat2,se%lon2,se%num_fields)
       real(r_single),        intent(  out) :: suba_vars(sa%inner_vars,sa%lat2,sa%lon2,sa%num_fields)
       logical,               intent(in   ) :: regional
+
+!     Declare externals
+      external :: mpi_finalize
 
       real(r_single),allocatable:: gride_vars(:,:,:,:),grida_vars(:,:,:,:)
       logical,allocatable :: vectorx(:)
@@ -2833,6 +2866,9 @@ end subroutine get_iuse_pe
       real(r_single),        intent(in   ) :: suba_vars(sa%inner_vars,sa%lat2,sa%lon2,sa%num_fields)
       real(r_single),        intent(  out) :: sube_vars(se%inner_vars,se%lat2,se%lon2,se%num_fields)
       logical,               intent(in   ) :: regional
+
+!     Declare externals
+      external :: mpi_finalize
 
       real(r_single),allocatable:: gride_vars(:,:,:,:),grida_vars(:,:,:,:)
       logical,allocatable :: vectorx(:)

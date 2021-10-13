@@ -53,6 +53,9 @@ type(control_vector), intent(inout) :: grad
 type(gsi_bundle)    , intent(inout) :: mval
 type(gsi_bundle)    , intent(in   ) :: eval(ntlevs_ens)
 
+! Declare externals
+external :: stop2,tv_to_tsen_ad,getprs_ad,getuv,normal_rh_to_q_ad
+
 ! Declare local variables
 character(len=*),parameter::myname='ensctl2state_ad'
 character(len=max_varname_length),allocatable,dimension(:) :: clouds

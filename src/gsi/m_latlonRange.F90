@@ -357,6 +357,9 @@ subroutine gatherWrite_(llrange,hdfile,root,comm)
   integer(kind=i_kind),intent(in):: comm
   
   character(len=*),parameter:: myname_=myname//"::gatherWrite_"
+! Declare externals
+  external :: MPI_gather
+
   integer(kind=i_kind):: ier,lu
   integer(kind=i_kind):: lsize,isize,rsize,mtype
   integer(kind=i_kind):: irec,nrec
@@ -425,6 +428,10 @@ subroutine readBcast_(hdfile,allRanges,root,comm)
   integer(kind=i_kind),intent(in):: comm        ! the communicator of my "world".
 
   character(len=*),parameter:: myname_=myname//"::readBcast_"
+
+! Declare externals
+  external :: MPI_bcast
+
   integer(kind=i_kind):: ier,lu,irec,jrec,nrec
   integer(kind=i_kind),allocatable,dimension(:,:):: ibufr
   real   (kind=r_kind),allocatable,dimension(:,:):: rbufr
@@ -538,6 +545,10 @@ subroutine gatherdump_(llrange,varname,root,comm)
   integer(kind=i_kind),intent(in):: comm
   
   character(len=*),parameter:: myname_=myname//"::gatherdump_"
+
+! Declare externals
+  external :: MPI_gather
+
   integer(kind=i_kind):: ier
   integer(kind=i_kind):: lsize,isize,rsize,mtype
   integer(kind=i_kind):: irec,nrec

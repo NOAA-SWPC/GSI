@@ -57,6 +57,9 @@ subroutine simpin1(wgts,wgtsx1,wgtsx11,iwgts, &
   integer(i_kind),intent(in   ) :: ixi(0:iord)
   real(r_kind)   ,intent(in   ) :: tl(lbig,lbig,n1grid,2),alocal(n1grid,2),blocal(n1grid,2)
 
+! Declar externals
+  external :: stop2
+
   real(r_kind) dx1gridi(-3:n1grid+3)
   integer(i_kind) i1ref(nin)
   integer(i_kind) ix1sign(nin)
@@ -399,7 +402,9 @@ subroutine vinvmm(b,a,m,nb,na,ninv,ninv0)
   
   integer(i_kind),intent(in   ) :: m,nb,na,ninv,ninv0
   real(r_kind)   ,intent(inout) :: a(ninv0,na,*),b(ninv0,nb,*)
-  
+
+! Declare externals
+  external :: vlufm
 
   integer(i_kind) ipiv(ninv,m)
   real(r_kind) s(ninv),d(ninv)

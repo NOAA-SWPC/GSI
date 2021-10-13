@@ -116,6 +116,10 @@ SUBROUTINE cloudCover_Surface_col(mype,nsig,&
   real (r_single),intent(inout) :: vis2qc
   real (r_single),intent(inout) :: cld_cover_obs(nsig)
 !
+!  Declare externals
+!
+  external :: stop2
+!
 !  local
 !
   real (r_single) :: cloud_zthick_p

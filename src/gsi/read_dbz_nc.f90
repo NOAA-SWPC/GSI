@@ -92,6 +92,9 @@ subroutine read_dbz_nc(nread,ndata,nodata,infile,lunout,obstype,sis,hgtl_full,no
   real(r_kind),dimension(nlat,nlon,nsig),intent(in):: hgtl_full
   integer(i_kind),dimension(npe) ,intent(inout) :: nobs
 
+! Declare externals
+  external :: stop2,ncvgt,w3fs21,count_obs
+
 ! Declare local parameters
   real(r_kind),parameter:: r6 = 6.0_r_kind
   real(r_kind),parameter:: r360=360.0_r_kind

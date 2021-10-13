@@ -8,7 +8,11 @@ subroutine read_locinfo()
                              kdtree2_result, kdtree2_n_nearest
    use constants, only: zero, rearth
    use gridinfo, only: gridloc, logp
-   use mpisetup
+   use mpimod, only: mpi_comm_world
+   use mpisetup, only: mpi_real4,mpi_sum,mpi_in_place,numproc,nproc,&
+                mpi_integer,mpi_wtime,mpi_real8,mpi_max,mpi_min
+   ! Declare externals
+   external :: stop2,grdcrd,mpi_allreduce
    logical lexist
    character(len=40)  :: fname = 'hybens_info'
    real(r_kind) oblnp_indx(1)

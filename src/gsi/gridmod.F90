@@ -94,6 +94,9 @@ module gridmod
 !   2018-02-15  wu      - add fv3_regional & grid_ratio_fv3_regional
 !   2019-03-05  martin  - add wgtfactlats for factqmin/factqmax scaling
 !   2019-04-19  martin  - add use_fv3_aero option to distingiush between NGAC and FV3-Chem
+!   2019-09-04  martin  - add write_fv3_incr to write netCDF increment rather than analysis in NEMSIO format
+!   2019-09-23  martin  - add use_gfs_ncio to read global first guess from netCDF file
+!   2020-12-18  Hu      - add grid_type_fv3_regional
 !
 !                        
 !
@@ -148,12 +151,14 @@ module gridmod
   public :: nlat_regional,nlon_regional,update_regsfc,half_grid,gencode
   public :: diagnostic_reg,nmmb_reference_grid,filled_grid
   public :: grid_ratio_nmmb,isd_g,isc_g,dx_gfs,lpl_gfs,nsig5,nmmb_verttype
-  public :: grid_ratio_fv3_regional,fv3_regional
+  public :: grid_ratio_fv3_regional,fv3_regional,grid_type_fv3_regional
+  public :: l_reg_update_hydro_delz
   public :: nsig3,nsig4,grid_ratio_wrfmass
   public :: use_gfs_ozone,check_gfs_ozone_date,regional_ozone,nvege_type
   public :: jcap,jcap_b,hires_b,sp_a,grd_a
   public :: jtstart,jtstop,nthreads
   public :: use_gfs_nemsio
+  public :: use_gfs_ncio
   public :: fv3_full_hydro  
   public :: use_fv3_aero
   public :: sfcnst_comb
@@ -162,6 +167,7 @@ module gridmod
   public :: use_sp_eqspace,jcap_cut
   public :: wrf_mass_hybridcord
   public :: lsidea
+  public :: write_fv3_incr
 
   interface strip
      module procedure strip_single_rank33_
@@ -178,6 +184,7 @@ module gridmod
 
   logical wrf_nmm_regional  !
   logical fv3_regional      ! .t. to run with fv3 regional model
+  logical l_reg_update_hydro_delz  ! .true. to update delz in fv3 model
   logical nems_nmmb_regional! .t. to run with NEMS NMMB model
   logical wrf_mass_regional !
   logical wrf_mass_hybridcord
@@ -193,16 +200,19 @@ module gridmod
   logical update_regsfc     !
   logical hires_b           ! .t. when jcap_b requires double FFT
   logical use_gfs_nemsio    ! .t. for using NEMSIO to real global first guess
+  logical use_gfs_ncio      ! .t. for using netCDF to real global first guess
   logical fv3_full_hydro    ! .t. for using NEMSIO to real global first guess
   logical use_fv3_aero      ! .t. for using FV3 Aerosols, .f. for NGAC
   logical sfcnst_comb       ! .t. for using combined sfc & nst file
   logical use_sp_eqspace    ! .t. use equally-space grid in spectral transforms
   logical lsidea            ! .t. for using IDEA/WAM model first guess
+  logical write_fv3_incr    ! .t. write netCDF increment rather than NEMSIO analysis
 
   logical use_readin_anl_sfcmask        ! .t. for using readin surface mask
   character(1) nmmb_reference_grid      ! ='H': use nmmb H grid as reference for analysis grid
                                         ! ='V': use nmmb V grid as reference for analysis grid
   real(r_kind) grid_ratio_fv3_regional  ! ratio of analysis grid to fv3 model grid in fv3 grid units.
+  integer(i_kind) grid_type_fv3_regional! type of fv3 model grid (grid orientation).
   real(r_kind) grid_ratio_nmmb ! ratio of analysis grid to nmmb model grid in nmmb model grid units.
   real(r_kind) grid_ratio_wrfmass ! ratio of analysis grid to wrf model grid in wrf mass grid units.
   character(3) nmmb_verttype   !   'OLD' for old vertical coordinate definition
@@ -412,6 +422,8 @@ contains
 !   2016-08-28       li - tic591: add use_readin_anl_sfcmask for consistent sfcmask
 !                         between analysis grids and others
 !   2019-04-19  martin  - add use_fv3_aero option for NGAC vs FV3-Chem
+!   2019-09-23  martin  - add flag use_gfs_ncio to determine whether to use netCDF to read global first gues field
+!   2021-01-05  x.zhang/lei  - add code for updating delz analysis in regional da
 !
 ! !REMARKS:
 !   language: f90
@@ -448,6 +460,7 @@ contains
     wrf_mass_hybridcord = .false.
     cmaq_regional=.false.
     fv3_regional=.false.
+    l_reg_update_hydro_delz=.false.
     nems_nmmb_regional = .false.
     twodvar_regional = .false. 
     use_gfs_ozone = .false.
@@ -457,6 +470,7 @@ contains
     filled_grid = .false.
     half_grid = .false.
     grid_ratio_fv3_regional = one
+    grid_type_fv3_regional = 0
     grid_ratio_nmmb = sqrt(two)
     grid_ratio_wrfmass = one
     nmmb_reference_grid = 'H'
@@ -489,6 +503,7 @@ contains
     nthreads = 1  ! initialize the number of threads
 
     use_gfs_nemsio  = .false.
+    use_gfs_ncio = .false.
     fv3_full_hydro  = .false. 
     use_fv3_aero  = .false.
     sfcnst_comb = .false.
@@ -558,6 +573,8 @@ contains
 !EOP
 !-------------------------------------------------------------------------
     character(len=*),parameter::myname_=myname//'*init_grid_vars'
+!   Declare externals
+    external :: looplimits
     integer(i_kind) i,k,inner_vars,num_fields
     integer(i_kind) n3d,n2d,nvars,tid,nth
     integer(i_kind) ipsf,ipvp,jpsf,jpvp,isfb,isfe,ivpb,ivpe
@@ -1054,6 +1071,8 @@ contains
 !EOP
 !-------------------------------------------------------------------------
 
+!   Declare externals
+    external :: stop2,ll2rpolar,rpolar2ll
     logical fexist
     integer(i_kind) i,k
     real(r_single)pt,pdtop
@@ -1102,6 +1121,7 @@ contains
        rlat_max_dd=rlat_max_ll-r1_5/grid_ratio_fv3_regional
        rlon_min_dd=rlon_min_ll+r1_5/grid_ratio_fv3_regional
        rlon_max_dd=rlon_max_ll-r1_5/grid_ratio_fv3_regional
+       pt_ll=zero
     endif    !  fv3_regional
 
     if(wrf_nmm_regional) then     ! begin wrf_nmm section

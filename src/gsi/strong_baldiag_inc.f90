@@ -53,6 +53,9 @@ subroutine strong_baldiag_inc(sval,nsval)
   type(gsi_bundle),intent(inout) :: sval(nsval)
   integer(i_kind) ,intent(in   ) :: nsval
 
+! Declare externals
+  external :: stop2,calctends_tl,strong_bal_correction
+
 ! Declare local variables
   character(len=*),parameter::myname='strong_baldiag_inc' 
   integer(i_kind) ii,ier,iqi,iql,icw,istatus   

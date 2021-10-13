@@ -47,6 +47,9 @@ subroutine smoothrf(work,nlevs)
   integer(i_kind)                        ,intent(in   ) :: nlevs
   real(r_kind),dimension(nlat,nlon,nlevs),intent(inout) :: work
 
+! Declare externals
+  external :: rfxyyx,grid2tr,grid2tr_ad,grid2nh,grid2nh_ad,grid2sh,grid2sh_ad
+
 ! Declare local variables
   integer(i_kind) j,i
   integer(i_kind) k,kk,kkk
@@ -341,6 +344,9 @@ subroutine grid2nh(work,pall)
   real(r_kind),dimension(nlat,nlon),intent(in)  :: work
   real(r_kind),dimension(-nf:nf,-nf:nf),intent(inout)    :: pall
 
+! Declare externals
+  external :: polcasa
+
 ! Declare local variables
   real(r_kind),dimension(nlon+1,mr:nr)    :: p2all
   integer(i_kind) j,i,j1
@@ -407,6 +413,9 @@ subroutine grid2nh_ad(work,pall)
   real(r_kind),dimension(nlat,nlon),intent(inout)  :: work
   real(r_kind),dimension(-nf:nf,-nf:nf),intent(inout)    :: pall
 
+! Declare externals
+  external :: polcas
+
 ! Declare local variables
   real(r_kind),dimension(nlon+1,mr:nr)     :: p2all
   integer(i_kind) j,i,j1
@@ -469,6 +478,9 @@ subroutine grid2sh(work,pall)
 ! Declare passed variables
   real(r_kind),dimension(nlat,nlon),intent(in)  :: work
   real(r_kind),dimension(-nf:nf,-nf:nf),intent(inout)    :: pall
+
+! Declare externals
+  external :: polcasa
 
 ! Declare local variables
   real(r_kind),dimension(nlon+1,mr:nr)    :: p3all
@@ -536,6 +548,9 @@ subroutine grid2sh_ad(work,pall)
 ! Declare passed variables
   real(r_kind),dimension(nlat,nlon),intent(inout)        :: work
   real(r_kind),dimension(-nf:nf,-nf:nf),intent(inout)    :: pall
+
+! Declare externals
+  external :: polcas
 
 ! Declare local variables
   real(r_kind),dimension(nlon+1,mr:nr)     :: p3all
@@ -612,6 +627,9 @@ subroutine rfxyyx(p1,nx,ny,iix,jjx,dssx,totwgt)
   real(r_kind),dimension(nx,ny)          ,intent(inout) :: p1
   real(r_kind),dimension(nx,ny)          ,intent(in   ) :: dssx
   real(r_kind),dimension(nhscrf)         ,intent(in   ) :: totwgt
+
+! Declare externals
+  external :: rfhx0,rfhyt,rfhy
 
 ! Declare local variables
   integer(i_kind) ix,iy,i,j,im,n
@@ -1130,6 +1148,9 @@ subroutine sqrt_smoothrf(z,work,nlevs)
   real(r_kind),dimension(nval_lenz)      ,intent(in   ) :: z
   real(r_kind),dimension(nlat,nlon,nlevs),intent(inout) :: work
 
+! Declare externals
+  external :: sqrt_rfxyyx,grid2tr_ad,grid2nh_ad,grid2sh_ad
+
 ! Declare local variables
   integer(i_kind) j,i
   integer(i_kind) k,iz,kk,kkk
@@ -1171,7 +1192,7 @@ subroutine sqrt_smoothrf(z,work,nlevs)
   else
 
      do j=1,nhscrf
-        totwgt(j)=sqrt(hswgt(j)*hzscl(j)*hzscl(j))
+        totwgt(j)=sqrt(hswgt(j))*hzscl(j)
      end do
      
 !       zero output array
@@ -1307,6 +1328,9 @@ subroutine sqrt_smoothrf_ad(z,work,nlevs)
   real(r_kind),dimension(nval_lenz)      ,intent(inout) :: z
   real(r_kind),dimension(nlat,nlon,nlevs),intent(inout) :: work
 
+! Declare externals
+  external :: sqrt_rfxyyx_ad,grid2tr,grid2nh,grid2sh
+
 ! Declare local variables
   integer(i_kind) j,i
   integer(i_kind) k,iz,kk,kkk
@@ -1330,7 +1354,7 @@ subroutine sqrt_smoothrf_ad(z,work,nlevs)
         if(nrf_var(nvar_id(k))=='sf'.or.nrf_var(nvar_id(k))=='vp')then
            totwgt(3)=sqrt(half)*totwgt(3)
         end if
-		
+
         call sqrt_rfxyyx_ad(zloc,work(1,1,k),ny,nx,ii(1,1,1,k),&
              jj(1,1,1,k),slw(1,k),totwgt)
 
@@ -1348,7 +1372,7 @@ subroutine sqrt_smoothrf_ad(z,work,nlevs)
   else
 
      do j=1,nhscrf
-        totwgt(j)=sqrt(hswgt(j)*hzscl(j)*hzscl(j))
+        totwgt(j)=sqrt(hswgt(j))*hzscl(j)
      end do
      
 
@@ -1462,6 +1486,9 @@ subroutine sqrt_rfxyyx(z,p1,nx,ny,iix,jjx,dssx,totwgt)
   real(r_kind)   ,dimension(nx,ny)    ,intent(in   ) :: dssx
   real(r_kind)   ,dimension(nhscrf)      ,intent(in   ) :: totwgt
 
+! Declare externals
+  external :: rfhy,rfhx0
+
 ! Declare local variables
   integer(i_kind) ix,iy,i,j,im,n
 
@@ -1547,6 +1574,9 @@ subroutine sqrt_rfxyyx_ad(z,p1,nx,ny,iix,jjx,dssx,totwgt)
   real(r_kind)   ,dimension(nx,ny)    ,intent(inout) :: p1
   real(r_kind)   ,dimension(nx,ny)    ,intent(in   ) :: dssx
   real(r_kind)   ,dimension(nhscrf)      ,intent(in   ) :: totwgt
+
+! Declare externals
+  external :: rfhx0,rfhyt
 
 ! Declare local variables
   integer(i_kind) ix,iy,i,j,im,n

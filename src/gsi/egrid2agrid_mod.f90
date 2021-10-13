@@ -290,6 +290,9 @@ module egrid2agrid_mod
       real(r_kind)          ,intent(in   ) :: rgrida(ngrida),rgride(ngride)
       logical,optional      ,intent(in   ) :: e2a_only
 
+!     Declare externals
+      external :: simpin1_init,simpin1
+
       integer(i_kind) i,ii,ipmaxmax,ipminmin,j,jord,k,lbig,n,ntwinmax
       integer(i_kind) ixi(0:iord)
       real(r_kind) tl(iord+1,iord+1,2*ngride),alocal(2*ngride),blocal(2*ngride),wgts(ngrida,iord+1)
@@ -492,6 +495,9 @@ module egrid2agrid_mod
       real(r_single)          ,intent(  out) :: a(:,:,:,:)
       integer(i_kind)       ,intent(in   ) :: kb,ke
 
+!     Declare externals
+      external :: stop2
+
       integer(i_kind) i,idim
 
       idim=size(e,1)
@@ -609,6 +615,9 @@ module egrid2agrid_mod
       real(r_double)          ,intent(  out) :: a(:,:,:,:)
       integer(i_kind)       ,intent(in   ) :: kb,ke
 
+!     Declare externals
+      external :: stop2
+
       integer(i_kind) i,idim
 
       idim=size(e,1)
@@ -725,6 +734,9 @@ module egrid2agrid_mod
       real(r_single)          ,intent(  out) :: e(:,:,:,:)
       real(r_single)          ,intent(in   ) :: a(:,:,:,:)
       integer(i_kind)       ,intent(in   ) :: kb,ke
+
+!     Declare externals
+      external :: stop2
 
       integer(i_kind) i,idim
 
@@ -848,6 +860,9 @@ module egrid2agrid_mod
       real(r_double)          ,intent(in   ) :: a(:,:,:,:)
       integer(i_kind)       ,intent(in   ) :: kb,ke
 
+!     Declare externals
+      external :: stop2
+
       integer(i_kind) i,idim
 
       idim=size(a,1)
@@ -970,6 +985,9 @@ module egrid2agrid_mod
       real(r_single)        ,intent(in   ) :: a(:,:,:,:)
       integer(i_kind)       ,intent(in   ) :: kb,ke
 
+!     Declare externals
+      external :: stop2
+
       integer(i_kind) i,idim
 
       idim=size(a,1)
@@ -1089,6 +1107,9 @@ module egrid2agrid_mod
       real(r_double)        ,intent(  out) :: e(:,:,:,:)
       real(r_double)        ,intent(in   ) :: a(:,:,:,:)
       integer(i_kind)       ,intent(in   ) :: kb,ke
+
+!     Declare externals
+      external :: stop2
 
       integer(i_kind) i,idim
 
@@ -1401,6 +1422,9 @@ module egrid2agrid_mod
       logical,intent(in):: e2a_only
       logical,intent(in),optional:: eqspace
 
+!     Declare externals
+      external :: stop2
+
       integer(i_kind) i,ilona,ilone,j,nextend,nlate_ex,nlone_ex,nlone_half
       real(r_single) errtest
       real(r_kind) half_pi,two_pi,dlona,dlone,diffmax,range_lat,range_lon
@@ -1583,6 +1607,9 @@ module egrid2agrid_mod
       logical               ,intent(in   ) :: vector(kb:ke)
       real(r_double)        ,intent(  out) :: a(:,:,:,:)
 
+!     Declare externals
+      external :: stop2
+
       integer(i_kind) i,idim
 
       idim=size(e,1)
@@ -1745,6 +1772,9 @@ module egrid2agrid_mod
       logical               ,intent(in   ) :: vector(kb:ke)
       real(r_single)        ,intent(  out) :: a(:,:,:,:)
 
+!     Declare externals
+      external :: stop2
+
       integer(i_kind) i,idim
 
       idim=size(e,1)
@@ -1906,6 +1936,9 @@ module egrid2agrid_mod
       real(r_double)        ,intent(in   ) :: a(:,:,:,:)
       integer(i_kind)       ,intent(in   ) :: kb,ke
 
+!     Declare externals
+      external :: stop2
+
       integer(i_kind) i,idim
 
       idim=size(a,1)
@@ -2049,6 +2082,9 @@ module egrid2agrid_mod
       logical               ,intent(in   ) :: vector(kb:ke)
       real(r_single)        ,intent(in   ) :: a(:,:,:,:)
       integer(i_kind)       ,intent(in   ) :: kb,ke
+
+!     Declare externals
+      external :: stop2
 
       integer(i_kind) i,idim
 
@@ -2194,6 +2230,9 @@ module egrid2agrid_mod
       logical               ,intent(in   ) :: vector(kb:ke)
       real(r_double)        ,intent(in   ) :: a(:,:,:,:)
       integer(i_kind)       ,intent(in   ) :: kb,ke
+
+!     Declare externals
+      external :: stop2
 
       integer(i_kind) i,idim
 
@@ -2355,6 +2394,9 @@ module egrid2agrid_mod
       integer(i_kind)       ,intent(in   ) :: kb,ke
       logical               ,intent(in   ) :: vector(kb:ke)
       real(r_single)        ,intent(in   ) :: a(:,:,:,:)
+
+!     Declare externals
+      external :: stop2
 
       integer(i_kind) i,idim
 
@@ -2523,6 +2565,9 @@ module egrid2agrid_mod
       integer(i_kind),intent(in) :: na,nlate,nlone,nord_e2a
       real(r_kind),intent(in) :: rlata(na),rlona(na),rlate(nlate),rlone(nlone)
       type(egrid2agrid_parm),intent(inout) :: p
+
+!     Declare externals
+      external :: stop2
 
       integer(i_kind) i,ilone,j,nextend,nlate_ex,nlone_ex,nlone_half
       real(r_kind) half_pi,two_pi,dlone,errtest

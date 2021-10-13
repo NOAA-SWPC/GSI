@@ -33,6 +33,8 @@ module control_vectors
 !                          in obs operator and analysis 
 !   2019-07-11  Todling  - move WRF specific variables w_exist and dbz_exit to a new wrf_vars_mod.f90.
 !                        . move imp_physics and lupp to ncepnems_io.f90.
+!   2019-09-13  martin   - added incvars_to_zero variable for writing out fv3 netCDF increments
+!   2019-10-28  martin   - added incvars_zero_strat variable for zeroing out increments above tropopause
 !
 ! subroutines included:
 !   sub init_anacv   
@@ -131,6 +133,10 @@ public lcalc_gfdl_cfrac ! when .t., calculate and use GFDL cloud fraction in obs
 public nrf2_loc,nrf3_loc,nmotl_loc   ! what are these for??
 public ntracer
 
+public :: incvars_to_zero ! array of fieldnames to zero out increments for
+public :: incvars_zero_strat ! array of fieldnames to zero out increments above tropopause
+public :: incvars_efold ! scale factor x in which e^(-(k-ktrop)/x) for above fields
+
 type control_vector
    integer(i_kind) :: lencv
    real(r_kind), pointer :: values(:) => NULL()
@@ -172,6 +178,9 @@ real(r_kind)    ,allocatable,dimension(:) :: atsfc_sdv
 real(r_kind)    ,allocatable,dimension(:) :: an_amp0
 
 logical :: llinit = .false.
+character(len=12),allocatable,dimension(:) :: incvars_to_zero 
+character(len=12),allocatable,dimension(:) :: incvars_zero_strat 
+real(r_kind) :: incvars_efold
 
 ! ----------------------------------------------------------------------
 INTERFACE ASSIGNMENT (=)
@@ -336,6 +345,11 @@ allocate(as3d(nc3d),as2d(nc2d))
 allocate(cvarsmd(mvars))
 allocate(atsfc_sdv(mvars))
 allocate(an_amp0(nvars))
+allocate(incvars_to_zero(nvars))
+allocate(incvars_zero_strat(nvars))
+incvars_to_zero(:) = 'NONE'
+incvars_zero_strat(:) = 'NONE'
+incvars_efold = 5.0_r_kind
 
 ! want to rid code from the following ...
 nrf=nc2d+nc3d
@@ -434,6 +448,8 @@ subroutine allocate_cv(ycv)
   use hybrid_ensemble_parameters, only: grd_ens
   implicit none
   type(control_vector), intent(  out) :: ycv
+! Declare externals
+  external :: stop2
   integer(i_kind) :: ii,jj,nn,ndim,ierror,n_step,n_aens
   character(len=256)::bname
   character(len=max_varname_length)::ltmp(1) 
@@ -707,6 +723,8 @@ subroutine assign_cv2cv(ycv,xcv)
   implicit none
   type(control_vector), intent(inout) :: ycv
   type(control_vector), intent(in   ) :: xcv
+! Declare externals
+  external :: stop2
   integer(i_kind) :: ii
 
   if (xcv%lencv/=ycv%lencv) then
@@ -748,6 +766,8 @@ subroutine assign_array2cv(ycv,parray)
   implicit none
   type(control_vector), intent(inout) :: ycv
   real(r_kind)        , intent(in   ) :: parray(:)
+! Declare externals
+  external :: stop2
   integer(i_kind) :: ii
 
   if (size(parray)/=ycv%lencv) then
@@ -789,6 +809,8 @@ subroutine assign_cv2array(parray,ycv)
   implicit none
   real(r_kind)        , intent(  out) :: parray(:)
   type(control_vector), intent(in   ) :: ycv
+! Declare externals
+  external :: stop2
   integer(i_kind) :: ii
 
   if (size(parray)/=ycv%lencv) then
@@ -1032,6 +1054,9 @@ real(r_kind) function dot_prod_cv(xcv,ycv)
   implicit none
   type(control_vector), intent(in   ) :: xcv, ycv
 
+! Declare externals
+  external :: stop2
+
 ! local variables
   real(r_quad) :: dd(1)
 
@@ -1074,6 +1099,9 @@ real(r_quad) function qdot_prod_cv(xcv,ycv,mold)
   implicit none
   integer(i_kind)     , intent(in   ) :: mold
   type(control_vector), intent(in   ) :: xcv, ycv
+
+! Declare externals
+  external :: stop2
 
 ! local variables
   real(r_quad) :: dd(1)
@@ -1123,6 +1151,9 @@ real(r_quad) function qdot_prod_cv_eb(xcv,ycv,mold,eb)
   integer(i_kind)     , intent(in   ) :: mold
   character(len=*)    , intent(in   ) :: eb
   type(control_vector), intent(in   ) :: xcv, ycv
+
+! Declare externals
+  external :: stop2
 
 ! local variables
   real(r_quad) :: zz(nsubwin+1)
@@ -1297,6 +1328,8 @@ subroutine axpy(alpha,xcv,ycv)
   real(r_kind)        , intent(in   ) :: alpha
   type(control_vector), intent(in   ) :: xcv
   type(control_vector), intent(inout) :: ycv
+! Declare externals
+  external :: stop2
   integer(i_kind) :: ii
 
   if (xcv%lencv/=ycv%lencv) then
@@ -1480,6 +1513,9 @@ subroutine read_cv(xcv,cdfile)
   type(control_vector), intent(inout) :: xcv
   character(len=*)    , intent(in   ) :: cdfile
 
+! Declare externals
+  external :: stop2
+
   character(len=100) :: clfile
   character(len=5) :: clmype
   integer(i_kind):: iunit,ilen
@@ -1561,6 +1597,8 @@ real(r_kind) function maxval_cv(ycv)
 
 implicit none
 type(control_vector), intent(in   ) :: ycv
+! Declare externals
+external :: mpi_allreduce,stop2
 real(r_kind) :: zloc(1),zglo(1)
 
 zloc(1)=maxval(ycv%values(:))
@@ -1600,6 +1638,8 @@ real(r_quad) function qdot_product(x,y)
 
   implicit none
   real(r_kind),intent(in   ) :: x(:),y(:)
+  ! Declare externals
+  external :: stop2
   real(r_quad):: zz
   integer(i_kind) :: nx,ny,i
   nx=size(x)

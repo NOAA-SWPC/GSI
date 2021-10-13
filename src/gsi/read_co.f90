@@ -46,6 +46,9 @@ subroutine read_co(nread,ndata,nodata,infile,gstime,lunout, &
   integer(i_kind) ,intent(inout) :: ndata,nodata
   real(r_kind)    ,intent(in   ) :: gstime
 
+! Declare externals
+  external :: grdcrd1,w3fs21,count_obs
+
 ! Declare local parameters
   real(r_kind),parameter:: r360 = 360.0_r_kind
 

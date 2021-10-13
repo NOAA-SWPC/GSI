@@ -315,6 +315,9 @@ subroutine init_(hour)
 
   integer(i_kind),intent(in) :: hour
 
+! Declare externals
+  external :: w3movdat
+
   character(len=*), parameter :: myname_=myname//'*init_'
   character(len=32) bname
   type(gsi_grid) :: grid

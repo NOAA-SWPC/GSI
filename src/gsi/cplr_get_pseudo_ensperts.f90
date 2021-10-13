@@ -60,6 +60,8 @@ contains
     type(gsi_bundle),allocatable, intent(in   ) :: en_perts(:,:)
     integer(i_kind),                   intent(in   ) :: nelen
     
+!   Declare externals
+    external :: stop2,outgrads1,mpi_scatterv,mpi_barrier
 
     type(sub2grid_info) grd_lib,grd_tmp
     real(r_kind),allocatable,dimension(:,:,:) :: u,v,tv,rh
@@ -793,6 +795,9 @@ contains
     real(r_kind),dimension(grd%lat2,grd%lon2)     ,intent(  out) :: ps
     real(r_kind),dimension(grd%lat2,grd%lon2,grd%nsig),intent(  out) :: u,v,tv,rh
   
+  ! Declare externals
+    external :: stop2,mpi_alltoallv,genqsat
+
   ! Declare local parameters
     real(r_kind),parameter:: r0_01=0.01_r_kind
     real(r_kind),allocatable,dimension(:,:,:) :: tsen,q,prsl
@@ -1050,6 +1055,10 @@ contains
     implicit none
   
     real(r_kind)                          ,intent(inout) :: bc_lon,bc_lat
+
+!   Declare externals
+    external :: stop2
+
     integer(i_kind) iclat,iclon
     character*1 sn,ew
     real(r_kind),parameter:: r360=360.0_r_kind

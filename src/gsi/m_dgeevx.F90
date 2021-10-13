@@ -170,6 +170,10 @@ contains
 !----------------------------------------
     character*1,parameter:: jobvr='V'
     character*1,parameter:: jobvl='V'
+
+!  decalre externals
+    external :: dgeev
+
 !  double precision
     real(r_double)  :: aaa(nsig,nsig)
     real(r_double)  :: wr(nsig),wi(nsig)

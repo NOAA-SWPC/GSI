@@ -156,6 +156,10 @@ subroutine read_airs(mype,val_airs,ithin,isfcalc,rmesh,jsatid,gstime,&
 ! Input/Output variables
   real(r_kind)     ,intent(inout) :: val_airs
 
+! Declare externals
+  external :: stop2,openbf,datelen,ufbint,ufbrep,grdcrd1,&
+    w3fs21,closbf,combine_radobs,count_obs
+
 ! BUFR file sequencial number
   character(len=512)  :: table_file
   integer(i_kind)     :: lnbufr = 10
@@ -855,6 +859,7 @@ subroutine read_airs(mype,val_airs,ithin,isfcalc,rmesh,jsatid,gstime,&
   enddo read_subset
   deallocate(allchan, chan_map, bufr_chan_test)
   call closbf(lnbufr)  ! Close bufr file
+  close(lnbufr)
 
 ! If multiple tasks read input bufr file, allow each tasks to write out
 ! information it retained and then let single task merge files together

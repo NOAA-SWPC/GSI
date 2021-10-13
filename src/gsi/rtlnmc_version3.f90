@@ -2057,6 +2057,9 @@ contains
     real(r_kind),intent(in):: test_div(0:ny1,0:nx1)
     logical,intent(in):: helmholtz_on
 
+!   Declare externals
+    external :: outgrad1
+
     real(r_kind) helmholtz
     real(r_kind),allocatable:: f(:,:),v(:,:),w(:,:)
 !             real(r_kind) time0,timef
@@ -2095,6 +2098,9 @@ contains
   subroutine test_relax
 
     use constants, only: zero,one
+
+!   Declare externals
+    external :: outgrad1
 
     integer(i_kind) i,k,nx,ny
     character(50) string
@@ -2853,6 +2859,9 @@ subroutine fmg_initialize_e(mype)
 
   integer(i_kind),intent(in):: mype
 
+! Declare externals
+  external :: outgrad1
+
   integer(i_kind) mode_number
   real(r_kind) phi0
   real(r_kind) region_lat_e(0:nlat+1,0:nlon+1)
@@ -2930,6 +2939,10 @@ subroutine fmg_strong_bal_correction(u_t,v_t,t_t,ps_t,psi,chi,t,ps,bal_diagnosti
   real(r_kind),dimension(lat2,lon2),intent(in)::ps_t
   real(r_kind),dimension(lat2,lon2,nsig),intent(inout)::psi,chi,t
   real(r_kind),dimension(lat2,lon2),intent(inout)::ps
+
+! Declare externals
+  external :: stop2,special_for_llfmg_sub2grid3,get_div_reg,get_vor_reg,fmg_wrapper_e,&
+    get_delsqr_reg,delx_reg,dely_reg,mpi_allreduce,special_for_llfmg_grid2sub2
 
   real(r_kind),dimension(lat2,lon2,nvmodes_keep)::utilde,vtilde,mtilde
   real(r_kind),dimension(lat2,lon2,nvmodes_keep)::delpsitilde,delchitilde,delmtilde,dummytilde
@@ -3146,6 +3159,10 @@ subroutine fmg_strong_bal_correction_ad(u_t,v_t,t_t,ps_t,psi,chi,t,ps,update,myp
   real(r_kind),dimension(lat2,lon2,nsig),intent(in)::psi,chi,t
   real(r_kind),dimension(lat2,lon2),intent(in)::ps
 
+! Declare externals
+  external :: stop2,special_for_llfmg_sub2grid2,fmg_wrapper_e_ad,tget_delsqr_reg,&
+    get_div_reg_ad,get_vor_reg_ad,special_for_llfmg_grid2sub3
+
   real(r_kind),dimension(lat2,lon2,nvmodes_keep)::utilde,vtilde,mtilde,utdum,vtdum,mtdum
   real(r_kind),dimension(lat2,lon2,nvmodes_keep)::delpsitilde,delchitilde,delmtilde,dummytilde
   real(r_kind),dimension(nlat,nlon)::u0t,v0t,m0t,div0t,vor0t,rhs,mtg,delm
@@ -3297,6 +3314,11 @@ subroutine fmg_strong_bal_correction_ad_test(u_t,v_t,t_t,ps_t,psi,chi,t,ps,mype)
   real(r_kind),dimension(lat2,lon2),intent(inout)::ps_t
   real(r_kind),dimension(lat2,lon2,nsig),intent(inout)::psi,chi,t
   real(r_kind),dimension(lat2,lon2),intent(inout)::ps
+
+! Declare externals
+  external :: fmg_strong_bal_correction,mpi_allreduce,fmg_strong_bal_correction_ad,&
+    mpi_finalize
+
            real(r_kind),dimension(lat2,lon2,nsig)::uu_t,vv_t,tt_t
            real(r_kind),dimension(lat2,lon2)::pps_t
            real(r_kind),dimension(lat2,lon2,nsig)::psi2,chi2,t2
@@ -3419,6 +3441,10 @@ subroutine zrnmi_filter_uvm_ad_test(mype)
            implicit none
 
   integer(i_kind),intent(in)::mype
+
+! Declare externals
+  external :: mpi_allreduce,mpi_finalize
+
   real(r_kind),dimension(lat2,lon2,nvmodes_keep)::u1,u2,v1,v2,m1,m2
            integer(i_kind) ivar,i,j,k
            real(r_kind) yty,yty0,xtz,xtz0,errmax
@@ -3598,8 +3624,13 @@ subroutine get_delsqr_reg(work1,work2)
   use gridmod, only: nlat,nlon
   implicit none
   
+  real(r_kind),dimension(nlat,nlon),intent(in):: work1
+  real(r_kind),dimension(nlat,nlon),intent(out):: work2
+
+! Declare externals
+  external :: delx_reg,dely_reg
+
   integer(i_kind) i,j
-  real(r_kind),dimension(nlat,nlon):: work1,work2
   real(r_kind),dimension(nlat,nlon):: grid1,grid2,grid3,grid4
 
   call delx_reg(work1,grid1,(.false.))
@@ -3643,8 +3674,13 @@ subroutine tget_delsqr_reg(work2,work1)
   use constants, only: zero
   implicit none
 
+  real(r_kind),dimension(nlat,nlon),intent(inout):: work1
+  real(r_kind),dimension(nlat,nlon),intent(in):: work2
+
+! Declare externals
+  external :: tdely_reg,tdelx_reg
+
   integer(i_kind) i,j
-  real(r_kind),dimension(nlat,nlon):: work1,work2
   real(r_kind),dimension(nlat,nlon):: grid1,grid2,grid3,grid4
 
   do j=1,nlon
@@ -3671,68 +3707,71 @@ end subroutine tget_delsqr_reg
 
 subroutine outgrad1(f,label,nx,ny)
 
-         character(*) label
-         integer(4) nx,ny
-         real(8) f(ny,nx)
+   use kinds, only: i_kind,r_kind,r_single
+   implicit none
 
-         character(80) dsdes,dsdat
-         character(80) datdes(1000)
-         character(1) blank
-         integer np,ioutcor,ioutdat,ntime
-         integer i,j,k,next,last,koutmax
-         real(4) out(nx,ny)
-         real(4) undef,rlonmap0,rlatmap0,dlonmap,dlatmap
-         real(4) startp,pinc
-         data blank/' '/
-         data undef/-9.99e33/
+   character(*),intent(in) :: label
+   integer(i_kind),intent(in) :: nx,ny
+   real(r_kind),intent(in) :: f(ny,nx)
+
+   character(80) dsdes,dsdat
+   character(80) datdes(1000)
+   character(1) blank
+   integer(i_kind) np,ioutcor,ioutdat,ntime
+   integer(i_kind) i,j,k,next,last,koutmax
+   real(r_single) out(nx,ny)
+   real(r_single) undef,rlonmap0,rlatmap0,dlonmap,dlatmap
+   real(r_single) startp,pinc
+   data blank/' '/
+   data undef/-9.99e33_r_single/
 
 
-         np=1
-         ioutcor=10
-         ioutdat=11
+   np=1
+   ioutcor=10
+   ioutdat=11
 
-         write(dsdes,'(a,".des")')trim(label)
-         write(dsdat,'(a,".dat")')trim(label)
-         open(unit=ioutcor,file=dsdes,form='formatted')
-         open(unit=ioutdat,file=dsdat,form='unformatted')
-         ntime=1
-         rlonmap0=1.
-         dlonmap=1.
-         rlatmap0=1.
-         dlatmap=1.
-         startp=1.
-         pinc=1.
-         koutmax=1
-         do i=1,1000
-          write(datdes(i),'(80a1)')(blank,k=1,80)
-         end do
-         write(datdes(1),'("DSET ",a)')trim(dsdat)
-         write(datdes(2),'("options big_endian sequential")')
-         write(datdes(3),'("TITLE ",a)')trim(label)
-         write(datdes(4),'("UNDEF ",e11.2)')undef
-         write(datdes(5),'("XDEF ",i5," LINEAR ",f7.2,f7.2)')nx,rlonmap0,dlonmap
-         write(datdes(6),'("YDEF ",i5," LINEAR ",f7.2,f7.2)')ny,rlatmap0,dlatmap
-         next=7
-         write(datdes(next),'("ZDEF ",i5," LINEAR ",f7.2,f7.2)')np,startp,pinc
-         next=next+1
-         write(datdes(next),'("TDEF ",i5," LINEAR 0Z23may1992 24hr")')koutmax
-         next=next+1
-         write(datdes(next),'("VARS 1")')
-         next=next+1
-         write(datdes(next),'("f   ",i5," 99 f   ")')np
-         next=next+1
-         write(datdes(next),'("ENDVARS")')
-         last=next
-         write(ioutcor,'(a80)')(datdes(i),i=1,last)
-         close(ioutcor)
+   write(dsdes,'(a,".des")')trim(label)
+   write(dsdat,'(a,".dat")')trim(label)
+   open(unit=ioutcor,file=dsdes,form='formatted')
+   open(unit=ioutdat,file=dsdat,form='unformatted')
+   ntime=1
+   rlonmap0=1._r_single
+   dlonmap=1._r_single
+   rlatmap0=1._r_single
+   dlatmap=1._r_single
+   startp=1._r_single
+   pinc=1._r_single
+   koutmax=1
+   do i=1,1000
+      write(datdes(i),'(80a1)')(blank,k=1,80)
+   end do
+   write(datdes(1),'("DSET ",a)')trim(dsdat)
+   write(datdes(2),'("options big_endian sequential")')
+   write(datdes(3),'("TITLE ",a)')trim(label)
+   write(datdes(4),'("UNDEF ",e11.2)')undef
+   write(datdes(5),'("XDEF ",i5," LINEAR ",f7.2,f7.2)')nx,rlonmap0,dlonmap
+   write(datdes(6),'("YDEF ",i5," LINEAR ",f7.2,f7.2)')ny,rlatmap0,dlatmap
+   next=7
+   write(datdes(next),'("ZDEF ",i5," LINEAR ",f7.2,f7.2)')np,startp,pinc
+   next=next+1
+   write(datdes(next),'("TDEF ",i5," LINEAR 0Z23may1992 24hr")')koutmax
+   next=next+1
+   write(datdes(next),'("VARS 1")')
+   next=next+1
+   write(datdes(next),'("f   ",i5," 99 f   ")')np
+   next=next+1
+   write(datdes(next),'("ENDVARS")')
+   last=next
+   write(ioutcor,'(a80)')(datdes(i),i=1,last)
+   close(ioutcor)
 
-         do i=1,nx
-           do j=1,ny
-             out(i,j)=f(j,i)
-           end do
-         end do
-         write(ioutdat)((out(i,j),i=1,nx),j=1,ny)
-         close(ioutdat)
+   do i=1,nx
+      do j=1,ny
+         out(i,j)=f(j,i)
+      end do
+   end do
+   write(ioutdat)((out(i,j),i=1,nx),j=1,ny)
+   close(ioutdat)
 
 return
 end subroutine outgrad1
@@ -3749,6 +3788,9 @@ subroutine special_for_llfmg_sub2grid3(a1,a2,a3,b1,b2,b3,f1,f2,f3,mype)
   integer(i_kind),intent(in):: mype
   real(r_kind),dimension(lat2,lon2,nvmodes_keep),intent(in)::a1,a2,a3,b1,b2,b3
   real(r_kind),dimension(nlat,nlon),intent(out):: f1,f2,f3
+
+! Declare externals
+  external :: generic_sub2grid8
 
   real(r_kind) all_loc(lat1,lon1,3,2*nvmodes_keep),tempa(itotsub,3)
   integer(i_kind) i,ip1,j,jp1,k,ka,kb
@@ -3817,6 +3859,9 @@ subroutine special_for_llfmg_sub2grid2(a1,a2,b1,b2,f1,f2,mype)
   real(r_kind),dimension(lat2,lon2,nvmodes_keep),intent(in)::a1,a2,b1,b2
   real(r_kind),dimension(nlat,nlon),intent(out):: f1,f2
 
+! Declare externals
+  external :: generic_sub2grid8
+
   real(r_kind) all_loc(lat1,lon1,2,2*nvmodes_keep),tempa(itotsub,2)
   integer(i_kind) i,ip1,j,jp1,k,ka,kb
   integer(i_kind) kbegin(0:npe-1),kend(0:npe-1),numlevs(0:npe-1)
@@ -3878,6 +3923,9 @@ subroutine special_for_llfmg_grid2sub2(f1,f2,a1,a2,b1,b2,mype)
   real(r_kind),dimension(nlat,nlon),intent(in):: f1,f2
   real(r_kind),dimension(lat2,lon2,nvmodes_keep),intent(out)::a1,a2,b1,b2
 
+! Declare externals
+  external :: generic_grid2sub8
+
   real(r_kind) all_loc(lat2,lon2,2,2*nvmodes_keep),tempa(itotsub,2)
   integer(i_kind) i,j,k,ka,kb
   integer(i_kind) kbegin(0:npe-1),kend(0:npe-1),numlevs(0:npe-1)
@@ -3937,6 +3985,9 @@ subroutine special_for_llfmg_grid2sub3(f1,f2,f3,a1,a2,a3,b1,b2,b3,mype)
   integer(i_kind),intent(in):: mype
   real(r_kind),dimension(nlat,nlon),intent(in):: f1,f2,f3
   real(r_kind),dimension(lat2,lon2,nvmodes_keep),intent(out)::a1,a2,a3,b1,b2,b3
+
+! Declare externals
+  external :: generic_grid2sub8
 
   real(r_kind) all_loc(lat2,lon2,3,2*nvmodes_keep),tempa(itotsub,3)
   integer(i_kind) i,j,k,ka,kb
@@ -4033,10 +4084,13 @@ subroutine generic_sub2grid8(all_loc,tempa,kbegin_loc,kend_loc,kbegin,kend,mype,
   use constants, only: zero
   implicit none
 
-  integer(i_kind) kbegin_loc,kend_loc,mype,num_fields
-  integer(i_kind) kbegin(0:npe),kend(0:npe-1)
-  real(r_kind) tempa(itotsub,kbegin_loc:max(kbegin_loc,kend_loc))
-  real(r_kind) all_loc(lat1*lon1*num_fields)
+  integer(i_kind),intent(in) :: kbegin_loc,kend_loc,mype,num_fields
+  integer(i_kind),intent(in) :: kbegin(0:npe),kend(0:npe-1)
+  real(r_kind),intent(out) :: tempa(itotsub,kbegin_loc:max(kbegin_loc,kend_loc))
+  real(r_kind),intent(in) :: all_loc(lat1*lon1*num_fields)
+
+! Declare externals
+  external :: mpi_alltoallv,reorder_s8
 
   integer(i_kind) k
   integer(i_kind) sendcounts(0:npe-1),sdispls(0:npe),recvcounts(0:npe-1),rdispls(0:npe)
@@ -4045,13 +4099,13 @@ subroutine generic_sub2grid8(all_loc,tempa,kbegin_loc,kend_loc,kbegin,kend,mype,
 
   sdispls(0)=0
   do k=0,npe-1
-   sendcounts(k)=ijn(k+1)*(kend_loc-kbegin_loc+1)
-   sdispls(k+1)=sdispls(k)+sendcounts(k)
+     sendcounts(k)=ijn(k+1)*(kend_loc-kbegin_loc+1)
+     sdispls(k+1)=sdispls(k)+sendcounts(k)
   end do
   rdispls(0)=0
   do k=0,npe-1
-   recvcounts(k)=ijn(mype+1)*(kend(k)-kbegin(k)+1)
-   rdispls(k+1)=rdispls(k)+recvcounts(k)
+     recvcounts(k)=ijn(mype+1)*(kend(k)-kbegin(k)+1)
+     rdispls(k+1)=rdispls(k)+recvcounts(k)
   end do
 
   call mpi_alltoallv(all_loc,recvcounts,rdispls,mpi_rtype, &
@@ -4185,11 +4239,14 @@ subroutine generic_grid2sub8(tempa,all_loc,kbegin_loc,kend_loc,kbegin,kend,mype,
   use constants, only: zero
   implicit none
   
-  integer(i_kind) kbegin_loc,kend_loc,mype,num_fields
-  integer(i_kind) kbegin(0:npe),kend(0:npe-1)
-  real(r_kind) tempa(itotsub,kbegin_loc:max(kbegin_loc,kend_loc))
-  real(r_kind) all_loc(lat2*lon2*num_fields)
+  integer(i_kind),intent(in) :: kbegin_loc,kend_loc,mype,num_fields
+  integer(i_kind),intent(in) :: kbegin(0:npe),kend(0:npe-1)
+  real(r_kind),intent(inout) :: tempa(itotsub,kbegin_loc:max(kbegin_loc,kend_loc))
+  real(r_kind),intent(out) :: all_loc(lat2*lon2*num_fields)
   
+! Declare externals
+  external :: reorder2_s8,mpi_alltoallv
+
   integer(i_kind) k
   integer(i_kind) sendcounts(0:npe-1),sdispls(0:npe),recvcounts(0:npe-1),rdispls(0:npe)
 
@@ -4306,6 +4363,9 @@ subroutine get_div_reg(u,v,div)
   real(r_kind),dimension(nlat,nlon),intent(in):: u,v
   real(r_kind),dimension(nlat,nlon),intent(out)::div
 
+! Declare externals
+  external :: delx_reg,dely_reg
+
   integer(i_kind) i,j
   real(r_kind),dimension(nlat,nlon)::ux,vy
 
@@ -4329,6 +4389,9 @@ subroutine get_div_reg_ad(u,v,div)
 
   real(r_kind),dimension(nlat,nlon),intent(out):: u,v
   real(r_kind),dimension(nlat,nlon),intent(in)::div
+
+! Declare externals
+  external :: tdelx_reg,tdely_reg
 
   integer(i_kind) i,j
   real(r_kind),dimension(nlat,nlon)::ux,vy
@@ -4355,6 +4418,9 @@ subroutine get_vor_reg(u,v,vor)
   real(r_kind),dimension(nlat,nlon),intent(in):: u,v
   real(r_kind),dimension(nlat,nlon),intent(out)::vor
 
+! Declare externals
+  external :: delx_reg,dely_reg
+
   integer(i_kind) i,j
   real(r_kind),dimension(nlat,nlon)::uy,vx
 
@@ -4378,6 +4444,9 @@ subroutine get_vor_reg_ad(u,v,vor)
 
   real(r_kind),dimension(nlat,nlon),intent(out):: u,v
   real(r_kind),dimension(nlat,nlon),intent(in)::vor
+
+! Decalre externals
+  external :: tdelx_reg,tdely_reg
 
   integer(i_kind) i,j
   real(r_kind),dimension(nlat,nlon)::uy,vx

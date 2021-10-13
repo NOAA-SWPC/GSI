@@ -277,6 +277,8 @@ subroutine allocate_state(yst)
 !$$$ end documentation block
   implicit none
   type(gsi_bundle), intent(inout) :: yst
+! Declare externals
+  external :: stop2
   type(gsi_grid) :: grid
   integer(i_kind) :: ierror
   character(len=80) :: bname
@@ -366,6 +368,9 @@ subroutine norms_vars(xst,pmin,pmax,psum,pnum)
   implicit none
   type(gsi_bundle), intent(in   ) :: xst
   real(r_kind)    , intent(  out) :: pmin(nvars),pmax(nvars),psum(nvars),pnum(nvars)
+
+! Declare externals
+  external :: mpi_allgather
 
 ! local variables
   real(r_kind),allocatable,dimension(:)   :: zloc,nloc
@@ -589,6 +594,9 @@ real(r_quad) function dot_prod_st(xst,yst,which)
   type(gsi_bundle)         , intent(in) :: xst, yst
   character(len=*)  ,optional, intent(in) :: which  ! variable name
 
+! Declare externals
+  external :: stop2
+
   real(r_quad),dimension(1) :: zz
   integer(i_kind) :: i,ii,ipntx,ipnty,irkx,irky,ier,ist
 
@@ -796,6 +804,9 @@ subroutine set_random_st ( xst )
 !$$$ end documentation block
   implicit none
   type(gsi_bundle), intent(inout) :: xst
+
+! Declare externals
+  external :: getprs_tl,tv_to_tsen
 
   integer(i_kind):: i,jj,iseed,itsn,iprse,ierror,ier
   integer, allocatable :: nseed(:) ! Intentionaly default integer

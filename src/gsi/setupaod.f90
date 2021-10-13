@@ -105,7 +105,10 @@ subroutine setupaod(obsLL,odiagLL,lunin,mype,nchanl,nreal,nobs,&
   logical                           ,intent(in   ) :: init_pass  ! state of "setup" processing
 
 ! Declare external calls for code analysis
+  external:: intrp2a11
+  external:: genqsat
   external:: stop2
+  external:: aero_guess_at_obs_locations
 
 ! Declare local parameters
   integer(i_kind),parameter:: ipchan=4

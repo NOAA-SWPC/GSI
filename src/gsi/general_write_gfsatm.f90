@@ -58,6 +58,9 @@ subroutine general_write_gfsatm(grd,sp_a,sp_b,filename,mype_out,&
     integer(i_kind),     intent(in   ) :: ibin
     integer(i_kind),     intent(  out) :: iret_write
 
+    ! Declare externals
+    external :: stop2,w3movdat,general_gather,general_sptez_s_b,general_sptez_s
+
     ! LOCAL VARIABLES
     integer(i_kind),parameter::  lunges = 11
     integer(i_kind),parameter::  lunanl = 51
@@ -412,6 +415,9 @@ subroutine general_gather(grd,g_ps,g_tv,g_vor,g_div,g_q,g_oz,g_cwmr, &
 !
 !EOP
 !-------------------------------------------------------------------------
+
+! Declare externals
+  external :: mpi_alltoallv
 
   integer(i_kind) klev,k,icount
   real(r_kind),dimension(grd%lat1*grd%lon1,npe):: sub

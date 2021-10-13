@@ -73,6 +73,8 @@ subroutine  read_goesimgr_skycover(nread,ndata,nodata,infile,obstype,lunout,gsti
   real(r_kind)                          ,intent(in   ) :: twind,gstime
   real(r_kind),dimension(nlat,nlon,nsig),intent(in   ) :: prsl_full
 
+! Declare externals
+  external :: openbf,datelen,closbf,ufbint,w3fs21,grdcrd1,stop2,count_obs
 
 ! Declare local parameters
   real(r_kind),parameter:: r90  = 90.0_r_kind
@@ -205,11 +207,11 @@ subroutine  read_goesimgr_skycover(nread,ndata,nodata,infile,obstype,lunout,gsti
   ilat=3
   ntb=0
 
-   close(lunin)
-   call closbf(lunin)
-   open(lunin,file=trim(infile),form='unformatted')
-   call openbf(lunin,'IN',lunin)
-   call datelen(10)
+  call closbf(lunin)
+  close(lunin)
+  open(lunin,file=trim(infile),form='unformatted')
+  call openbf(lunin,'IN',lunin)
+  call datelen(10)
 
    loop_msg: do while (ireadmg(lunin,subset,idate) == 0)
          loop_readsb: do while (ireadsb(lunin) == 0)
@@ -418,7 +420,7 @@ subroutine  read_goesimgr_skycover(nread,ndata,nodata,infile,obstype,lunout,gsti
   deallocate(cdata_out)
 
   if (ndata == 0) then 
-     write(6,*)myname,':  closbf(',lunin,')'
+     write(6,*)myname,'no read_goesimgr_skycover data'
   endif
 
   close(lunin)

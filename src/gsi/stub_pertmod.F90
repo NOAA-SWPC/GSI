@@ -28,6 +28,8 @@ subroutine parallel_init_()
 use kinds, only: i_kind
 use mpeu_util, only: die
 implicit none
+! Declare externals
+external :: mpi_initialized,mpi_init
 integer(i_kind):: ierror
 logical:: already_init_mpi
 character(len=*),parameter:: myname_=MYNAME//'::parallel_init_'

@@ -83,6 +83,10 @@ subroutine calctends_no_ad(st,vp,t,p,mype,u_t,v_t,t_t,p_t,uvflag)
   integer(i_kind)                       ,intent(in   ) :: mype
   logical                               ,intent(in   ) :: uvflag
 
+! Declare externals
+  external :: stop2,turbl_ad,getvvel_ad,tget_derivatives2uv,&
+    tget_derivatives2,getprs_ad
+
 ! Declare local variables
   character(len=*),parameter::myname='calctends_no_ad'
   real(r_kind),dimension(lat2,lon2,nsig):: u,v

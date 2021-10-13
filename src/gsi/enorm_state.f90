@@ -47,6 +47,9 @@ type(gsi_bundle), intent(inout) :: xst
 real(r_quad)    , intent(  out) :: enorm
 type(gsi_bundle), intent(inout) :: yst
 
+! Declare externals
+external :: stop2
+
 ! Declare local variables
 real(r_kind) :: qfact, tfact, pfact, pref, tref, gridfac, zps
 real(r_kind) :: coslat(lat2), dsig(lat2,lon2,nsig), akk(nsig)
@@ -223,6 +226,9 @@ implicit none
 type(gsi_bundle), intent(inout) :: xst
 real(r_quad)    , intent(  out) :: enorm
 type(gsi_bundle), intent(inout) :: yst
+
+! Declare externals
+external :: stop2
 
 ! Declare local variables
 real(r_kind) :: qfact, tfact, pfact, pref, tref, gridfac, zps

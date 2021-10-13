@@ -122,6 +122,9 @@ contains
     use obsmod, only: iout_light
     implicit none
 
+! Declare externals
+    external :: stop2
+
 ! Declare local varianbes
     logical lexist
     character(len=1):: cflg

@@ -32,6 +32,8 @@ use state_vectors, only: allocate_state,deallocate_state
 use gsi_4dcouplermod, only: gsi_4dcoupler_putpert
 use gsi_bundlemod, only: gsi_bundle
 implicit none
+! declare externals
+external :: stop2
 ! declare local variables
 character(len=*),parameter:: myname_ = "getsiga"
 type(gsi_bundle)     :: siga                      ! vector to analysis errors
@@ -111,6 +113,8 @@ type(control_vector)        :: xhat
 integer(i_kind), intent(in) :: mydate(5) ! as in iadate or ibdate, or similar
 character(len=*),intent(in) :: filename
 logical,         intent(in) :: writecv   ! when .t., simply write out CV directly
+! declare externals
+external :: control2model,control2state
 ! declare local variables
 character(len=*),parameter:: myname_ = "view_cv"
 integer(i_kind)      :: nymd                      ! date as in YYYYMMDD
@@ -203,6 +207,8 @@ type(control_vector)        :: xhat
 integer(i_kind), intent(in) :: mydate(5) ! as in iadate or ibdate, or similar
 character(len=*),intent(in) :: filename
 logical,         intent(in) :: readcv    ! when .t. simply read in CV
+! declare externals
+external :: control2model,control2model_ad,control2state_ad
 ! declare local variables
 character(len=*),parameter:: myname_ = "view_cv_ad"
 integer(i_kind)      :: nymd                      ! date as in YYYYMMDD
@@ -295,6 +301,8 @@ use gsi_bundlemod, only: gsi_bundle
 implicit none
 type(gsi_bundle)            :: sval(nobs_bins)
 character(len=*),intent(in) :: filename
+! declare externals
+external :: w3movdat
 ! declare local variables
 character(len=*),parameter:: myname_ = "view_st"
 integer(i_kind)      :: nymd                      ! date as in YYYYMMDD

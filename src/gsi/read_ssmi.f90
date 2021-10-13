@@ -121,6 +121,10 @@ subroutine read_ssmi(mype,val_ssmi,ithin,rmesh,jsatid,gstime,&
   integer(i_kind),intent(inout):: ndata,nodata
   logical        ,intent(in   ):: dval_use
 
+! Declare externals
+  external :: openbf,datelen,ufbint,w3fs21,ufbrep,grdcrd1,closbf,&
+    combine_radobs,count_obs
+
 ! Declare local parameters
   integer(i_kind),parameter :: n1bhdr=14
   integer(i_kind),parameter :: maxchanl=30
@@ -511,6 +515,7 @@ subroutine read_ssmi(mype,val_ssmi,ithin,rmesh,jsatid,gstime,&
      end do read_loop
   end do read_subset
   call closbf(lnbufr)
+  close(lnbufr)
 
 ! If multiple tasks read input bufr file, allow each tasks to write out
 ! information it retained and then let single task merge files together

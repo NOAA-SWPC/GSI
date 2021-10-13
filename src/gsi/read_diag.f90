@@ -260,6 +260,9 @@ subroutine open_radiag(filename, ftin, istatus)
    integer(i_kind), intent(inout) :: ftin
    integer(i_kind), intent(out):: istatus
 
+!  Declare externals
+   external :: stop2
+
    integer(i_kind) :: i
 
    istatus = -999
@@ -300,6 +303,9 @@ end subroutine open_radiag
 subroutine close_radiag(filename, ftin)
    character*500,   intent(in) :: filename
    integer(i_kind), intent(inout) :: ftin
+
+!  Declare externals
+   external :: stop2
 
    integer(i_kind) :: id
 
@@ -408,6 +414,9 @@ subroutine read_radiag_header_nc(ftin,header_fix,header_chan,iflag)
   type(diag_header_fix_list ),intent(out):: header_fix
   type(diag_header_chan_list),allocatable :: header_chan(:)
   integer(i_kind),intent(out)            :: iflag
+
+! Declare externals
+  external :: stop2
 
 ! local variables
   integer(i_kind)                        :: nchan_dim
@@ -850,6 +859,9 @@ subroutine read_radiag_data_nc_init(ftin, diag_status, header_fix, retrieval, if
   type(diag_header_fix_list ),intent(in) :: header_fix
   logical,intent(in)                     :: retrieval
   integer(i_kind),intent(out)            :: iflag
+
+! Declare externals
+  external :: abort
 
 ! Declare local variables
   integer(i_kind)                          :: nrecord, ndatum, nangord

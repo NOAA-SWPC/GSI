@@ -89,6 +89,9 @@ contains
     character(10)  , intent(in   ) :: obstype,csatid
     integer(i_kind), intent(in   ) :: mype
 
+! Declare externals
+    external :: openbf
+
     integer(i_kind) i
     character(9) :: string
     character(len=80) :: bufrtabf
@@ -182,6 +185,9 @@ contains
     character(len=8), parameter :: subset='NC012017'
     real(r_kind),parameter:: r180=180.0_r_kind
     real(r_kind),parameter:: r360=360.0_r_kind
+
+!   Declare externals
+    external :: w3movdat,OPENMB,UFBSEQ,WRITSB
 
 !   Declare local variables
     real(r_kind) :: ws,wa,wq
@@ -467,7 +473,11 @@ contains
 !$$$ end documentation block
     implicit none
 
+!   Declare externals
+    external :: closbf
+
     call closbf(lnbufr)
+    close(lnbufr)
     return
   end subroutine finish_sst_retrieval
     

@@ -157,6 +157,9 @@ contains
     use gsi_io, only: verbose
     implicit none
 
+!   Declare externals
+    external :: stop2
+
     integer(i_kind) j,k,lunin,nlines,ip,istat
     integer(i_kind) anal_time
     integer(i_kind) isort

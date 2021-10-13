@@ -61,6 +61,9 @@ contains
 !   Declare passed variables
     integer(i_kind),intent(in):: nlat,nlon,jcapin,idrtin
 
+!   Declare externals
+    external :: sptranf0,splat
+
 !   Set constants
     jcap = jcapin
     idrt = idrtin
@@ -275,6 +278,9 @@ subroutine sptranf_s(wave,gridn,grids,idir)
   real(r_kind),dimension(nc),intent(inout):: wave
   real(r_kind),dimension(ijmax),intent(inout):: gridn
   real(r_kind),dimension(ijmax),intent(inout):: grids
+
+! Declare externals
+  external :: sptranf1
 
 ! Declare local variables
   integer(i_kind) i,j,jj,ijn,ijs,mp
@@ -513,6 +519,8 @@ subroutine sptranf_v(waved,wavez,gridun,gridus,gridvn,gridvs,idir)
   real(r_kind),dimension(nc):: waved,wavez
   real(r_kind),dimension(ijmax):: gridun,gridus,gridvn,gridvs
 
+! Declare externals
+  external :: spdz2uv,sptranf1,spuv2dz
 
 ! Declare local variables
   integer(i_kind) i,j,jj,ijn,ijs

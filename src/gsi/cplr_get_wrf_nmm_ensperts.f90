@@ -77,6 +77,10 @@ contains
       real(r_kind),allocatable, intent(inout):: region_lat_ens(:,:),region_lon_ens(:,:)
       real(r_single),dimension(:,:,:),allocatable, intent(inout):: ps_bar
   
+!     Declare externals
+      external :: stop2,outgrads1,merge_grid_e_to_grid_a_initialize,merge_vgrid_e_to_vgrid_a,&
+        merge_grid_e_to_grid_a,mpi_barrier
+
       type(get_wrf_mass_ensperts_class) :: wrf_mass
       real(r_kind),allocatable,dimension(:,:,:):: u,v,tv,cwmr,oz,rh
       real(r_kind),allocatable,dimension(:,:):: ps
@@ -945,6 +949,10 @@ contains
     use get_wrf_binary_interface_mod, only: get_wrf_binary_interface_class
     implicit none
     class(get_wrf_nmm_ensperts_class), intent(inout) :: this
+
+!   Declare externals
+    external :: stop2,ll2rpolar,rpolar2ll
+
     integer(i_kind),parameter:: in_unit = 15
   
     character(9) wrfens
@@ -1302,6 +1310,9 @@ contains
       real(r_kind),intent(out) :: region_lat(grd%nlat,grd%nlon)
       real(r_kind),intent(out) :: region_lon(grd%nlat,grd%nlon)
   
+  ! Declare externals
+      external :: stop2,mpi_file_open,mpi_file_read_at,mpi_file_close,genqsat
+
   ! Declare local parameters
       type(read_wrf_mass_guess_class) :: read_wrf
       real(r_kind),parameter:: r0_01 = 0.01_r_kind
@@ -1719,6 +1730,9 @@ contains
        real(r_kind),intent(out) :: region_lat(grd%nlat,grd%nlon)
        real(r_kind),intent(out) :: region_lon(grd%nlat,grd%nlon)
      
+     ! Declare externals
+       external :: stop2,mpi_alltoallv,genqsat
+
      ! other internal variables
        real(r_kind),allocatable::g_tsen(:,:,:),g_q(:,:,:),g_prsl(:,:,:)
        real(r_kind),allocatable::g_pd(:,:)
@@ -2290,6 +2304,9 @@ contains
     real(r_single) ,intent(inout) :: tempa(grd%itotsub,kbegin_loc:kend_loc)
     real(r_single) ,intent(  out) :: all_loc(grd%lat2*grd%lon2*num_fields)
    
+!   Declare externals
+    external :: mpi_alltoallv
+
     integer(i_kind) k
     integer(i_kind) sendcounts(0:npe-1),sdispls(0:npe),recvcounts(0:npe-1),rdispls(0:npe)
   
@@ -2803,6 +2820,9 @@ contains
     real(r_kind),dimension(grd%lat2,grd%lon2),intent(in):: sub
     real(r_kind),dimension(grd%nlat,grd%nlon),intent(out)::grid
   
+!   Declare externals
+    external :: mpi_gatherv
+
     real(r_kind),dimension(grd%lat1*grd%lon1):: zsm
     real(r_kind),dimension(grd%itotsub):: work1
     integer(i_kind) mm1,i,j,k
@@ -2920,6 +2940,9 @@ contains
     type(gsi_bundle),allocatable, intent(inout) :: en_perts(:,:)
     integer(i_kind), intent(in   ):: nelen
   
+!   Declare externals
+    external :: stop2
+
     type(gsi_bundle):: sube,suba
     type(gsi_grid):: grid_ens,grid_anl
     real(r_kind) sig_norm_inv

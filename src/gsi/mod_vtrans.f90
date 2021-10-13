@@ -219,6 +219,10 @@ contains
 !   Declare passed variables
     integer(i_kind),intent(in   ) :: mype
 
+!   Declare externals
+    external :: mpi_bcast,get_semimp_mats,iminv_quad,&
+      special_eigvv
+
 !   Declare local variables
     character(len=*),parameter::myname_=myname//'*create_vtrans'
     integer(i_kind) i,j,k,n
@@ -243,8 +247,6 @@ contains
 
 !   get work pe:
 
-    print_verbose=.false.
-    if(verbose .and. g1%mype==workpe) print_verbose=.true.
     allocate(numlevs(0:g1%npe-1))
     numlevs(0:g1%npe-1)=g1%kend(0:g1%npe-1)-g1%kbegin(0:g1%npe-1)+1
     if(g1%mype==0) then
@@ -257,6 +259,10 @@ contains
     end if
     call mpi_bcast(workpe,1,mpi_integer,0,mpi_comm_world,ierror)
    !write(6,*)' mype,workpe=',mype,workpe
+
+    print_verbose=.false.
+    if(verbose .and. g1%mype==workpe) print_verbose=.true.
+
 
 !    obtain vertical coordinate constants ahat,bhat,chat
     if(mype==workpe) call getabc(ahat,bhat,chat)
@@ -816,6 +822,8 @@ subroutine special_eigvv(qmat0,hmat0,smat0,nmat,swww0,szzz0,swwwd0,szzzd0,nvmode
   real(r_kind),intent(inout):: swww0(nvmodes_keep),swwwd0(nvmodes_keep)
   real(r_kind),intent(inout):: szzz0(nmat,nvmodes_keep),szzzd0(nmat,nvmodes_keep)
 
+! Declare externals
+  external :: eigen,iterative_improvement0,iterative_improvement
 
   real(r_quad) qmat(nmat,nmat),hmat(nmat),smat(nmat)
   real(r_quad) swww(nvmodes_keep),swwwd(nvmodes_keep)
@@ -1076,6 +1084,9 @@ subroutine iterative_improvement0(a,mu,aminv,aminvt,na,iret,errormax)
   real(r_quad),intent(inout)::aminvt(na,na)
   real(r_quad),intent(out):: errormax
   integer(i_kind),intent(out)::iret
+
+! Declare externals
+  external :: iminv_quad
 
   real(r_quad) am(na,na)
   real(r_quad) sum,detam,errlimit

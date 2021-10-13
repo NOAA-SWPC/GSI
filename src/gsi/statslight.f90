@@ -48,6 +48,9 @@ subroutine statslight(mype,i_light,bwork,awork,i_ref,ndata)
   real(r_kind),dimension(npres_print,nlighttype,5,3),intent(in   ) :: bwork
   integer(i_kind),dimension(ndat,3)                 ,intent(in   ) :: ndata
 
+! Declare externals
+  external :: dtast
+
 ! Declare local variables
   character(100) mesage
 
@@ -126,7 +129,7 @@ subroutine statslight(mype,i_light,bwork,awork,i_ref,ndata)
 920 format(a44,i7)
 924 format(a50)
 925 format(' number of ',a5,' obs that failed gross test = ',I5,' nonlin qc test = ',I5)
-949 format(' number of ',a5,' obs = ',i6,' pen= ',e25.18,' cpen= ',g13.6)
+949 format(' number of ',a5,' obs = ',i7,' pen= ',e25.18,' cpen= ',g13.6)
 950 format(' type ',a7,' jiter ',i3,' nread ',i7,' nkeep ',i7,' num ',i7)
 951 format(' type ',a7,' pen= ',e25.18,' qcpen= ',e25.18,' r= ',g13.6,' qcr= ',g13.6)
 952 format(t5,'it',t13,'sat',t21,'# read',t32,'# keep',t42,'# assim',&

@@ -313,6 +313,9 @@ subroutine create_ges_tendencies(tendsflag)
   implicit none
   logical,intent(in) :: tendsflag
 
+! Declare externals
+  external :: stop2
+
   character(len=32) bname
   integer(i_kind) ierror
   type(gsi_grid) :: grid

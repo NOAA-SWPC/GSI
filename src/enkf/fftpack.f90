@@ -74,6 +74,10 @@ subroutine fftpack_rfftb ( n, r, wsave )
 !
   real r(n)
   real wsave(2*n+15)
+
+! Declare externals
+  external :: fftpack_rfftb1
+
   integer ifac(15)
 !
   if ( n <= 1 ) then
@@ -124,9 +128,15 @@ subroutine fftpack_rfftb1 ( n, c, ch, wa, ifac )
 !
   real c(n)
   real ch(n)
+  real wa(n)
+  integer ifac(15)
+
+! Declare externals
+  external :: fftpack_radb4,fftpack_radb2,&
+    fftpack_radb3,fftpack_radb5,fftpack_radbg
+
   integer idl1
   integer ido
-  integer ifac(15)
   integer ip
   integer iw
   integer ix2
@@ -137,7 +147,6 @@ subroutine fftpack_rfftb1 ( n, c, ch, wa, ifac )
   integer l2
   integer na
   integer nf
-  real wa(n)
 !
   nf = ifac(2)
   na = 0
@@ -303,6 +312,10 @@ subroutine fftpack_rfftf ( n, r, wsave )
 !
   real r(n)
   real wsave(2*n+15)
+
+! Declare externals
+  external :: fftpack_rfftf1
+
   integer ifac(15)
 !
   if ( n <= 1 ) then
@@ -353,9 +366,15 @@ subroutine fftpack_rfftf1 ( n, c, ch, wa, ifac )
 !
   real c(n)
   real ch(n)
+  real wa(n)
+  integer ifac(15)
+
+! Declare externals
+  external :: fftpack_radf4,fftpack_radf2,fftpack_radf3,&
+    fftpack_radf5,fftpack_radfg
+
   integer idl1
   integer ido
-  integer ifac(15)
   integer ip
   integer iw
   integer ix2
@@ -367,7 +386,6 @@ subroutine fftpack_rfftf1 ( n, c, ch, wa, ifac )
   integer l2
   integer na
   integer nf
-  real wa(n)
 !
   nf = ifac(2)
   na = 1
@@ -502,6 +520,10 @@ subroutine fftpack_rffti ( n, wsave )
   integer n
 !
   real wsave(2*n+15)
+
+! Declare externals
+  external :: fftpack_rffti1
+
   integer ifac(15)
 !
   if ( n <= 1 ) then
@@ -544,13 +566,18 @@ subroutine fftpack_rffti1 ( n, wa, ifac )
 !
   integer n
 !
+  real wa(n)
+  integer ifac(15)
+
+! Declare externals
+  external :: i_factor
+
   real arg
   real argh
   real argld
   real fi
   integer i
   integer ido
-  integer ifac(15)
   integer ii
   integer ip
   integer is
@@ -561,7 +588,6 @@ subroutine fftpack_rffti1 ( n, wa, ifac )
   integer ld
   integer nf
   real r_pi
-  real wa(n)
 !
   call i_factor ( n, ifac )
 

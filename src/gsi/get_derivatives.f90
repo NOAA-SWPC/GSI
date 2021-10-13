@@ -75,6 +75,9 @@ subroutine get_derivatives (guess,xderivative,yderivative)
   type(gsi_bundle) :: xderivative
   type(gsi_bundle) :: yderivative
 
+! Declare externals
+  external :: stop2,delx_reg,dely_reg
+
 ! Local Variables
   character(len=*),parameter::myname='get_derivatives'
   integer(i_kind) k,ic,ier,istatus
@@ -230,6 +233,9 @@ subroutine tget_derivatives(guess,xderivative,yderivative)
   type(gsi_bundle) :: xderivative
   type(gsi_bundle) :: yderivative
 
+! Declare externals
+  external :: tdely_reg,tdelx_reg,stop2
+
 ! Local Variables
   character(len=*),parameter::myname='tget_derivatives'
   integer(i_kind) k,ic,ier,istatus
@@ -373,6 +379,9 @@ subroutine get_zderivs(z,z_x,z_y,mype)
   integer(i_kind)                  ,intent(in   ) :: mype
   real(r_kind),dimension(lat2,lon2),intent(in   ) :: z
   real(r_kind),dimension(lat2,lon2),intent(  out) :: z_x,z_y
+
+! Declare externals
+  external :: delx_reg,dely_reg
 
 ! Local variables
   real(r_kind),dimension(:,:,:),allocatable:: workh,workd1,workd2

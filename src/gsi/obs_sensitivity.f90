@@ -192,6 +192,9 @@ subroutine init_fc_sens
 
 implicit none
 
+! Declare externals
+external :: stop2,control2model_ad,ensctl2state_ad,control2state_ad
+
 character(len=12) :: clfile
 type(gsi_bundle) :: fcgrad(nsubwin)
 type(gsi_bundle) :: eval(ntlevs_ens)
@@ -337,6 +340,9 @@ subroutine efsoi_o2_update(sval)
 implicit none
 type(gsi_bundle),intent(inout)  :: sval(nobs_bins)
 
+! Declare externals
+external :: stop2,ensctl2state_ad,control2state_ad,control2state,ensctl2state
+
 character(len=80),allocatable,dimension(:)::fname
 type(gsi_bundle) :: fcgrad(nsubwin)
 type(gsi_bundle) :: eval(ntlevs_ens)
@@ -463,6 +469,9 @@ subroutine save_fc_sens
 !
 !$$$ end documentation block
 implicit none
+
+! Declare externals
+external :: stop2
 
 real(r_kind) :: zz
 integer(i_kind) :: ii,jj,kk

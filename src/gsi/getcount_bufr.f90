@@ -26,6 +26,9 @@ use file_utility, only : get_lun
    character(len=*)                      ,intent(in ) :: inpfile
    integer(i_kind)                       ,intent(out) :: nmsg,nsub 
 
+!  Declare externals
+   external :: openbf,closbf
+
 !  Declare local parameters
 
    character(len=8)  :: subset
@@ -33,7 +36,6 @@ use file_utility, only : get_lun
 
    lunit=get_lun()
    nsub=0;nmsg=0
-   call closbf(lunit)
    open(lunit,file=trim(inpfile),form='unformatted')
    call openbf(lunit,'IN',lunit)
    do while(ireadmg(lunit,subset,idate) >=0)
