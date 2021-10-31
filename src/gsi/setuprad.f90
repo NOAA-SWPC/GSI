@@ -547,10 +547,8 @@ contains
 !       Load channel numbers into local array based on satellite type
 
         ich(jc)=j
-        do i=1,npred
-           if (iuse_rad(j)==4) predx(i,j)=zero
-           predchan(i,jc)=predx(i,j)
-        end do
+        if (iuse_rad(j)==4) predx(1:npred,j)=zero
+        predchan(1:npred,jc)=predx(1:npred,j)
 !
 !       Set error instrument channels
         tnoise(jc)=varch(j)
