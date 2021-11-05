@@ -128,6 +128,7 @@ export DOGAUSFCANL=${DOGAUSFCANL:-"NO"}
 ###############################################################
 # Run relevant exglobal script
 env
+echo "HAS BEGUN on `hostname`"
 
 ${ANALYSISSH:-$SCRgsi/exglobal_analysis_fv3gfs.sh.ecf}
 export err=$? ; err_chk "Failure during GSI analysis or sfc analysis"
@@ -154,6 +155,7 @@ if [ -e "$pgmout" ] ; then
   cat $pgmout
 fi
 
+echo "ENDED NORMALLY."
 
 ##########################################
 # Remove the Temporary working directory
