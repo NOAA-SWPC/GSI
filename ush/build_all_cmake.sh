@@ -86,6 +86,10 @@ elif [ $target = hera -o $target = orion -o $target = s4 ]; then
 elif [ $target = cheyenne ]; then
     module purge
     source $dir_modules/modulefile.ProdGSI.$target
+    export SIGIO_INC4=$SIGIO_INC
+    export SIGIO_LIB4=$SIGIO_LIB
+    export SFCIO_INC4=$SFCIO_INC
+    export SFCIO_LIB4=$SFCIO_LIB
 elif [ $target = wcoss_c ]; then
     module purge
     module load $dir_modules/modulefile.ProdGSI.$target
