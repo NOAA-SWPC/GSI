@@ -1,7 +1,7 @@
 [submodule "fix"]
 	path = fix
-	url = ssh://vlab.ncep.noaa.gov:29418/GSI-fix
+	url = ssh://vlab.noaa.gov:29418/GSI-fix
 
 [submodule "libsrc"]
 	path = libsrc
-	url = ssh://vlab.ncep.noaa.gov:29418/GSI-libsrc
+	url = ssh://vlab.noaa.gov:29418/GSI-libsrc

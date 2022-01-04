@@ -92,28 +92,9 @@ elif [ $target = wcoss_c ]; then
 elif [ $target = discover ]; then
     module load $dir_modules/modulefile.ProdGSI.$target
 elif [ $target = wcoss2 ]; then
-    module purge
-    module load envvar/$envvar_ver
-    module load PrgEnv-intel/$PrgEnv_intel_ver
-    module load craype/$craype_ver
-    module load intel/$intel_ver
-    module load cray-mpich/$cray_mpich_ver
-    module load bacio/$bacio_ver
-    module load bufr/$bufr_ver
-    module load crtm/$crtm_ver
-    module load ip/$ip_ver
-    module load nemsio/$nemsio_ver
-    module load prod_util/$prod_util_ver
-    module load sfcio/$sfcio_ver
-    module load sigio/$sigio_ver
-    module load sp/$sp_ver
-    module load w3emc/$w3emc_ver
-    module load w3nco/$w3nco_ver
-
-    module load cmake/$cmake_ver
-    module load git/$git_ver
-    module load hdf5/$hdf5_ver
-    module load netcdf/$netcdf_ver
+    module reset
+    module use -a $dir_modules
+    module load modulefile.ProdGSI.$target
 else 
     module purge
     source $dir_modules/modulefile.ProdGSI.$target
