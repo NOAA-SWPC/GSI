@@ -1261,6 +1261,9 @@ fi # NODA
 if [ $ipe_coldstart = "T" -a $CDUMP = "wdas" ]; then
     cp $IPE_IC_DIR/IPE_State.coldstart.$bcyc.h5 $IPEANL
 else
+    while [ ! -f $IPEGES ] ; do
+        sleep 10
+    done
     cp $IPEGES $IPEANL
 fi
 
