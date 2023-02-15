@@ -1,0 +1,166 @@
+#!/bin/ksh
+set -x
+
+export RUN_ENVIR=${RUN_ENVIR:-"nco"}
+export PS4='$SECONDS + '
+date
+
+
+##############################################
+# Obtain unique process id (pid) and make temp directory
+##############################################
+jobid=${jobid:-${job}.$(hostname -s).$$}
+export pid=${pid:-$$}
+export outid=${outid:-"LL$job"}
+export DATA=${DATA:-${DATAROOT}/${jobid:?}}
+mkdir -p $DATA
+cd $DATA
+
+
+##############################################
+# Run setpdy and initialize PDY variables
+##############################################
+export cycle="t${cyc}z"
+setpdy.sh
+. ./PDY
+
+
+##############################################
+# Set com directory
+##############################################
+export CDATE=${CDATE:-${PDY}${cyc}}
+export CDUMP=${CDUMP:-${RUN:-"wfs"}}
+
+#############################
+# Source relevant config files
+#############################
+configs="base anal"
+export EXPDIR=${EXPDIR:-$HOMEwfs/parm/config}
+for config in $configs; do
+    . $EXPDIR/config.$config
+    export err=$?; err_chk
+done
+
+while read line; do export $line ; done < <($HOMEwfs/ush/create_config.py \
+                                            -d $PARMDIR/default_config.json -p $DCOM)
+
+##########################################
+# Source machine runtime environment
+##########################################
+. $HOMEwfs/env/${machine}.env anal
+export err=$? ; err_chk "GSI analysis or sfc analysis failure"
+
+
+##############################################
+# Determine Job Output Name on System
+##############################################
+export pgmout="OUTPUT.${pid}"
+export pgmerr=errfile
+
+
+##############################################
+# Begin JOB SPECIFIC work
+##############################################
+
+GDATE=$($NDATE -$assim_freq $CDATE)
+[[ $CDUMP = "wrs" ]] && GDATE=$CDATE
+gPDY=$(echo $GDATE | cut -c1-8)
+gcyc=$(echo $GDATE | cut -c9-10)
+GDUMP=${GDUMP:-"wdas"}
+[[ $CDUMP = "wrs" ]] && GDUMP="wfs"
+
+export OPREFIX="${CDUMP}.t${cyc}z."
+export GPREFIX="${GDUMP}.t${gcyc}z."
+export GSUFFIX=""
+export APREFIX="${CDUMP}.t${cyc}z."
+export ASUFFIX=""
+
+
+export COMIN=${COMIN:-$(compath.py $NET/${wfs_ver}/$RUN.$PDY/$cyc)}
+export COMOUT=${COMOUT:-$(compath.py -o $NET/${wfs_ver}/$CDUMP.$PDY/$cyc)}
+export COMIN_OBS=${COMIN_OBS:-$COMIN}
+export COMIN_GES_OBS=${COMIN_GES_OBS:-$(compath.py $NET/${wfs_ver}/$GDUMP.$gPDY/$gcyc)}
+export COMIN_GES=$COMIN_GES_OBS
+
+mkdir -m 775 -p $COMOUT
+
+ATMGES="$COMIN_GES/${GPREFIX}atmf06${GSUFFIX}"
+[[ $CDUMP = "wrs" ]] && ATMGES="$COMIN_GES/${GPREFIX}atmf03${GSUFFIX}"
+export ATMGES
+if [ ! -f $ATMGES ]; then
+    echo "FATAL ERROR: FILE MISSING: ATMGES = $ATMGES"
+    export err=1 ; err_exit
+fi
+
+
+export LEVS=$($SIGHDR $ATMGES levs)
+export err=$? ; err_chk "Failure to get levs from $ATMGES using $SIGHDR"
+
+
+if [ $DOHYBVAR = "YES" ]; then
+    export ATMGES_ENSMEAN="$COMIN_GES_ENS/${GPREFIX}atmf006.ensmean$GSUFFIX"
+    if [ ! -f $ATMGES_ENSMEAN ]; then
+        echo "FATAL ERROR: FILE MISSING: ATMGES_ENSMEAN = $ATMGES_ENSMEAN"
+        export err=2 ; err_exit
+    fi
+fi
+
+
+# Link observational data
+export PREPQC="${COMOUT}/${OPREFIX}prepbufr"
+if [ ! -f $PREPQC ]; then
+    echo "WARNING: PREPBUFR FILE $PREPQC MISSING"
+fi
+export PREPQCPF="${COMOUT}/${OPREFIX}prepbufr.acft_profiles"
+export TCVITL="${COMOUT}/${OPREFIX}syndata.tcvitals.tm00"
+[[ $DONST = "YES" ]] && export NSSTBF="${COMOUT}/${OPREFIX}nsstbufr"
+
+
+# Update surface fields with global_cycle
+export DOGCYCLE=${DOGCYCLE:-"YES"}
+
+
+# Generate Gaussian surface analysis
+export DOGAUSFCANL=${DOGAUSFCANL:-"NO"}
+
+
+###############################################################
+# Run relevant exglobal script
+env
+echo "HAS BEGUN on `hostname`"
+
+${ANALYSISSH:-$SCRgsi/exglobal_analysis_fv3gfs.sh.ecf}
+export err=$? ; err_chk "Failure during GSI analysis or sfc analysis"
+
+
+##############################################
+# Send Alerts
+##############################################
+if [ $SENDDBN = YES -a $RUN = gdas ] ; then
+    $DBNROOT/bin/dbn_alert MODEL GDAS_MSC_abias $job $COMOUT/${APREFIX}abias
+    $DBNROOT/bin/dbn_alert MODEL GDAS_MSC_abias_pc $job $COMOUT/${APREFIX}abias_pc
+    $DBNROOT/bin/dbn_alert MODEL GDAS_MSC_abias_air $job $COMOUT/${APREFIX}abias_air
+fi
+
+
+##############################################
+# End JOB SPECIFIC work
+##############################################
+
+##############################################
+# Final processing
+##############################################
+if [ -e "$pgmout" ] ; then
+  cat $pgmout
+fi
+
+echo "ENDED NORMALLY."
+
+##########################################
+# Remove the Temporary working directory
+##########################################
+cd $DATAROOT
+[[ $KEEPDATA = "NO" ]] && rm -rf $DATA
+
+date
+exit 0

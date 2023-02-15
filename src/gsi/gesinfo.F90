@@ -620,7 +620,6 @@ subroutine gesinfo
   if (allocated(nems_vcoord))     deallocate(nems_vcoord)
   if (allocated(gfsheadv%vcoord)) deallocate(gfsheadv%vcoord)
   if (allocated(gfsheadv%cpi))    deallocate(gfsheadv%cpi)
-  if (allocated(cp5)) deallocate(cp5)
 
   return
 end subroutine gesinfo

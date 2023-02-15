@@ -162,6 +162,7 @@ module gridmod
   public :: jcap_gfs,nlat_gfs,nlon_gfs
   public :: use_sp_eqspace,jcap_cut
   public :: wrf_mass_hybridcord
+  public :: lsidea
   public :: write_fv3_incr
 
   interface strip
@@ -200,6 +201,7 @@ module gridmod
   logical use_fv3_aero      ! .t. for using FV3 Aerosols, .f. for NGAC
   logical sfcnst_comb       ! .t. for using combined sfc & nst file
   logical use_sp_eqspace    ! .t. use equally-space grid in spectral transforms
+  logical lsidea
   logical write_fv3_incr    ! .t. write netCDF increment rather than NEMSIO analysis
 
   logical use_readin_anl_sfcmask        ! .t. for using readin surface mask
@@ -503,6 +505,7 @@ contains
     fv3_full_hydro  = .false. 
     use_fv3_aero  = .false.
     sfcnst_comb = .false.
+    lsidea = .false.
     use_readin_anl_sfcmask = .false.
 
     use_sp_eqspace = .false.
@@ -621,6 +624,7 @@ contains
     do k=1,nsig
        msig = msig + nlayers(k)
     end do
+    if (lsidea) msig = 64 ! CRTM tested only for 64 layers, not for 90
 
 ! Initialize structure(s) for spectral <--> grid transforms
     if (.not.regional) then

@@ -68,7 +68,8 @@ use crtm_module, only: crtm_atmosphere_type,crtm_surface_type,crtm_geometry_type
     crtm_irlandcoeff_classification, &
     crtm_kind => fp, &
     crtm_microwave_sensor => microwave_sensor
-use gridmod, only: lat2,lon2,nsig,msig,nvege_type,regional,wrf_mass_regional,netcdf,use_gfs_ozone
+use gridmod, only: lat2,lon2,nsig,msig,nvege_type,regional,wrf_mass_regional,netcdf,use_gfs_ozone, &
+    lsidea
 use mpeu_util, only: die
 use crtm_aod_module, only: crtm_aod_k
 use radiance_mod, only: n_actual_clouds,cloud_names,n_clouds_fwd,cloud_names_fwd, &
@@ -1113,6 +1114,7 @@ subroutine call_crtm(obstype,obstime,data_s,nchanl,nreal,ich, &
   integer(i_kind),dimension(8)::obs_time,anal_time
   integer(i_kind),dimension(msig) :: klevel
   real(r_kind),dimension(nsig) :: qsat
+  real(r_kind) :: jacwam_decay(nsig)
 
 ! ****************************** 
 ! Constrained indexing for lai
@@ -1242,6 +1244,13 @@ subroutine call_crtm(obstype,obstime,data_s,nchanl,nreal,ich, &
   w00=delx1*dely1; w10=delx*dely1; w01=delx1*dely; w11=delx*dely
 ! w_weights = (/w00,w10,w01,w11/)
 
+  if (lsidea) then
+      do k=1,nsig
+          jacwam_decay(k) = 1.0_r_kind
+          if (k > msig) jacwam_decay(k)=exp(-float(abs(k-msig))*.75_r_kind)
+          if (jacwam_decay(k).lt.1.e-3_r_kind) jacwam_decay(k)=sqrt_tiny_r_kind
+      enddo
+  endif
 
 ! Get time interpolation factors for sigma files
   if(obstime > hrdifsig(1) .and. obstime < hrdifsig(nfldsig))then
@@ -2260,6 +2269,10 @@ subroutine call_crtm(obstype,obstime,data_s,nchanl,nreal,ich, &
 !   wmix  - moisture sensitivity
 !   omix  - ozone sensitivity
 !   ptau5 - layer transmittance
+      if (lsidea) then
+          ptau5(1:nsig,i)= 1.0
+      endif
+
        do k=1,msig
           kk = klevel(msig-k+1)
           temp(kk,i) = temp(kk,i) + atmosphere_k(i,1)%temperature(k)
@@ -2274,12 +2287,18 @@ subroutine call_crtm(obstype,obstime,data_s,nchanl,nreal,ich, &
 
 !  Small sensitivities for temp
           if (abs(temp(k,i))<sqrt_tiny_r_kind) temp(k,i)=sign(sqrt_tiny_r_kind,temp(k,i))
+          if (lsidea) then
+             if(k > msig) temp(k,i) = temp(k,i)*jacwam_decay(k)
+          endif
        end do ! <nsig>
 
 !  Deflate moisture jacobian above the tropopause.
        if (itv>=0) then
           do k=1,nsig
              jacobian(itv+k,i)=temp(k,i)*c2(k)               ! virtual temperature sensitivity
+             if (lsidea) then
+                if (k > msig) jacobian(itv+k,i) = jacobian(itv+k,i)*jacwam_decay(k)
+             endif
           end do ! <nsig>
        endif
        if (iqv>=0) then
@@ -2290,12 +2309,18 @@ subroutine call_crtm(obstype,obstime,data_s,nchanl,nreal,ich, &
                 term = (prsi(k)-trop5)/(trop5-prsi(nsig))
                 jacobian(iqv+k,i) = exp(ifactq(m)*term)*jacobian(iqv+k,i)
              endif
+             if (lsidea) then
+                 if (k > msig) jacobian(iqv+k,i) = jacobian(iqv+k,i)*jacwam_decay(k)
+             endif
           end do ! <nsig>
        endif
        if (ioz>=0) then
 !        if (.not. regional .or. use_gfs_ozone)then
           do k=1,nsig
              jacobian(ioz+k,i)=omix(k,i)*constoz       ! ozone sensitivity
+             if (lsidea) then
+                if (k > msig) jacobian(ioz+k,i) = jacobian(ioz+k,i)*jacwam_decay(k)
+             endif
           end do ! <nsig>
 !        end if
        endif

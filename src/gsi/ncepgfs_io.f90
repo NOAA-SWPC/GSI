@@ -107,7 +107,7 @@ contains
 !$$$ end documentation block
 
     use kinds, only: i_kind,r_kind
-    use gridmod, only: hires_b,sp_a,grd_a,jcap_b,nlon,nlat,lat2,lon2,nsig,regional
+    use gridmod, only: hires_b,sp_a,grd_a,jcap_b,nlon,nlat,lat2,lon2,nsig,regional,lsidea
     use guess_grids, only: ifilesig,nfldsig
     use gsi_metguess_mod, only: gsi_metguess_bundle
     use gsi_bundlemod, only: gsi_bundlegetpointer
@@ -131,12 +131,9 @@ contains
     type(gsi_bundle) :: atm_bundle
     type(gsi_grid)   :: atm_grid
     integer(i_kind),parameter :: n2d=2
-    integer(i_kind),parameter :: n3d=8
+    integer(i_kind) :: n3d
     character(len=4), parameter :: vars2d(n2d) = (/ 'z   ', 'ps  ' /)
-    character(len=4), parameter :: vars3d(n3d) = (/ 'u   ', 'v   ', &
-                                                    'vor ', 'div ', &
-                                                    'tv  ', 'q   ', &
-                                                    'cw  ', 'oz  ' /)
+    character(len=4),dimension(:),allocatable :: vars3d
 
     real(r_kind),pointer,dimension(:,:):: ptr2d   =>null()
     real(r_kind),pointer,dimension(:,:,:):: ptr3d =>null()
@@ -153,10 +150,24 @@ contains
     real(r_kind),pointer,dimension(:,:,:):: ges_cwmr_it => null()
     real(r_kind),pointer,dimension(:,:,:):: ges_ql_it   => null()
     real(r_kind),pointer,dimension(:,:,:):: ges_qi_it   => null()
+    real(r_kind),pointer,dimension(:,:,:):: ges_o_it    => null()
+    real(r_kind),pointer,dimension(:,:,:):: ges_o2_it   => null()
 
     type(spec_vars):: sp_b
     type(sub2grid_info) :: grd_t
 
+    if (lsidea) then
+       n3d = 10
+       allocate(vars3d(n3d))
+       vars3d = (/ 'u   ', 'v   ', 'vor ', 'div ', &
+                   'tv  ', 'q   ', 'cw  ', 'oz  ', &
+                   'o   ', 'o2  ' /)
+    else
+       n3d = 8
+       allocate(vars3d(n3d))
+       vars3d = (/ 'u   ', 'v   ', 'vor ', 'div ', &
+                   'tv  ', 'q   ', 'cw  ', 'oz  '  /)
+    endif
 
 !   If needed, initialize for hires_b transforms
     nlon_b=((2*jcap_b+1)/nlon+1)*nlon
@@ -169,7 +180,12 @@ contains
     endif
 
     inner_vars=1
-   num_fields=min(8*grd_a%nsig+2,npe)
+
+    if (lsidea) then
+       num_fields=min(10*grd_a%nsig+2,npe)
+    else
+       num_fields=min(8*grd_a%nsig+2,npe)
+    endif
 !  Create temporary communication information fore read routines
     call general_sub2grid_create_info(grd_t,inner_vars,grd_a%nlat,grd_a%nlon, &
           grd_a%nsig,num_fields,regional)
@@ -296,6 +312,19 @@ contains
      if (mype==0) write(6,*)'READ_GFS: cannot get pointer to qi,iret_qi= ',iret_qi 
   endif
 
+  if (lsidea) then
+     call gsi_bundlegetpointer (atm_bundle,'o',ptr3d,istatus)
+     if (istatus==0) then
+        call gsi_bundlegetpointer (gsi_metguess_bundle(it),'o',ges_o_it  ,istatus)
+        if(istatus==0) ges_o_it = ptr3d
+     endif
+     call gsi_bundlegetpointer (atm_bundle,'o2',ptr3d,istatus)
+     if (istatus==0) then
+        call gsi_bundlegetpointer (gsi_metguess_bundle(it),'o2',ges_o2_it  ,istatus)
+        if(istatus==0) ges_o2_it = ptr3d
+     endif
+  end if
+
   end subroutine set_guess_
 
   end subroutine read_gfs
@@ -341,7 +370,7 @@ contains
 
     use kinds, only: i_kind,r_kind
     use mpimod, only: mype
-    use gridmod, only: lat2,lon2,nsig,nlat,rlats,istart
+    use gridmod, only: lat2,lon2,nsig,nlat,rlats,istart,lsidea
     use ncepgfs_ghg, only: read_gfsco2,read_ch4n2oco
     use guess_grids, only: nfldsig
     use gsi_bundlemod, only: gsi_bundlegetpointer
@@ -1200,6 +1229,8 @@ end subroutine write_ghg_grid
     real(r_kind),pointer,dimension(:,:,:):: aux_qs
     real(r_kind),pointer,dimension(:,:,:):: aux_qg
     real(r_kind),pointer,dimension(:,:,:):: aux_cf
+    real(r_kind),pointer,dimension(:,:,:):: aux_o
+    real(r_kind),pointer,dimension(:,:,:):: aux_o2
     real(r_kind),pointer,dimension(:,:  ):: ges_ps_it  =>null()
     real(r_kind),pointer,dimension(:,:,:):: ges_u_it   =>null()
     real(r_kind),pointer,dimension(:,:,:):: ges_v_it   =>null()
@@ -1234,23 +1265,35 @@ end subroutine write_ghg_grid
     real(r_kind),pointer,dimension(:,:,:):: ges_oc2_it=>NULL()
     real(r_kind),pointer,dimension(:,:,:):: ges_bc1_it=>NULL()
     real(r_kind),pointer,dimension(:,:,:):: ges_bc2_it=>NULL()
+    real(r_kind),pointer,dimension(:,:,:):: ges_o_it   =>null()
+    real(r_kind),pointer,dimension(:,:,:):: ges_o2_it  =>null()
     type(gsi_bundle) :: chem_bundle
     type(gsi_bundle) :: atm_bundle
     type(gsi_grid)   :: atm_grid
     integer(i_kind),parameter :: n2d=2
-    integer(i_kind),parameter :: n3d=14   
+    integer(i_kind) :: n3d
     character(len=4), parameter :: vars2d(n2d) = (/ 'z   ', 'ps  ' /)
-    character(len=4), parameter :: vars3d(n3d) = (/ 'u   ', 'v   ', &
-                                                    'vor ', 'div ', &
-                                                    'tv  ', 'q   ', &
-                                                    'cw  ', 'oz  ', &
-                                                    'ql  ', 'qi  ', &  
-                                                    'qr  ', 'qs  ', &  
-                                                    'qg  ', 'cf  ' /)  
+    character(len=4),dimension(:),allocatable :: vars3d
 
 
     logical :: inithead
     type(spec_vars):: sp_b
+
+    if (lsidea) then
+       n3d=16
+       allocate(vars3d(n3d))
+       vars3d = (/ 'u   ', 'v   ', 'vor ', 'div ', &
+                   'tv  ', 'q   ', 'cw  ', 'oz  ', &
+                   'ql  ', 'qi  ', 'qr  ', 'qs  ', &
+                   'qg  ', 'cf  ', 'o   ', 'o2  ' /)
+    else
+       n3d=14
+       allocate(vars3d(n3d))
+       vars3d = (/ 'u   ', 'v   ', 'vor ', 'div ', &
+                   'tv  ', 'q   ', 'cw  ', 'oz  ', &
+                   'ql  ', 'qi  ', 'qr  ', 'qs  ', &
+                   'qg  ', 'cf  '/)
+    endif
 
     ! Write atmospheric analysis file
     if ( lwrite4danl ) then
@@ -1297,7 +1340,13 @@ end subroutine write_ghg_grid
     if ( istatus == 0 ) aux_cf = zero
     call gsi_bundlegetpointer(atm_bundle,'cw',aux_cwmr,istatus)
     if ( istatus == 0 ) aux_cwmr = zero
-    
+    if (lsidea) then
+       call gsi_bundlegetpointer(atm_bundle,'o',aux_o,istatus)
+       if ( istatus == 0 ) aux_o = zero
+       call gsi_bundlegetpointer(atm_bundle,'o2',aux_o2,istatus)
+       if ( istatus == 0 ) aux_o2 = zero
+    end if
+
     ! if aerosols
     if ( laeroana_gocart ) then
        call gsi_bundlecreate(chem_bundle,atm_grid,'aux-chem-write',istatus,names3d=aerosol_names)
@@ -1437,6 +1486,12 @@ end subroutine write_ghg_grid
            call gsi_bundlegetpointer (gsi_chemguess_bundle(itoutsig),'bc2',ges_bc2_it,istatus)
            if( istatus==0 ) aux_bc2 = ges_bc2_it
         end if ! laeroana_gocart
+        if (lsidea) then
+           call gsi_bundlegetpointer (gsi_metguess_bundle(itoutsig),'o',ges_o_it  ,istatus)
+           if ( istatus == 0 ) aux_o = ges_o_it
+           call gsi_bundlegetpointer (gsi_metguess_bundle(itoutsig),'o2',ges_o2_it  ,istatus)
+           if ( istatus == 0 ) aux_o2 = ges_o2_it
+        endif
         if ( use_gfs_nemsio ) then
 
             if ( write_fv3_incr ) then

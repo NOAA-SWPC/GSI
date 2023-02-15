@@ -1,3 +1,3 @@
 [submodule "fix"]
 	path = fix
-	url = gerrit:GSI-fix
+	url = ssh://adam.kubaryk@vlab.noaa.gov:29418/GSI-fix

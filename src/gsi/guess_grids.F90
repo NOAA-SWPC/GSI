@@ -1799,7 +1799,7 @@ contains
 ! !USES:
 
     use constants, only: half,ten,one_tenth
-    use gridmod, only: nsig,msig,nlayers
+    use gridmod, only: nsig,msig,nlayers,lsidea
     use crtm_module, only: toa_pressure
 
     implicit none
@@ -1832,7 +1832,7 @@ contains
 !-------------------------------------------------------------------------
 
 !   Declare local variables
-    integer(i_kind) k,kk,l
+    integer(i_kind) k,kk,l,nsigx
     real(r_kind) dprs,toa_prs_kpa
 
 !   Convert toa_pressure to kPa
@@ -1841,16 +1841,22 @@ contains
 
 !   Check if model top pressure above rtm top pressure, where prsitmp
 !   is in kPa and toa_pressure is in hPa.
-    if (prsitmp(nsig) < toa_prs_kpa)then
+    if (prsitmp(nsig) < toa_prs_kpa .and. (.not. lsidea))then
        write(6,*)'ADD_RTM_LAYERS:  model top pressure(hPa)=', &
             ten*prsitmp(nsig),&
             ' above rtm top pressure(hPa)=',toa_pressure
        call stop2(35)
     end if
 
+    if (lsidea) then
+        nsigx = msig
+    else
+        nsigx = nsig
+    endif
+
 !   Linear in pressure sub-divsions
     kk=0
-    do k = 1,nsig
+    do k = 1,nsigx
        if (nlayers(k)<=1) then
           kk = kk + 1
           prsltmp_ext(kk) = prsltmp(k)
