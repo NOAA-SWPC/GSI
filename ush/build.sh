@@ -13,7 +13,7 @@ BUILD_DIR=${BUILD_DIR:-"${DIR_ROOT}/build"}
 INSTALL_PREFIX=${INSTALL_PREFIX:-"${DIR_ROOT}/install"}
 GSI_MODE=${GSI_MODE:-"Regional"}  # By default build Regional GSI (for regression testing)
 ENKF_MODE=${ENKF_MODE:-"GFS"}     # By default build Global EnKF  (for regression testing)
-UTIL_OPTS=${UTIL_OPTS:-"-DBUILD_UTIL_ALL=ON"} # By default build all GFS utilities
+UTIL_OPTS=${UTIL_OPTS:-"-DBUILD_UTIL_ALL=OFF"} # By default build all GFS utilities
 REGRESSION_TESTS=${REGRESSION_TESTS:-"YES"} # Build regression test suite
 
 #==============================================================================#

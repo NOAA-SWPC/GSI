@@ -1184,7 +1184,7 @@ end subroutine write_ghg_grid
     use mpimod, only: mype
     use guess_grids, only: dsfct
     use guess_grids, only: ntguessig,ntguessfc,ifilesig,nfldsig
-    use gridmod, only: hires_b,sp_a,grd_a,jcap_b,nlon,nlat,use_gfs_nemsio,write_fv3_incr,use_gfs_ncio
+    use gridmod, only: hires_b,sp_a,grd_a,jcap_b,nlon,nlat,use_gfs_nemsio,write_fv3_incr,use_gfs_ncio,lsidea
     use gsi_metguess_mod, only: gsi_metguess_bundle
     use gsi_bundlemod, only: gsi_bundlegetpointer
     use gsi_bundlemod, only: gsi_grid

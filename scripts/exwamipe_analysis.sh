@@ -455,44 +455,6 @@ fi
 
 cd $DATA || exit 99
 
-################################################################################
-# Clean the run-directory
-rm berror_stats hybens_info
-rm scaninfo satbias_angle satinfo
-rm anavinfo convinfo ozinfo pcpinfo aeroinfo
-rm errtable atms_beamwidth.txt
-rm cloudy_radiance_info.txt
-
-rm prepbufr prepbufr_profl
-rm gpsrobufr
-rm tcvitl
-rm gsndrbufr gsnd1bufr
-rm ssmisbufr ssmitbufr ssmirrbufr tmirrbufr
-rm sbuvbufr gomebufr omibufr mlsbufr msubufr ompsnpbufr ompstcbufr
-rm airsbufr
-rm iasibufr iasibufrears iasibufr_db
-rm amsrebufr amsr2bufr
-rm gmibufr saphirbufr
-rm hirs2bufr hirs3bufr hirs4bufr hirs3bufr_db hirs3bufrears
-rm amsuabufr amsuabufr_db amsuabufrears
-rm amsubbufr amsubbufr_db amsubbufrears
-rm mhsbufr mhsbufr_db mhsbufrears
-rm seviribufr ahibufr
-rm crisbufr crisbufrears crisbufr_db crisfsbufr crisfsbufrears crisfsbufr_db
-rm atmsbufr atmsbufr_db atmsbufrears
-
-rm satbias_in satbias_ang.in satbias_out satbias_pc satbias_pc.out satbias_out.int
-rm aircftbias_in aircftbias_out
-
-rm sfcf* sigf* nstf*
-rm sfca* siga* nsta*
-
-rm gsiparm.anl
-
-rm -rf dir*
-rm -rf crtm_coeffs
-rm -rf ensemble_data
-
 ##############################################################
 # Fixed files
 $NLN $BERROR       berror_stats
@@ -840,17 +802,13 @@ OBS_INPUT::
    prepbufr       ps          null        ps                  0.0     0     0
    prepbufr       t           null        t                   0.0     0     0
    prepbufr_profl t           null        t                   0.0     0     0
-   hdobbufr       t           null        t                   0.0     0     0
    prepbufr       q           null        q                   0.0     0     0
    prepbufr_profl q           null        q                   0.0     0     0
-   hdobbufr       q           null        q                   0.0     0     0
    prepbufr       pw          null        pw                  0.0     0     0
    prepbufr       uv          null        uv                  0.0     0     0
    prepbufr_profl uv          null        uv                  0.0     0     0
    satwndbufr     uv          null        uv                  0.0     0     0
-   hdobbufr       uv          null        uv                  0.0     0     0
    prepbufr       spd         null        spd                 0.0     0     0
-   hdobbufr       spd         null        spd                 0.0     0     0
    prepbufr       dw          null        dw                  0.0     0     0
    radarbufr      rw          null        rw                  0.0     0     0
    nsstbufr       sst         nsst        sst                 0.0     0     0
@@ -879,6 +837,7 @@ OBS_INPUT::
    ssmisbufr      ssmis       f16         ssmis_f16           0.0     1     0
    ssmisbufr      ssmis       f17         ssmis_f17           0.0     1     0
    ssmisbufr      ssmis       f18         ssmis_f18           0.0     1     0
+   ssmisbufr      ssmis       f19         ssmis_f19           0.0     1     0
    gsnd1bufr      sndrd1      g12         sndrD1_g12          0.0     1     0
    gsnd1bufr      sndrd2      g12         sndrD2_g12          0.0     1     0
    gsnd1bufr      sndrd3      g12         sndrD3_g12          0.0     1     0
@@ -902,7 +861,6 @@ OBS_INPUT::
    seviribufr     seviri      m08         seviri_m08          0.0     1     0
    seviribufr     seviri      m09         seviri_m09          0.0     1     0
    seviribufr     seviri      m10         seviri_m10          0.0     1     0
-   seviribufr     seviri      m11         seviri_m11          0.0     1     0
    hirs4bufr      hirs4       metop-b     hirs4_metop-b       0.0     1     1
    amsuabufr      amsua       metop-b     amsua_metop-b       0.0     1     1
    mhsbufr        mhs         metop-b     mhs_metop-b         0.0     1     1
@@ -923,35 +881,14 @@ OBS_INPUT::
    gsnd1bufr      sndrd4      g15         sndrD4_g15          0.0     1     0
    oscatbufr      uv          null        uv                  0.0     0     0
    mlsbufr        mls30       aura        mls30_aura          0.0     0     0
-   avhambufr      avhrr       metop-a     avhrr3_metop-a      0.0     4     0
-   avhpmbufr      avhrr       n18         avhrr3_n18          0.0     4     0
-   avhambufr      avhrr       metop-b     avhrr3_metop-b      0.0     4     0
-   avhambufr      avhrr       metop-c     avhrr3_metop-c      0.0     4     0
-   avhpmbufr      avhrr       n19         avhrr3_n19          0.0     4     0
+   avhambufr      avhrr       metop-a     avhrr3_metop-a      0.0     1     0
+   avhpmbufr      avhrr       n18         avhrr3_n18          0.0     1     0
    amsr2bufr      amsr2       gcom-w1     amsr2_gcom-w1       0.0     3     0
-   gmibufr        gmi         gpm         gmi_gpm             0.0     1     0
+   gmibufr        gmi         gpm         gmi_gpm             0.0     3     0
    saphirbufr     saphir      meghat      saphir_meghat       0.0     3     0
-   ahibufr        ahi         himawari8   ahi_himawari8       0.0     1     0
-   abibufr        abi         g16         abi_g16             0.0     1     0
-   abibufr        abi         g17         abi_g17             0.0     1     0
+   ahibufr        ahi         himawari8   ahi_himawari8       0.0     3     0
    rapidscatbufr  uv          null        uv                  0.0     0     0
-   ompsnpbufr     ompsnp      npp         ompsnp_npp          0.0     0     0
-   ompslpbufr     ompslp      npp         ompslp_npp          0.0     0     0
-   ompstcbufr     ompstc8     npp         ompstc8_npp         0.0     2     0
-   ompsnpbufr     ompsnp      n20         ompsnp_n20          0.0     0     0
-   ompstcbufr     ompstc8     n20         ompstc8_n20         0.0     2     0
-   amsuabufr      amsua       metop-c     amsua_metop-c       0.0     1     1
-   mhsbufr        mhs         metop-c     mhs_metop-c         0.0     1     1
-   iasibufr       iasi        metop-c     iasi_metop-c        0.0     1     1
-   sstviirs       viirs-m     npp         viirs-m_npp         0.0     4     0
-   sstviirs       viirs-m     j1          viirs-m_j1          0.0     4     0
-   ahibufr        ahi         himawari9   ahi_himawari9       0.0     1     0
-   atmsbufr       atms        n21         atms_n21            0.0     1     1
-   crisfsbufr     cris-fsr    n21         cris-fsr_n21        0.0     1     0
-   sstviirs       viirs-m     j2          viirs-m_j2          0.0     4     0
-   ompsnpbufr     ompsnp      n21         ompsnp_n21          0.0     0     0
-   ompstcbufr     ompstc8     n21         ompstc8_n21         0.0     2     0
-   gomebufr       gome        metop-c     gome_metop-c        0.0     2     0
+#   glmbufr        light       g16         light               0.0     0     0
 ::
  &SUPEROB_RADAR
    $SUPERRAD
@@ -1261,10 +1198,12 @@ fi # NODA
 if [ $ipe_coldstart = "T" -a $CDUMP = "wdas" ]; then
     cp $IPE_IC_DIR/IPE_State.coldstart.$bcyc.h5 $IPEANL
 else
-    while [ ! -f $IPEGES ] ; do
-        sleep 10
+    while [ ! -f $IPEGES ] || [ ! -f $IPEANL ] || [ "$(diff $IPEGES $IPEANL)" != "" ] ; do
+        while [ ! -f $IPEGES ] ; do
+            sleep 10
+        done
+        cp $IPEGES $IPEANL
     done
-    cp $IPEGES $IPEANL
 fi
 
 ################################################################################
