@@ -48,7 +48,7 @@ while read line; do export $line ; done < <($HOMEwfs/ush/create_config.py \
 # Source machine runtime environment
 ##########################################
 . $HOMEwfs/env/${machine}.env anal
-export err=$? ; err_chk "GSI analysis or sfc analysis failure"
+export err=$? ; err_chk
 
 
 ##############################################
@@ -76,13 +76,28 @@ export APREFIX="${CDUMP}.t${cyc}z."
 export ASUFFIX=""
 
 
-export COMIN=${COMIN:-$(compath.py $NET/${wfs_ver}/$RUN.$PDY/$cyc)}
+export COMIN=${COMIN:-$(compath.py $NET/${wfs_ver}/$CDUMP.$PDY/$cyc)}
 export COMOUT=${COMOUT:-$(compath.py -o $NET/${wfs_ver}/$CDUMP.$PDY/$cyc)}
 export COMIN_OBS=${COMIN_OBS:-$COMIN}
 export COMIN_GES_OBS=${COMIN_GES_OBS:-$(compath.py $NET/${wfs_ver}/$GDUMP.$gPDY/$gcyc)}
 export COMIN_GES=$COMIN_GES_OBS
 
 mkdir -m 775 -p $COMOUT
+
+############################ 
+# Copy dump files to comout
+############################   
+atmos="/atmos"
+
+export COMINgfs=${COMINgfs:-$(compath.py gfs/${gfs_ver}/$PDUMP.$PDY/${cyc}${atmos})}
+export COMINobsproc=${COMINobsproc:-$(compath.py obsproc/${obsproc_ver}/$PDUMP.$PDY/${cyc}${atmos})}
+
+if [ $CDUMP != "wrs" ] ; then
+    $HOMEwfs/ush/getdump.sh $CDATE $PDUMP $COMINobsproc $COMOUT
+    export err=$? ; err_chk
+    $HOMEwfs/ush/get_global_data.sh $CDATE $PDUMP $COMINgfs $COMOUT
+    export err=$? ; err_chk
+fi
 
 ATMGES="$COMIN_GES/${GPREFIX}atmf06${GSUFFIX}"
 [[ $CDUMP = "wrs" ]] && ATMGES="$COMIN_GES/${GPREFIX}atmf03${GSUFFIX}"
@@ -94,7 +109,7 @@ fi
 
 
 export LEVS=$($SIGHDR $ATMGES levs)
-export err=$? ; err_chk "Failure to get levs from $ATMGES using $SIGHDR"
+export err=$? ; err_chk
 
 
 if [ $DOHYBVAR = "YES" ]; then
@@ -130,7 +145,7 @@ env
 echo "HAS BEGUN on `hostname`"
 
 ${ANALYSISSH:-$SCRgsi/exglobal_analysis_fv3gfs.sh.ecf}
-export err=$? ; err_chk "Failure during GSI analysis or sfc analysis"
+export err=$? ; err_chk
 
 
 ##############################################

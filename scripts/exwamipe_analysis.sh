@@ -377,10 +377,10 @@ if [ $NODA = "YES" ] ; then
       fi
       cp $SFCGES $SFCANL
 
-      cp $GRADSTAT $RADSTAT
-      cp $GBIAS    $ABIAS
-      cp $GBIASPC  $ABIASPC
-      cp $GBIASAIR $ABIASAIR
+      cp --preserve=mode,ownership $GRADSTAT $RADSTAT
+      cp --preserve=mode,ownership $GBIAS    $ABIAS
+      cp --preserve=mode,ownership $GBIASPC  $ABIASPC
+      cp --preserve=mode,ownership $GBIASAIR $ABIASAIR
    fi
 if [ $DOGCYCLE = "YES" ]; then
 
@@ -1006,7 +1006,7 @@ fi
 # Add this statement to release the forecast job once the GSI
 # step is completed.  Do not release forecast when RUN=enkf
 ##############################################################
-if [ $SENDECF = "YES" -a "$RUN" != "enkf" ]; then
+if [ $SENDECF = "YES" -a "$CDUMP" != "enkf" ]; then
    ecflow_client --event release_fcst
 fi
 
@@ -1180,18 +1180,6 @@ EOFdiag
    fi
 
 fi # End diagnostic file generation block - if [ $GENDIAG = "YES" ]
-
-
-################################################################################
-# Send alerts
-if [ $SENDDBN = "YES" ]; then
-    if [ $RUN = "gdas" ]; then
-       $DBNROOT/bin/dbn_alert MODEL GDASRADSTAT $job $RADSTAT
-    fi
-    if [ $RUN = "gfs" ]; then
-       $DBNROOT/bin/dbn_alert MODEL GFS_abias $job $ABIAS
-    fi
-fi
 
 fi # NODA
 
