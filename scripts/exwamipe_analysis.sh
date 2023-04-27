@@ -2,18 +2,20 @@
 ################################################################################
 ####  UNIX Script Documentation Block
 #                      .                                             .
-# Script name:         exglobal_analysis_fv3gfs.sh.ecf.sh
-# Script description:  Makes a global model upper air analysis with GSI
+# Script name:         exwamipe_analysis.sh
+# Script description:  Makes air and surface analyses
 #
-# Author: Rahul Mahajan      Org: NCEP/EMC     Date: 2017-03-02
+# Author: Adam Kubaryk      Org: NCEP/SWPC     Date: 2023-04-27
 #
-# Abstract: This script makes a global model analysis using the GSI
+# Abstract: This script makes a global model analysis using the GSI, as well as
+#           a surface analysis using global_cycle. It also copies the needed
+#           IPE initial conditions from the previous WDAS/wFS cycle.
 #
 # $Id$
 #
 # Attributes:
 #   Language: POSIX shell
-#   Machine: WCOSS-Cray / Theia
+#   Machine: WCOSS2/Hera
 #
 ################################################################################
 
