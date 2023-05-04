@@ -102,7 +102,6 @@ subroutine general_write_gfsatm(grd,sp_a,sp_b,filename,mype_out,&
     else
        itotflds=6*grd%nsig+2 !                     vor,div,tv,q,oz,cwmr,ps,z
     end if
-    itotflds=6*grd%nsig+2  ! Hardwired for now!  vor,div,tv,q,oz,cwmr,ps,z
     lloop=.true.
 
     istatus=0
@@ -274,11 +273,11 @@ subroutine general_write_gfsatm(grd,sp_a,sp_b,filename,mype_out,&
                    sigdati%i = sighead%levs * (2+2) + 2 + klev
                 else if ( kvar == 8 ) then ! cw, 3rd tracer
                    sigdati%i = sighead%levs * (2+3) + 2 + klev
-                endif
                 else if ( lsidea .and. kvar==9 ) then  ! o, 4th tracer
                    sigdati%i = sighead%levs * (2+4) + 2 + klev
                 else if ( lsidea .and. kvar==10 ) then ! o2, 5th tracer
                    sigdati%i = sighead%levs * (2+5) + 2 + klev
+                end if
 
                 if ( klev > 0 ) then
 
