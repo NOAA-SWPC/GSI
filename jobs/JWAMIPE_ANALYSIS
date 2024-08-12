@@ -67,7 +67,7 @@ done
 while read line; do export $line ; done < <($HOMEwfs/ush/create_config.py \
                                             -d $PARMDIR/default_config.json -p $DCOM)
 while read line; do export $line ; done < <($HOMEwfs/ush/check_kp.py \
-                                            -s $CDATE -p $DCOM)
+                                            -s $($NDATE -3 $CDATE) -p $DCOM)
 
 ##########################################
 # Source machine runtime environment
