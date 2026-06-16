@@ -113,8 +113,9 @@ mkdir -m 775 -p $COMOUT
 # Copy dump files to comout
 ############################   
 atmos="/atmos"
+obs="/obs"
 
-export COMINgfs=${COMINgfs:-$(compath.py gfs/${gfs_ver}/$PDUMP.$PDY/${cyc}${atmos})}
+export COMINgfs=${COMINgfs:-$(compath.py gfs/${gfs_ver}/$PDUMP.$PDY/${cyc}${obs})}
 export COMINobsproc=${COMINobsproc:-$(compath.py obsproc/${obsproc_ver}/$PDUMP.$PDY/${cyc}${atmos})}
 
 if [ $CDUMP != "wrs" ] ; then
